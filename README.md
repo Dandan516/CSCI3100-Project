@@ -31,13 +31,13 @@ def index(request):
     return render(request, "html file", {some information provide to the template})
 ```
 
-### urls.py
+### Files: urls.py
 This file contains URL configuration for webapp project
 The _urlpatterns_ list routes URLs to views
 
 Examples:
 ```
-\# webapp.urls.py
+# webapp.urls.py
 from django.contrib import admin
 from django.urls import path , include
 
