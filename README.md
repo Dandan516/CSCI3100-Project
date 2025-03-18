@@ -1,3 +1,8 @@
+To run:  
+  cd frontend  
+  npm install  
+  npm run dev  
+
 # Web Application Backend Development Documentation
 
 This repository contains documentation and code for the backend server of the application
