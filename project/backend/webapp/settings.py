@@ -31,8 +31,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # our application called planner
+    
     'planner',
+    'users', # User Authentication
+
+    'rest_framework',
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+CORS_ALLOW_ORIGINS = ['https://localhost:5173']
+
+AUTH_USER_MODEL = 'users.CustomUser' # Apply CustomUser Model in users
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
