@@ -1,7 +1,25 @@
-To run:  
-  cd frontend  
-  npm install  
-  npm run dev  
+# Running and Testing Server
+
+## To run React server:  
+```
+cd frontend  
+npm install  
+npm run dev  
+```
+
+# Backend TO-DO
+
+### 1. User Account Creation
+### 2. User Login/Logout
+
+## User Management
+
+# Web Application Backend Development Documentation
+
+## Django , Django REST framework
+```
+pip install django djangorestframework django-cors-headers
+```
 
 # Web Application Backend Development Documentation
 
