@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Portal from './components/Portal/Portal';
+import SignIn from './components/Auth/SignIn';
+import SignUp from './components/Auth/SignUp';
 
 function App() {
+  // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([])
 
   useEffect(() => {
@@ -20,14 +25,19 @@ function App() {
     fetchData();
   }, [])
 
-  const test = 0;
-
   return (
-    <div>
-      <h1>Hello World {test}</h1>
-      <button>Test</button>
-    </div>
-  )
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<Portal />} />
+          <Route path="/portal" element={<Portal />} />
+          <Route path="/auth/signin" element={<SignIn />} />
+          <Route path="/auth/signup" element={<SignUp />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+
 }
 
 export default App

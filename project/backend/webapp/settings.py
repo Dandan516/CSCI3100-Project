@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # our application called planner
     'planner',
+
     'users',
     'rest_framework',
     'corsheaders',

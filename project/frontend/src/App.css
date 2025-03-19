@@ -1,42 +1,50 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  width: 400px;
+  margin: 0px;
+  padding: 0px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.large-button {
+  width: 400px;
+  height: 60px;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(32, 32, 32, 0.1);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.large-button.white {
+  background-color: #eee;
+  color: #333;
+  border: 2px solid #888;
 }
 
-.card {
-  padding: 2em;
+.large-button.white:hover {
+  background-color: #e8e0f0;
+  border: 2px solid #7218D1;
 }
 
-.read-the-docs {
-  color: #888;
+.large-button.purple {
+  background-color: #7218D1;
+  color: #eee;
+}
+
+.large-button.purple:hover {
+  background-color: #8c3ddb;
+}
+
+.white-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px, 40px;
+  background-color: #eee;
+  /* White frame */
+  border-radius: 30px;
+  justify-content: top;
+  align-items: center;
+  box-shadow: 0 4px 8px 0 rgba(255, 255, 255, 0.3);
 }
