@@ -16,10 +16,10 @@ function SignIn() {
     });
   };
 
-  const handleSignIn = (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     // Handle sign-in logic here
-    console.log('Signing in with', formData.email, formData.password);
+    console.log('Signing in with', formData.email, formData.password);  
   };
 
   return (

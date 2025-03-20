@@ -17,10 +17,18 @@ function SignUp() {
     });
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     // Handle sign-in logic here
-    console.log('Signing in with', formData.email, formData.password);
+    console.log('Signing up with', formData.email, formData.password);
+    try {
+      const response = await axios.post('localhost:8000/api/users', formData);
+      console.log('Form data submitted successfully:', response.data);
+      // You can add additional logic here, such as displaying a success message
+    } catch (error) {
+      console.error('Error submitting form data:', error);
+      // You can add error handling logic here, such as displaying an error message
+    }
   };
 
   return (
