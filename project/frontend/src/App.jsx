@@ -11,7 +11,7 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/`); // change later
+        const response = await fetch(`${import.meta.env.VITE_API_URL}`); // change later
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
