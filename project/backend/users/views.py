@@ -1,32 +1,22 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
-from django.urls import reverse
+from rest_framework import viewsets, permissions
+from .serializer import *
+from .models import *
+from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create your views here.
-def index(request):
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("users:login"))
-    return render(request, "users/index.html")
+class RegisterViewset(viewsets.ViewSet):
+    permission_classes = [permissions.AllowAny]
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
 
-def login_user(request):
-    if request.method == "POST":
-        username = request.POST["username"]
-        password = request.POST["password"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return HttpResponseRedirect(reverse("users:index"))
-        else: 
-            return render(request, "users/login.html", {
-                "message": "Incorrect username or password"
-            })
-    return render(request, "users/login.html", {
-        "message":"please login"
-    })
+    def create(self, request):
+        serializer = self.serializer_class( data=request.data )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=400)
 
-def logout_user(request):
-    logout(request)
-    return render(request, "users/login.html", {
-        "message": "Logged out"
-    })
