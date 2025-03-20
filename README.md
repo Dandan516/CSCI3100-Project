@@ -16,7 +16,7 @@ Build a Container from the Dockerfile:
 The Docker container will run automatically after the command
 
 The React server and Django server should be hosted in the container
-go to https://localhost:5173 to connect the React server
+go to http://localhost:5173 to connect the React server
 
 Stop the container:
 ```
