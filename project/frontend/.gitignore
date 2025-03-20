@@ -14,14 +14,3 @@ dist-ssr
 .vite/
 .env
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-eslint.config.js
