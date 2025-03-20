@@ -19,3 +19,4 @@ class RegisterViewset(viewsets.ViewSet):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=400)
+

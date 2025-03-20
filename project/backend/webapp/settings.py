@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     
     'planner',
     'users', # User Authentication
-
+  
     'rest_framework',
     'corsheaders',
     'django.contrib.admin',
@@ -45,9 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+
 CORS_ALLOW_ORIGINS = ['https://localhost:5173']
 
 AUTH_USER_MODEL = 'users.CustomUser' # Apply CustomUser Model in users
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
