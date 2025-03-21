@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import '../../App.css';
 import './Auth.css';
 import PlannerImage from '../../assets/Planner.png';
+import axios from 'axios';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -22,7 +23,7 @@ function SignUp() {
     // Handle sign-in logic here
     console.log('Signing up with', formData.email, formData.password);
     try {
-      const response = await axios.post('localhost:8000/api/users', formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
       console.log('Form data submitted successfully:', response.data);
       // You can add additional logic here, such as displaying a success message
     } catch (error) {
