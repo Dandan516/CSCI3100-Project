@@ -51,6 +51,15 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 AUTH_USER_MODEL = 'users.CustomUser' # Apply CustomUser Model in users
 
+AUTHENTICATION_BACKENDS = [
+    #'users.auth_backend.EmailAuthBackend'
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# django-rest-knox
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+}
 
 MIDDLEWARE = [
 

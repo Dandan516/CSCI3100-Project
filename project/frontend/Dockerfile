@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Install Vite globally (or locally if preferred)
+RUN npm install -g vite
+
 # Copy the rest of the application code
 COPY . .
 
