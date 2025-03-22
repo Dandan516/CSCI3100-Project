@@ -1,40 +1,23 @@
-import { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+// Desc: Main App component
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Portal from './components/Portal/Portal';
-import SignIn from './components/Auth/SignIn';
-import SignUp from './components/Auth/SignUp';
+import SignIn from './pages/SignIn';
+import SignUp from './pages/SignUp';
+import "@radix-ui/themes/styles.css";
+import { Theme, ThemePanel } from "@radix-ui/themes";
 
 function App() {
-  // eslint-disable-next-line no-unused-vars
-  const [data, setData] = useState([])
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}`); // change later
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        setData(data);
-        console.log(data)
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    }
-    fetchData();
-  }, [])
 
   return (
     <Router>
-      <div className="App">
+      <Theme accentColor="indigo" grayColor="slate" radius="full" scaling="100%" appearance="dark">
+        {/* <Sidebar /> */}
         <Routes>
-          <Route path="/" element={<Portal />} />
-          <Route path="/portal" element={<Portal />} />
-          <Route path="/auth/signin" element={<SignIn />} />
-          <Route path="/auth/signup" element={<SignUp />} />
+          <Route path="/" element={<SignIn />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
-      </div>
+      </Theme>
     </Router>
   );
 
