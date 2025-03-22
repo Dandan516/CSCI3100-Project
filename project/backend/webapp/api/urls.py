@@ -9,4 +9,5 @@ router.registry.extend(users_router.registry)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth/', include('knox.urls')),
 ]

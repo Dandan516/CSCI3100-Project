@@ -23,7 +23,7 @@ function SignIn() {
     // Handle sign-in logic here
     console.log('Signing in with', formData.email, formData.password);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, formData);
       console.log('Signed in successfully');
     } catch (error) {
       console.error('Error signing in:', JSON.parse(error.request.response)["email"][0]);

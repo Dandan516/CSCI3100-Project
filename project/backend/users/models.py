@@ -20,7 +20,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(email, password, **extra_fields)
 
-
+# Abstract Users extend function for Django Users model 
 class CustomUser(AbstractUser):
     email = models.EmailField(max_length=200, unique=True)
     username = models.CharField(max_length=200, null=True, blank=True)

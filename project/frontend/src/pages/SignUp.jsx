@@ -33,7 +33,10 @@ function SignUp() {
     e.preventDefault();
     console.log('Signing up with', formData.email, formData.password, formData.confirmPassword);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/`, {
+        email : formData.email,
+        password : formData.password
+      });
       console.log('Signed up successfully');
     } catch (error) {
       console.error('Error signing up:', JSON.parse(error.request.response)["email"][0]);
