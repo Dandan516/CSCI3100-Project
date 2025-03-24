@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import '../App.css';
-import "@radix-ui/themes/styles.css";
-import { Text, Button, Flex, Box, Card, TextField, Link } from "@radix-ui/themes";
+
+import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
+import "@radix-ui/themes/styles.css";
 
-function SignIn() {
+import '../App.css';
+
+function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,34 +25,28 @@ function SignIn() {
     // Handle sign-in logic here
     console.log('Signing in with', formData.email, formData.password);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
+      await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
       console.log('Signed in successfully');
     } catch (error) {
-      console.error('Error signing in:', JSON.parse(error.request.response)["email"][0]);
-    } 
+      console.error('Error signing in:', JSON.parse(error.request.response));
+    }
   };
 
   return (
-    <Flex width="100vw" height="100vh" direction="column" align="center" justify="center" gap="20px">
-      <Box width="480px" justify="center">
-        <Card size="3" elevation="3" padding="5" radius="2">
-          <Flex direction="column" align="center" justify="center" gap="50px" my="20px">
-            <Text size="7" weight="bold">
+    <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
+      <Box width="480px">
+        <Card size="3">
+          <Flex direction="column" align="center" justify="center" gap="20px">
+            <Text size="7" weight="bold" my="20px">
               Sign In
             </Text>
             <Form.Root className="FormRoot">
-              <Flex direction="column" align="center" justify="center" gap="20px">
-
+              <Flex direction="column" gap="20px">
                 <Form.Field className="FormField" name="email">
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      justifyContent: "space-between",
-                    }}>
+                  <Flex align="baseline" justify="between">
                     <Form.Label asChild className="FormLabel">
                       <Box height="30px">
-                        <Text size="2" weight="bold">
+                        <Text size="2" weight="medium" mb="10px" ml="6px">
                           Email
                         </Text>
                       </Box>
@@ -65,18 +61,17 @@ function SignIn() {
                         Please provide a valid email.
                       </Text>
                     </Form.Message>
-                  </div>
-
+                  </Flex>
                   <Form.Control
                     asChild
                     className="Input"
+                    name="email"
                     type="email"
                     placeholder="Enter your email address..."
-                    required
-                    size="3"
-                    name="email"
                     value={formData.email}
-                    onChange={handleChange}>
+                    onChange={handleChange}
+                    required
+                    size="3">
                     <Box asChild width="380px" height="60px">
                       <TextField.Root>
                         <TextField.Slot pl="8px" />
@@ -87,38 +82,29 @@ function SignIn() {
                 </Form.Field>
 
                 <Form.Field className="FormField" name="password">
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      justifyContent: "space-between",
-                    }}
-                  >
+                  <Flex align="baseline" justify="between">
                     <Form.Label asChild className="FormLabel">
-                      <Box height="30px">
-                        <Text size="2" weight="bold">
-                          Password
-                        </Text>
-                      </Box>
+                      <Text size="2" weight="medium" mb="10px" ml="6px">
+                        Password
+                      </Text>
                     </Form.Label>
                     <Form.Message asChild className="FormMessage" match="valueMissing">
                       <Text size="2" color="red">
                         Please enter a password.
                       </Text>
                     </Form.Message>
-                  </div>
+                  </Flex>
 
                   <Form.Control
                     asChild
-                    minLength="8"
                     className="Input"
+                    name="password"
                     type="password"
-                    placeholder="Enter your password..."
+                    value={formData.password}
+                    onChange={handleChange}
                     required
                     size="3"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}>
+                    placeholder="Enter your password...">
                     <Box asChild width="380px" height="60px">
                       <TextField.Root>
                         <TextField.Slot pl="8px" />
@@ -128,12 +114,20 @@ function SignIn() {
                   </Form.Control>
                 </Form.Field>
 
+                <Flex align="center" justify="between" m="4px">
+                  <Flex align="center" gap='10px'>
+                    <Checkbox />
+                    <Text size="2"> Remember Me </Text>
+                  </Flex>
+                  <Text size="2" align="right">
+                    <Link href="/forgotpassword"> Forgot password? </Link>
+                  </Text>
+                </Flex>
+
                 <Form.Submit asChild onClick={handleSignIn}>
-                  <Button asChild variant="solid" mt="20px" >
+                  <Button asChild variant="solid">
                     <Box width="380px" height="60px">
-                      <Text
-                        size="5"
-                        weight="bold">
+                      <Text size="5" weight="bold">
                         Continue
                       </Text>
                     </Box>
@@ -142,16 +136,16 @@ function SignIn() {
 
               </Flex>
             </Form.Root>
+
+            <Text size="2" m="4px">
+              Don't have an account? <Link href="/signup">Create an account</Link>
+            </Text>
           </Flex>
-        </Card>
-      </Box>
-      <Box>
-        <Text size="2">
-          Don't have an account? <Link href="/signup">Create an account</Link>
-        </Text>
-      </Box>
-    </Flex>
+        </Card >
+      </Box >
+
+    </Flex >
   );
 }
 
-export default SignIn;
+export default Login;
