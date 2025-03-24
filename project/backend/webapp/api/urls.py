@@ -4,10 +4,10 @@ from django.urls import path, include
 
 router = DefaultRouter()
 
-# words
+# users
 router.registry.extend(users_router.registry)
 
-# 定義主要的 API URL 路徑
 urlpatterns = [
     path('', include(router.urls)),
+    path('auth/', include('knox.urls')),
 ]
