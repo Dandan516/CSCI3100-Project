@@ -12,8 +12,9 @@ RUN npm install
 
 # Install Vite globally (or locally if preferred)
 RUN npm install -g vite
-
-
+RUN npm install eslint 
+RUN npm install --save prop-types 
+RUN npm install eslint-plugin-import --save-dev
 RUN npm install @radix-ui/colors
 
 # Copy the rest of the application code

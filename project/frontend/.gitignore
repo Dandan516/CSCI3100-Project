@@ -13,5 +13,4 @@ dist-ssr
 *.local
 .vite/
 .env
-eslint.config.js
 
