@@ -1,23 +1,23 @@
-// Desc: Main App component
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import Portal from './components/Portal/Portal';
-import SignIn from './pages/SignIn';
+
+import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import "@radix-ui/themes/styles.css";
-import { Theme, ThemePanel } from "@radix-ui/themes";
+import Dashboard from './pages/Dashboard';
+import Portal from './pages/Portal';
+import './App.css';
 
 function App() {
 
   return (
     <Router>
-      <Theme accentColor="indigo" grayColor="slate" radius="full" scaling="100%" appearance="dark">
-        {/* <Sidebar /> */}
         <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+          <Route path="/" element={<Portal />} />
+            <Route path="portal" element={<Portal />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<SignUp />} />
+            <Route path="home" element={<Dashboard />} />
         </Routes>
-      </Theme>
     </Router>
   );
 
