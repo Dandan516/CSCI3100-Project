@@ -15,7 +15,7 @@ function Sidebar() {
 
   return (
 
-    <Flex height="100vh" direction="column" justify="between" mx="10px" py="10px">
+    <Flex minHeight="100vh" direction="column" justify="between" mx="20px" py="40px">
 
       <Flex direction="column" justify="start" gap="10px" mt="60px">
 
@@ -31,7 +31,7 @@ function Sidebar() {
 
       </Flex>
 
-      <Box minHeight="70px" mx="20px">
+      <Box asChild mx="20px">
         <Card asChild size="1" variant="ghost">
           <Link href="/profile" underline='none' highContrast>
             <Flex direction="row" gap="14px" align="center" justify="start" display="flex">

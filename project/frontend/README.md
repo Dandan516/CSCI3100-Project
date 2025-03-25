@@ -1,10 +1,14 @@
-# Newly installed modules  
-npm install eslint
-npm install --save prop-types
-npm install eslint-plugin-import --save-dev
-
 # FRONT-END TODO  
   
 - Dashboard (user profile)    
 - Sign-up (secure password)  
-- Forget Password
+- Forget Password  
+- PreviewFrame
+    - 1 parameter: url  
+    - fetch image and description from api  
+  
+  
+# new modules  
+npm i eslint-plugin-react-prefer-function-component  
+npm install eslint eslint-plugin-react-prefer-function-component --save-dev
+npm install eslint eslint-plugin-react --save-dev

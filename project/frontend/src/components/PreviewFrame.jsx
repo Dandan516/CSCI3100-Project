@@ -8,20 +8,24 @@ import '../App.css';
 function PreviewFrame({ imageUrl, description }) {
 
   return (
-    <Card asChild>
-      <Link href="https://www.google.com">
-        <Flex direction="column" width="180px" height="180px" gap="15px">
-          <Inset clip="border-box" side="top" pb="0">
-            <Box width="202px" height="150px" overflow="hidden">
-              <img src={imageUrl} width="202px" />
+    <Box asChild width="200px" height="200px">
+      <Card asChild>
+        <Link href="https://www.google.com">
+          <Flex direction="column" align="center" gap="12px">
+            <Inset asChild clip="border-box" side="top" pb="0">
+              <Box height="150px" overflow="hidden">
+                <img src={imageUrl} width="200px" />
+              </Box>
+            </Inset>
+            <Box asChild width="200px" px="3" >
+              <Text size="3" align="left" highContrast truncate>
+                {description}
+              </Text>
             </Box>
-          </Inset>
-          <Text size="3" mx="4px" highContrast truncate>
-            {description}
-          </Text>
-        </Flex>
-      </Link>
-    </Card>
+          </Flex>
+        </Link>
+      </Card>
+    </Box>
   );
 }
 
