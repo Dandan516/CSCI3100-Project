@@ -1,0 +1,21 @@
+.collapsed {
+  display: none;
+}
+
+.toggle-button {
+  display: none;
+}
+
+.documentGrid {
+  justify-content: 'space-between';
+}
+
+@media (max-width: 768px) {
+  .collapsed {
+    display: flex;
+  }
+
+  .toggle-button {
+    display: block;
+  }
+}

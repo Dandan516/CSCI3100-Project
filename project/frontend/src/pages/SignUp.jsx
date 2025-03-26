@@ -8,13 +8,14 @@ import axios from 'axios';
 import '../App.css';
 
 function SignUp() {
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: ''
   });
 
-  const handleChange = (e) => {
+  const updateFormData = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -84,7 +85,7 @@ function SignUp() {
                     type="email"
                     placeholder="Enter your email address..."
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={updateFormData}
                     required
                     size="3">
                     <Box asChild width="380px" height="60px">
@@ -126,7 +127,7 @@ function SignUp() {
                     name="password"
                     type="password"
                     value={formData.password}
-                    onChange={handleChange}
+                    onChange={updateFormData}
                     required
                     minLength="8"
                     size="3"
@@ -164,7 +165,7 @@ function SignUp() {
                     name="confirmPassword"
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={handleChange}
+                    onChange={updateFormData}
                     required
                     size="3"
                     placeholder="Re-enter the password...">

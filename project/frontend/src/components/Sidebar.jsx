@@ -7,31 +7,24 @@ import '../App.css';
 import NavigateButton from './NavigateButton';
 
 function Sidebar() {
-
   const [currentUser, setCurrentUser] = useState({
     email: "user1@test.com",
     profilePicUrl: "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?&w=64&h=64&dpr=2&q=70&crop=focalpoint&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
   });
 
+
   return (
+    <Flex minHeight="100vh" direction="column" justify="between" px="20px" pt="60px" pb="40px">
 
-    <Flex height="100vh" direction="column" justify="between" mx="10px" py="10px">
-
-      <Flex direction="column" justify="start" gap="10px" mt="60px">
-
+      <Flex direction="column" justify="start" gap="10px" >
         <NavigateButton url="/portal" label="Portal" />
-
         <NavigateButton url="/home" label="Home" />
-
         <NavigateButton url="/itinerary" label="Itinerary Planner" />
-
         <NavigateButton url="/budget" label="Budget Tracker" />
-
         <NavigateButton url="/calendar" label="Calendar" />
-
       </Flex>
 
-      <Box minHeight="70px" mx="20px">
+      <Box asChild mx="20px">
         <Card asChild size="1" variant="ghost">
           <Link href="/profile" underline='none' highContrast>
             <Flex direction="row" gap="14px" align="center" justify="start" display="flex">
@@ -51,7 +44,6 @@ function Sidebar() {
         </Card>
       </Box>
     </Flex>
-
   );
 
 }
