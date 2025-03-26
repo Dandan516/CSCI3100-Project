@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import axios from 'axios';
-import { Text, Flex, Box, Tabs, Grid, Separator, TextField, ScrollArea } from "@radix-ui/themes";
+import { Text, Flex, Box, Tabs, Grid, IconButton, TextField, ScrollArea } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 
 import Sidebar from '../components/Sidebar';
 import PreviewFrame from '../components/PreviewFrame';
-import MagnifyingGlassIcon from '../components/MagnifyingGlassIcon';
+import * as Icons from '../assets/Icons';
 import '../App.css';
 
 function Dashboard() {
@@ -15,37 +15,58 @@ function Dashboard() {
     email: 'user1@test.com',
   });
 
-  const [selectedSegment, setSelectedSegment] = useState('1');
   const [searchQuery, setSearchQuery] = useState('');
+  const updateSearchQuery = (e) => setSearchQuery(e.target.value);
 
-  const handleSearchQueryChange = (newQuery) => {
-    setSearchQuery(newQuery);
-    // Add any additional logic for handling search query changes here
-  };
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 800) {
+        setIsCollapsed(true);
+      } else {
+        setIsCollapsed(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <Flex direction="column">
       <Box asChild>
         <Flex direction="row" align="center" >
 
-          <Sidebar />
+          {isCollapsed ? null : <Sidebar />}
 
           <ScrollArea type="always" scrollbars="vertical">
-            <Box height="100vh" p="20px">
-              <Flex direction="column" align="center" gap="60px" m="60px">
+            <Box asChild minWidth="800px" height="100vh" p="60px">
+              <Flex direction="column" align="start" gap="60px">
 
-                <Text size="6" weight="medium" align="center" mb="20px">
-                  Welcome {user.email}!
-                </Text>
+                <Box asChild width="60px" height="60px">
+                  <IconButton asChild highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
+                    {isCollapsed ? <Icons.LayoutSidebarLeftExpand /> : <Icons.LayoutSidebarLeftCollapseFilled />}
+                  </IconButton>
+                </Box>
+
+                <Box asChild pl="4px">
+                  <Text size="6" weight="medium" align="center">
+                    Welcome {user.email}!
+                  </Text>
+                </Box>
 
                 <Box asChild minWidth="70%" minHeight="50px" px="6px">
                   <TextField.Root
                     size="3"
                     placeholder="Search..."
                     value={searchQuery}
-                    onValueChange={handleSearchQueryChange}>
+                    onChange={updateSearchQuery} >
                     <TextField.Slot>
-                      <MagnifyingGlassIcon />
+                      <Icons.MagnifyingGlass />
                     </TextField.Slot>
                   </TextField.Root>
                 </Box>
@@ -60,7 +81,7 @@ function Dashboard() {
                     </Tabs.List>
 
                     <Tabs.Content value="recent">
-                      <Grid flow="row" columns="repeat(auto-fill, minmax(200px, 1fr))" gap="30px">
+                      <Grid flow="row" columns="repeat(auto-fill, minmax(200px, 200px))" gap="6">
                         <PreviewFrame imageUrl="/images/thailand.jpeg" description="Itinerary: Trip to Thailand" />
                         <PreviewFrame imageUrl="/images/budget.jpeg" description="April budget" />
                         <PreviewFrame imageUrl="/images/3.jpeg" description="Document 3" />
@@ -81,7 +102,7 @@ function Dashboard() {
                     </Tabs.Content>
 
                     <Tabs.Content value="shared">
-                      <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 1fr))" gap="6">
+                      <Grid flow="row" columns="repeat(auto-fill, minmax(200px, 200px))" gap="6">
                         <PreviewFrame imageUrl="/images/3.jpeg" description="Document 3" />
                         <PreviewFrame imageUrl="/images/4.jpeg" description="Document 4" />
                       </Grid>

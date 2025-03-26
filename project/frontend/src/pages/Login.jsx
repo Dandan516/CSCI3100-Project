@@ -8,12 +8,13 @@ import "@radix-ui/themes/styles.css";
 import '../App.css';
 
 function Login() {
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
-  const handleChange = (e) => {
+  const updateFormData = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
@@ -69,7 +70,7 @@ function Login() {
                     type="email"
                     placeholder="Enter your email address..."
                     value={formData.email}
-                    onChange={handleChange}
+                    onChange={updateFormData}
                     required
                     size="3">
                     <Box asChild width="380px" height="60px">
@@ -101,7 +102,7 @@ function Login() {
                     name="password"
                     type="password"
                     value={formData.password}
-                    onChange={handleChange}
+                    onChange={updateFormData}
                     required
                     size="3"
                     placeholder="Enter your password...">
