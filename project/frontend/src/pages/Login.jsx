@@ -7,7 +7,7 @@ import "@radix-ui/themes/styles.css";
 
 import '../App.css';
 
-function Login() {
+function Login({ setCurrentUser }) {
   
   const [formData, setFormData] = useState({
     email: '',
@@ -26,8 +26,9 @@ function Login() {
     // Handle sign-in logic here
     console.log('Signing in with', formData.email, formData.password);
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}login/`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, formData);
       console.log('Signed in successfully');
+      setCurrentUser(response.data.user); // Set the current user
     } catch (error) {
       console.error('Error signing in:', JSON.parse(error.request.response));
     }

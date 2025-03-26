@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 
-import Login from './pages/Login';
-import SignUp from './pages/SignUp';
-import Dashboard from './pages/Dashboard';
-import Portal from './pages/Portal';
+import * as Pages from './pages/index';
 import './App.css';
 
 function App() {
 
+  const [currentUser, setCurrentUser] = useState({
+    email: "user1@test.com",
+    profilePicUrl: "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?&w=64&h=64&dpr=2&q=70&crop=focalpoint&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
+  });
+
   return (
     <Router>
         <Routes>
-          <Route path="/" element={<Portal />} />
-            <Route path="portal" element={<Portal />} />
-            <Route path="login" element={<Login />} />
-            <Route path="signup" element={<SignUp />} />
-            <Route path="home" element={<Dashboard />} />
+          <Route path="/" element={<Pages.Portal />} />
+            <Route path="portal" element={<Pages.Portal />} />
+            <Route path="login" element={<Pages.Login setCurrentUser={setCurrentUser} />} />
+            <Route path="signup" element={<Pages.SignUp />} />
+            <Route path="home" element={<Pages.Homepage currentUser={currentUser}/>} />
         </Routes>
     </Router>
   );

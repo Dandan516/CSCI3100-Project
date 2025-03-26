@@ -2,16 +2,12 @@ import React, { useState } from 'react';
 
 import "@radix-ui/themes/styles.css";
 import { Text, Flex, Box, Card, Avatar, Link } from "@radix-ui/themes";
+import PropTypes from 'prop-types';
 
 import '../App.css';
 import NavigateButton from './NavigateButton';
 
-function Sidebar() {
-  const [currentUser, setCurrentUser] = useState({
-    email: "user1@test.com",
-    profilePicUrl: "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?&w=64&h=64&dpr=2&q=70&crop=focalpoint&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
-  });
-
+function Sidebar({ currentUser }) {
 
   return (
     <Flex minHeight="100vh" direction="column" justify="between" px="20px" pt="60px" pb="40px">
@@ -45,7 +41,10 @@ function Sidebar() {
       </Box>
     </Flex>
   );
+}
 
+PropTypes.Sidebar = {
+  currentUser: PropTypes.object.isRequired
 }
 
 export default Sidebar
