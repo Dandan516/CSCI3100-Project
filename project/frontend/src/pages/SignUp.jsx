@@ -52,7 +52,7 @@ function SignUp() {
     if (error.response && error.response.data) {
       const errorResponse = error.response.data;
       if (errorResponse.email) {
-        errors.push(`${errorResponse.email.join(', ')}`);
+        errors.push('User with this email already exists.');
       }
     } else {
       errors.push("An unexpected error occurred. Please try again later.");
