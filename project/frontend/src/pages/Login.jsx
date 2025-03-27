@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
 import "@radix-ui/themes/styles.css";
 
 import '../App.css';
+import * as Icons from '../assets/Icons';
 
 function Login({ setCurrentUser }) {
-  
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+
+  const [rememberMe, setRememberMe] = useState(false);
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      setFormData((prevData) => ({ ...prevData, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   const updateFormData = (e) => {
     setFormData({
@@ -21,106 +35,112 @@ function Login({ setCurrentUser }) {
     });
   };
 
+  const handleCheckboxChange = (checked) => setRememberMe(checked);
+
+  const [loginError, setLoginError] = useState(false);
+
   const handleSignIn = async (e) => {
     e.preventDefault();
-    // Handle sign-in logic here
-    console.log('Signing in with', formData.email, formData.password);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, formData);
-      console.log('Signed in successfully');
-      setCurrentUser(response.data.user); // Set the current user
+      setCurrentUser(response.data.user);
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', formData.email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
+      navigate("../home");
     } catch (error) {
-      console.error('Error signing in:', JSON.parse(error.request.response));
+      const errorResponse = JSON.parse(error.request.response);
+      setLoginError(true);
     }
   };
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
-      <Box width="480px">
+      <Box asChild width="480px">
         <Card size="3">
           <Flex direction="column" align="center" justify="center" gap="20px">
+
             <Text size="7" weight="bold" my="20px">
               Sign In
             </Text>
-            <Form.Root className="FormRoot">
+
+            {loginError && (
+              <Box width="380px">
+                <Callout.Root color="red">
+                  <Callout.Icon>
+                    <Icons.AlertCircleOutline />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    Invalid credentials.
+                  </Callout.Text>
+                </Callout.Root>
+              </Box>
+            )}
+
+            <Form.Root asChild className="FormRoot">
               <Flex direction="column" gap="20px">
+
+                {/* Email */}
                 <Form.Field className="FormField" name="email">
-                  <Flex align="baseline" justify="between">
-                    <Form.Label asChild className="FormLabel">
-                      <Box height="30px">
-                        <Text size="2" weight="medium" mb="10px" ml="6px">
-                          Email
-                        </Text>
-                      </Box>
-                    </Form.Label>
-                    <Form.Message asChild className="FormMessage" match="valueMissing">
-                      <Text size="2" color="red">
-                        Please enter your email.
+                  <Form.Label asChild className="FormLabel">
+                    <Box asChild mb="10px" ml="6px">
+                      <Text size="2" weight="medium">
+                        Email
                       </Text>
-                    </Form.Message>
-                    <Form.Message asChild className="FormMessage" match="typeMismatch">
-                      <Text size="2" color="red">
-                        Please provide a valid email.
-                      </Text>
-                    </Form.Message>
-                  </Flex>
+                    </Box>
+                  </Form.Label>
                   <Form.Control
                     asChild
                     className="Input"
-                    name="email"
                     type="email"
                     placeholder="Enter your email address..."
                     value={formData.email}
                     onChange={updateFormData}
-                    required
-                    size="3">
-                    <Box asChild width="380px" height="60px">
+                    required>
+                    <Box asChild width="380px" height="50px">
                       <TextField.Root>
-                        <TextField.Slot pl="8px" />
-                        <TextField.Slot pr="8px" />
+                        <TextField.Slot pl="10px" />
+                        <TextField.Slot pr="10px" />
                       </TextField.Root>
                     </Box>
                   </Form.Control>
                 </Form.Field>
 
                 <Form.Field className="FormField" name="password">
-                  <Flex align="baseline" justify="between">
-                    <Form.Label asChild className="FormLabel">
-                      <Text size="2" weight="medium" mb="10px" ml="6px">
+                  <Form.Label asChild className="FormLabel">
+                    <Box asChild mb="10px" ml="6px">
+                      <Text size="2" weight="medium">
                         Password
                       </Text>
-                    </Form.Label>
-                    <Form.Message asChild className="FormMessage" match="valueMissing">
-                      <Text size="2" color="red">
-                        Please enter a password.
-                      </Text>
-                    </Form.Message>
-                  </Flex>
+                    </Box>
+                  </Form.Label>
 
                   <Form.Control
                     asChild
                     className="Input"
-                    name="password"
                     type="password"
                     value={formData.password}
                     onChange={updateFormData}
                     required
-                    size="3"
                     placeholder="Enter your password...">
-                    <Box asChild width="380px" height="60px">
+                    <Box asChild width="380px" height="50px">
                       <TextField.Root>
-                        <TextField.Slot pl="8px" />
-                        <TextField.Slot pr="8px" />
+                        <TextField.Slot pl="10px" />
+                        <TextField.Slot pr="10px" />
                       </TextField.Root>
                     </Box>
                   </Form.Control>
                 </Form.Field>
 
+                {/* Password */}
                 <Flex align="center" justify="between" m="4px">
-                  <Flex align="center" gap='10px'>
-                    <Checkbox />
-                    <Text size="2"> Remember Me </Text>
-                  </Flex>
+                  <Text as="label" size="2">
+                    <Flex as="span" gap='2' m="4px">
+                      <Checkbox onCheckedChange={handleCheckboxChange} /> Remember me
+                    </Flex>
+                  </Text>
                   <Text size="2" align="right">
                     <Link href="/forgotpassword"> Forgot password? </Link>
                   </Text>
@@ -142,6 +162,7 @@ function Login({ setCurrentUser }) {
             <Text size="2" m="4px">
               Don't have an account? <Link href="/signup">Create an account</Link>
             </Text>
+
           </Flex>
         </Card >
       </Box >

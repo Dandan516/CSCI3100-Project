@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Text, Flex, Box, Tabs, Grid, IconButton, TextField, ScrollArea } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import PropTypes from 'prop-types';
 
 import Panel from '../components/Panel';
-import * as Icons from '../assets/Icons';
+// import * as Icons from '../assets/Icons';
 import PreviewFrame from '../components/PreviewFrame';
 
 function Homepage({ currentUser }) {
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const updateSearchQuery = (e) => setSearchQuery(e.target.value);
 
   const pageElement =
     <Box asChild p="80px">
@@ -20,18 +17,6 @@ function Homepage({ currentUser }) {
           <Text size="6" weight="medium" align="center">
             Welcome {currentUser.email}!
           </Text>
-        </Box>
-
-        <Box asChild minWidth="70%" minHeight="50px" px="6px">
-          <TextField.Root
-            size="3"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={updateSearchQuery} >
-            <TextField.Slot>
-              <Icons.MagnifyingGlass />
-            </TextField.Slot>
-          </TextField.Root>
         </Box>
 
         <Box asChild minWidth="100%">

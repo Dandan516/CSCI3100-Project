@@ -18,7 +18,7 @@ function Portal() {
 
             <NavigateButton url="/signup" label="Sign Up"/>
 
-            <NavigateButton url="/forgotpwd" label="Forgot Password"/>
+            <NavigateButton url="/forgotpassword" label="Forgot Password"/>
 
             <NavigateButton url="/home" label="Home"/>
             

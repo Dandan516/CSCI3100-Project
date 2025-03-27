@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Flex, Box, IconButton, Separator, ScrollArea } from "@radix-ui/themes";
+import { Flex, Box, IconButton, Separator, ScrollArea, TextField } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import PropTypes from 'prop-types';
 
@@ -10,15 +10,19 @@ import '../App.css';
 
 function Panel({ pageElement, currentUser }) {
 
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const updateSearchQuery = (e) => setSearchQuery(e.target.value);
 
   useEffect(() => {
+
     const handleResize = () => {
       if (window.innerWidth < 800) {
-        setIsCollapsed(true);
+        setSidebarCollapsed(true);
       } else {
-        setIsCollapsed(false);
+        setSidebarCollapsed(false);
       }
     };
 
@@ -33,20 +37,30 @@ function Panel({ pageElement, currentUser }) {
       <Box asChild>
         <Flex direction="row" align="center" >
 
-          {isCollapsed ? null : <Sidebar currentUser={currentUser}/>}
+          {sidebarCollapsed ? null : <Sidebar currentUser={currentUser} />}
 
           <Box asChild width="100vw" height="100vh" minWidth="800px">
 
             <Flex direction="column">
 
-              <Box asChild width="40px" mx="18px" my="14px">
+              <Flex align="center" gap="20px" m="20px">
                 <IconButton asChild highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
-                  {/* {isCollapsed ? <Icons.LayoutSidebarLeftExpand /> : <Icons.LayoutSidebarLeftCollapseFilled />} */}
-                  <Icons.Menu/>
+                  <Icons.Menu />
                 </IconButton>
-              </Box>
+                <Box asChild width="60%" minHeight="48px" px="6px">
+                  <TextField.Root
+                    size="3"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={updateSearchQuery} >
+                    <TextField.Slot>
+                      <Icons.MagnifyingGlass />
+                    </TextField.Slot>
+                  </TextField.Root>
+                </Box>
+              </Flex>
 
-              <Separator orientation="horizontal" size="4"/>
+              <Separator orientation="horizontal" size="4" />
 
               <ScrollArea type="always" scrollbars="vertical">
                 <main>
