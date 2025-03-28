@@ -29,6 +29,6 @@ class Itinerary(models.Model):
         ('accommodation', 'Accommodation'),
     )
     tag = models.CharField(max_length=20, choices=TAGS, blank=True)
-
+    
     def __str__(self):
         return f"{self.date} - {self.activity}"

@@ -59,7 +59,10 @@ AUTHENTICATION_BACKENDS = [
 
 # django-rest-knox
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',)
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'knox.auth.TokenAuthentication',  # For API requests (headers)
+        'rest_framework.authentication.SessionAuthentication',  # For browsable API
+    ],
 }
 
 MIDDLEWARE = [
