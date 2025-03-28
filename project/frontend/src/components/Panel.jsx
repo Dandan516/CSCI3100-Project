@@ -8,7 +8,7 @@ import Sidebar from './Sidebar';
 import * as Icons from '../assets/Icons';
 import '../App.css';
 
-function Panel({ pageElement}) {
+function Panel({ children }) {
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
@@ -64,7 +64,7 @@ function Panel({ pageElement}) {
 
               <ScrollArea type="always" scrollbars="vertical">
                 <main>
-                  {pageElement}
+                  {children}
                 </main>
               </ScrollArea>
             </Flex>
@@ -78,7 +78,7 @@ function Panel({ pageElement}) {
 }
 
 Panel.propTypes = {
-  pageElement: PropTypes.element.isRequired,
+  children: PropTypes.element.isRequired,
 };
 
 export default Panel
