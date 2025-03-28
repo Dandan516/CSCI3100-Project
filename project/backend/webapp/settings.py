@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '192.168.31.16']
 INSTALLED_APPS = [
     
     'users', # User Authentication
+    'travel',
   
     'rest_framework',
     'corsheaders',
