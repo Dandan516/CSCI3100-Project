@@ -7,11 +7,14 @@ import { Form } from "radix-ui";
 import axios from 'axios';
 
 import * as Icons from '../assets/Icons';
+import NavigateButton from '../components/NavigateButton';
 import '../App.css';
 
 function SignUp() {
 
   const navigate = useNavigate();
+
+  const [step, setStep] = useState(1);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -40,30 +43,13 @@ function SignUp() {
   const invalidPassword = () => {
     const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return !regex.test(formData.password);
-    // return false; // FOR TESTING ONLY
   };
 
   const failConfirmPassword = () => {
     return formData.password !== formData.confirmPassword;
   };
 
-  const handleSignUpError = (error) => {
-    const errors = [];
-    if (error.response && error.response.data) {
-      const errorResponse = error.response.data;
-      if (errorResponse.email) {
-        errors.push('User with this email already exists.');
-      }
-    } else {
-      errors.push("An unexpected error occurred. Please try again later.");
-    }
-    setErrorMessages(errors);
-    setSignUpError(true);
-  };
-
-  const handleSignUp = async (e) => {
-    e.preventDefault();
-
+  const invalidForm = () => {
     const errors = [];
 
     if (!formData.email) {
@@ -84,12 +70,37 @@ function SignUp() {
     if (errors.length > 0) {
       setErrorMessages(errors);
       setSignUpError(true);
+    }
+  };
+
+  const handleSignUpError = (error) => {
+    const errors = [];
+    if (error.response.data) {
+      if (error.response.data.email) {
+        errors.push('User with this email already exists.');
+      }
+    } else {
+      errors.push("An unexpected error occurred. Please try again later.");
+    }
+    setErrorMessages(errors);
+    setSignUpError(true);
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+
+    if (invalidForm()) {
       return;
     }
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}users/`, formData);
-      navigate("/login");
+      if (step === 1) {
+        await axios.post(`${import.meta.env.VITE_API_URL}users/`, { email: formData.email, password: formData.password });
+        setStep(2);
+      } else if (step === 2) {
+        // await axios.post(`${import.meta.env.VITE_API_URL}verify-code/`, { email: formData.email, code: formData.code });
+        navigate("/login");
+      }
     } catch (error) {
       console.error('Error signing up:', error);
       handleSignUpError(error);
@@ -128,100 +139,134 @@ function SignUp() {
             <Form.Root className="FormRoot">
               <Flex align="center" direction="column" gap="20px">
 
-                {/* Email */}
-                <Form.Field className="FormField" name="email">
+                {step === 1 && (
+                  <>
+                    {/* Email */}
+                    <Form.Field className="FormField" name="email">
 
-                  <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="10px" ml="6px">
-                      <Text size="2" weight="medium">
-                        Email
-                      </Text>
-                    </Box>
-                  </Form.Label>
+                      <Form.Label asChild className="FormLabel">
+                        <Box asChild mb="10px" ml="6px">
+                          <Text size="2" weight="medium">
+                            Email
+                          </Text>
+                        </Box>
+                      </Form.Label>
 
-                  <Form.Control
-                    asChild
-                    className="Input"
-                    type="email"
-                    placeholder="Enter your email address..."
-                    value={formData.email}
-                    onChange={updateFormData}
-                    required>
-                    <Box asChild width="380px" height="50px">
-                      <TextField.Root>
-                        <TextField.Slot pl="10px" />
-                        <TextField.Slot pr="10px" />
-                      </TextField.Root>
-                    </Box>
-                  </Form.Control>
-                </Form.Field>
+                      <Form.Control
+                        asChild
+                        className="Input"
+                        type="email"
+                        placeholder="Enter your email address..."
+                        value={formData.email}
+                        onChange={updateFormData}
+                        required>
+                        <Box asChild width="380px" height="50px">
+                          <TextField.Root>
+                            <TextField.Slot pl="10px" />
+                            <TextField.Slot pr="10px" />
+                          </TextField.Root>
+                        </Box>
+                      </Form.Control>
+                    </Form.Field>
 
-                {/* Password */}
-                <Form.Field className="FormField" name="password">
+                    {/* Password */}
+                    <Form.Field className="FormField" name="password">
 
-                  <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="10px" ml="6px">
-                      <Text size="2" weight="medium">
-                        Password
-                      </Text>
-                    </Box>
-                  </Form.Label>
+                      <Form.Label asChild className="FormLabel">
+                        <Box asChild mb="10px" ml="6px">
+                          <Text size="2" weight="medium">
+                            Password
+                          </Text>
+                        </Box>
+                      </Form.Label>
 
-                  <Form.Control
-                    asChild
-                    className="Input"
-                    type="password"
-                    value={formData.password}
-                    onChange={updateFormData}
-                    required
-                    minLength="8"
-                    placeholder="Enter a password of 8 characters or more...">
-                    <Box asChild width="380px" height="50px">
-                      <TextField.Root>
-                        <TextField.Slot pl="10px" />
-                        <TextField.Slot pr="10px" />
-                      </TextField.Root>
-                    </Box>
-                  </Form.Control>
-                </Form.Field>
+                      <Form.Control
+                        asChild
+                        className="Input"
+                        type="password"
+                        value={formData.password}
+                        onChange={updateFormData}
+                        required
+                        minLength="8"
+                        placeholder="Enter a password of 8 characters or more...">
+                        <Box asChild width="380px" height="50px">
+                          <TextField.Root>
+                            <TextField.Slot pl="10px" />
+                            <TextField.Slot pr="10px" />
+                          </TextField.Root>
+                        </Box>
+                      </Form.Control>
+                    </Form.Field>
 
-                {/* Confirm Password */}
-                <Form.Field className="FormField" name="confirmPassword">
+                    {/* Confirm Password */}
+                    <Form.Field className="FormField" name="confirmPassword">
 
-                  <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="10px" ml="6px">
-                      <Text size="2" weight="medium">
-                        Confirm Password
-                      </Text>
-                    </Box>
-                  </Form.Label>
+                      <Form.Label asChild className="FormLabel">
+                        <Box asChild mb="10px" ml="6px">
+                          <Text size="2" weight="medium">
+                            Confirm Password
+                          </Text>
+                        </Box>
+                      </Form.Label>
 
-                  <Form.Control
-                    asChild
-                    className="Input"
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={updateFormData}
-                    required
-                    placeholder="Re-enter the password...">
-                    <Box asChild width="380px" height="50px">
-                      <TextField.Root>
-                        <TextField.Slot pl="10px" />
-                        <TextField.Slot pr="10px" />
-                      </TextField.Root>
-                    </Box>
-                  </Form.Control>
-                </Form.Field>
+                      <Form.Control
+                        asChild
+                        className="Input"
+                        type="password"
+                        value={formData.confirmPassword}
+                        onChange={updateFormData}
+                        required
+                        placeholder="Re-enter the password...">
+                        <Box asChild width="380px" height="50px">
+                          <TextField.Root>
+                            <TextField.Slot pl="10px" />
+                            <TextField.Slot pr="10px" />
+                          </TextField.Root>
+                        </Box>
+                      </Form.Control>
+                    </Form.Field>
 
-                <Text as="label" size="2">
-                  <Flex as="span" gap='2' m="4px">
-                    <Checkbox onCheckedChange={handleCheckboxChange} /> I agree to Terms and Conditions
-                  </Flex>
-                </Text>
+                    <Text as="label" size="2">
+                      <Flex as="span" gap='2' m="4px">
+                        <Checkbox onCheckedChange={handleCheckboxChange} /> I agree to Terms and Conditions
+                      </Flex>
+                    </Text>
+
+                  </>
+                )}
+
+                {step === 2 && (
+                  <Form.Field className="FormField" name="code">
+                    <Flex align="baseline" justify="between">
+                      <Form.Label asChild className="FormLabel">
+                        <Box asChild mb="10px" ml="6px">
+                          <Text size="2" weight="medium">
+                            Authentication Code
+                          </Text>
+                        </Box>
+                      </Form.Label>
+                    </Flex>
+                    <Form.Control
+                      asChild
+                      className="Input"
+                      type="text"
+                      placeholder="Enter the code sent to your email..."
+                      value={formData.code}
+                      onChange={updateFormData}
+                      required>
+                      <Box asChild width="380px" height="50px">
+                        <TextField.Root>
+                          <TextField.Slot pl="10px" />
+                          <TextField.Slot pr="10px" />
+                        </TextField.Root>
+                      </Box>
+                    </Form.Control>
+                  </Form.Field>
+                )}
 
                 <Form.Submit asChild onClick={handleSignUp}>
                   <Button asChild variant="solid" disabled={!agreeToTerms}>
-                    <Box width="380px" height="60px">
+                    <Box width="380px" height="60px" my={step === 1 ? "0px": "10px"}>
                       <Text size="5" weight="bold">
                         Continue
                       </Text>
@@ -229,16 +274,21 @@ function SignUp() {
                   </Button>
                 </Form.Submit>
 
+
               </Flex>
             </Form.Root>
 
-            <Text size="2" m="4px">
-              Already have an account? <Link href="/login">Sign in</Link>
-            </Text>
+            {step === 1 && (
+              <Text size="2" m="4px">
+                Already have an account? <Link href="/login">Sign in</Link>
+              </Text>
+            )}
 
           </Flex>
         </Card>
       </Box>
+      
+      <NavigateButton url="/portal" label="Back to portal"/>
 
     </Flex>
   );
