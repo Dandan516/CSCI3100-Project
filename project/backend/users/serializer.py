@@ -10,7 +10,8 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'password')
         # Do not show password in request
         extra_kwargs = {'password': {'write_only':True}}
-                        
+
+    # Invoked when serializer.save() is call in views.py            
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
         return user
