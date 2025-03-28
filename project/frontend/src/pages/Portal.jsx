@@ -10,7 +10,7 @@ function Portal() {
   
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
-      <Box width="500px">
+      <Box asChild>
         <Card size="3">
           <Flex direction="column" align="center" gap="20px" my="20px">
             
@@ -21,6 +21,8 @@ function Portal() {
             <NavigateButton url="/forgotpassword" label="Forgot Password"/>
 
             <NavigateButton url="/home" label="Home"/>
+
+            <NavigateButton url="/profile" label="Profile"/>
             
           </Flex>
         </Card>

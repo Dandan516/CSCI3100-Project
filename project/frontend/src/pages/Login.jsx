@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
-import axios from 'axios';
 import "@radix-ui/themes/styles.css";
 
 import '../App.css';
 import * as Icons from '../assets/Icons';
+import NavigateButton from '../components/NavigateButton';
+import { useAuth } from "../hooks/AuthProvider";
 
-function Login({ setCurrentUser }) {
+function Login() {
 
-  const navigate = useNavigate();
+  const auth = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
 
+  const updateFormData = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleCheckboxChange = (checked) => setRememberMe(checked);
   const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
@@ -28,32 +36,18 @@ function Login({ setCurrentUser }) {
     }
   }, []);
 
-  const updateFormData = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleCheckboxChange = (checked) => setRememberMe(checked);
-
   const [loginError, setLoginError] = useState(false);
 
-  const handleSignIn = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, formData);
-      setCurrentUser(response.data.user);
-      if (rememberMe) {
-        localStorage.setItem('rememberedEmail', formData.email);
-      } else {
-        localStorage.removeItem('rememberedEmail');
-      }
-      navigate("../home");
-    } catch (error) {
-      const errorResponse = JSON.parse(error.request.response);
-      setLoginError(true);
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', formData.email);
+      localStorage.setItem('rememberedPassword', formData.password);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+      localStorage.removeItem('rememberedPassword');
     }
+    setLoginError(!(await auth.login(formData)));
   };
 
   return (
@@ -146,7 +140,7 @@ function Login({ setCurrentUser }) {
                   </Text>
                 </Flex>
 
-                <Form.Submit asChild onClick={handleSignIn}>
+                <Form.Submit asChild onClick={handleLogin}>
                   <Button asChild variant="solid">
                     <Box width="380px" height="60px">
                       <Text size="5" weight="bold">
@@ -166,6 +160,8 @@ function Login({ setCurrentUser }) {
           </Flex>
         </Card >
       </Box >
+
+      <NavigateButton url="/portal" label="Back to portal" />
 
     </Flex >
   );

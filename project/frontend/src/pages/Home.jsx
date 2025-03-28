@@ -1,13 +1,15 @@
 import React from 'react';
-import { Text, Flex, Box, Tabs, Grid, IconButton, TextField, ScrollArea } from "@radix-ui/themes";
+import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import PropTypes from 'prop-types';
 
 import Panel from '../components/Panel';
-// import * as Icons from '../assets/Icons';
 import PreviewFrame from '../components/PreviewFrame';
+import { useAuth } from "../hooks/AuthProvider";
 
-function Homepage({ currentUser }) {
+function Home() {
+
+  const auth = useAuth();
 
   const pageElement =
     <Box asChild p="80px">
@@ -15,7 +17,7 @@ function Homepage({ currentUser }) {
 
         <Box asChild pl="4px">
           <Text size="6" weight="medium" align="center">
-            Welcome {currentUser.email}!
+            Welcome {auth.user?.email}!
           </Text>
         </Box>
 
@@ -70,12 +72,8 @@ function Homepage({ currentUser }) {
 
 
   return (
-    <Panel pageElement={pageElement} currentUser={currentUser}/>
+    <Panel pageElement={pageElement} />
   );
 }
 
-Homepage.propTypes = {
-  currentUser: PropTypes.object.isRequired,
-};
-
-export default Homepage
+export default Home

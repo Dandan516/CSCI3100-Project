@@ -8,6 +8,7 @@ import axios from 'axios';
 
 import '../App.css';
 import * as Icons from '../assets/Icons';
+import NavigateButton from '../components/NavigateButton';
 
 function ForgotPassword() {
   const navigate = useNavigate();
@@ -124,7 +125,7 @@ function ForgotPassword() {
                       value={formData.code}
                       onChange={updateFormData}
                       required>
-                      <Box asChild width="380px" height="50px">
+                      <Box asChild width="380px" height="50px" >
                         <TextField.Root>
                           <TextField.Slot pl="10px" />
                           <TextField.Slot pr="10px" />
@@ -202,6 +203,9 @@ function ForgotPassword() {
           </Flex>
         </Card>
       </Box>
+
+      <NavigateButton url="/portal" label="Back to portal"/>
+
     </Flex>
   );
 }

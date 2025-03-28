@@ -8,7 +8,7 @@ import Sidebar from './Sidebar';
 import * as Icons from '../assets/Icons';
 import '../App.css';
 
-function Panel({ pageElement, currentUser }) {
+function Panel({ pageElement}) {
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
@@ -37,7 +37,7 @@ function Panel({ pageElement, currentUser }) {
       <Box asChild>
         <Flex direction="row" align="center" >
 
-          {sidebarCollapsed ? null : <Sidebar currentUser={currentUser} />}
+          {sidebarCollapsed ? null : <Sidebar />}
 
           <Box asChild width="100vw" height="100vh" minWidth="800px">
 
@@ -79,7 +79,6 @@ function Panel({ pageElement, currentUser }) {
 
 Panel.propTypes = {
   pageElement: PropTypes.element.isRequired,
-  currentUser: PropTypes.object.isRequired,
 };
 
 export default Panel
