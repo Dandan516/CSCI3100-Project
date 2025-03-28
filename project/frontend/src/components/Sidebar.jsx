@@ -18,17 +18,16 @@ function Sidebar() {
       minHeight="100vh"
       direction="column"
       justify="between"
-      px="20px"
+      p="40px"
       pt="60px"
-      pb="40px"
       style={{
-        borderRight: "1px solid rgb(102, 104, 106)", // Subtle gray border
         boxShadow: "4px 0 10px rgba(0, 0, 0, 0.1)", // Shadow effect
         zIndex: 10, // Ensure it is above the main panel
-      }}
-    >
+        transition: "width 0.3s ease-in-out", // Smooth transition for width
+        overflow: "hidden", // Prevent content overflow during collapse
+      }}>
 
-      <Flex direction="column" justify="start" gap="10px" >
+      <Flex direction="column" align="center" gap="20px" >
         <NavigateButton url="/portal" label="Portal" />
         <NavigateButton url="/home" label="Home" />
         <NavigateButton url="/itinerary" label="Itinerary Planner" />
@@ -36,7 +35,7 @@ function Sidebar() {
         <NavigateButton url="/calendar" label="Calendar" />
       </Flex>
 
-      <Box asChild mx="20px">
+      <Box asChild>
         <Card asChild size="1" variant="ghost">
           <Button variant="ghost" onClick={() => navigate("/profile")}>
             <Flex direction="row" gap="14px" align="center" justify="start" display="flex">

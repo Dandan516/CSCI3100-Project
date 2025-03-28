@@ -35,14 +35,16 @@ function Panel({ children }) {
   return (
     <Flex direction="column">
       <Box asChild>
-        <Flex direction="row" align="center" >
-
-          {sidebarCollapsed ? null : <Sidebar />}
-
+        <Flex direction="row" align="center">
+          <Box
+            style={{
+              width: sidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
+              transition: "width 0.3s ease-in-out", // Smooth transition for sidebar width
+            }}>
+            {sidebarCollapsed ? null : <Sidebar />}
+          </Box>
           <Box asChild width="100vw" height="100vh" minWidth="800px">
-
             <Flex direction="column">
-
               <Flex align="center" gap="20px" m="20px">
                 <IconButton asChild highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
                   <Icons.Menu />
@@ -69,7 +71,6 @@ function Panel({ children }) {
               </ScrollArea>
             </Flex>
           </Box>
-
         </Flex>
       </Box>
     </Flex>

@@ -29,19 +29,19 @@ function Profile() {
               <Table.Body>
                 <Table.Row>
                   <Table.RowHeaderCell>Name</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.name || "N/A"}</Table.Cell>
+                  <Table.Cell>{auth.user?.name || "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Email</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.email || "N/A"}</Table.Cell>
+                  <Table.Cell>{auth.user?.email || "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Role</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.role || "N/A"}</Table.Cell>
+                  <Table.Cell>{auth.user?.role || "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Joined</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.joinedDate || "N/A"}</Table.Cell>
+                  <Table.Cell>{auth.user?.joinedDate || "-"}</Table.Cell>
                 </Table.Row>
               </Table.Body>
             </Table.Root>

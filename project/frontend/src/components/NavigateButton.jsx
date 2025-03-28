@@ -5,24 +5,22 @@ import "@radix-ui/themes/styles.css";
 import { Text, Button, Flex, Box } from "@radix-ui/themes";
 import '../App.css';
 
-function NavigateButton ({ url, label }) {
+function NavigateButton({ url, label }) {
 
   const navigate = useNavigate();
 
   return (
-    <Box mx="10px">
+    <Flex asChild width="180px" height="40px" px="20px">
       <Button
-      asChild
-      variant="ghost"
-      highContrast
-      onClick={() => navigate(url)}>
-      <Flex width="200px" height="40px" px="20px" justify="start">
-        <Text size="4" weight="medium" align="left">
+        variant="ghost"
+        highContrast
+        onClick={() => navigate(url)}
+        style={{ justifyContent: "flex-start" }}>
+        <Text size="4" weight="medium">
           {label}
         </Text>
-      </Flex>
-    </Button>
-    </Box>
+      </Button>
+    </Flex>
   );
 }
 
