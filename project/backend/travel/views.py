@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from .models import Travel, Itinerary
@@ -11,24 +11,13 @@ class TravelViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.AllowAny]
 
-    '''
-    def create(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=400)
-    '''
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)  # Auto-set user on creation
-    '''
+    # only show travels owned by current user
     def get_queryset(self):
-        return self.queryset.filter(user=self.request.user)  # Only show user's trips
+        return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)  # Auto-set user on creation
-    '''
+
 
 class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()
@@ -36,29 +25,22 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.AllowAny]
 
-    '''
-    def create(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=400)
-
     def get_queryset(self):
-        # Only show itineraries for trips owned by the user
-        return self.queryset.filter(travel__user=self.request.user)
-    '''
-    def get_serializer_context(self):
-        # Pass the travel_id from URL kwargs to the serializer
-        context = super().get_serializer_context()
-        context['travel_id'] = self.kwargs.get('travel_id')
-        return context
-    
+        # Filter itineraries by travel_id from URL if provided
+        travel_id = self.kwargs.get('travel_id')
+        if travel_id:
+            # Verify the travel belongs to the current user
+            travel = get_object_or_404(Travel, id=travel_id, user=self.request.user)
+            return travel.itineraries.all()
+        return self.queryset.none()  # Return empty if no travel_id
+
     def perform_create(self, serializer):
         travel_id = self.kwargs.get('travel_id')
         if travel_id:
-            serializer.save(travel_id=travel_id)
+            # Verify the travel belongs to the current user
+            travel = get_object_or_404(Travel, id=travel_id, user=self.request.user)
+            serializer.save(travel=travel)
         else:
             serializer.save()
 
+    

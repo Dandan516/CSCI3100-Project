@@ -4,9 +4,7 @@ from .views import TravelViewSet, ItineraryViewSet
 
 travel_router = DefaultRouter()
 travel_router.register(r'travels', TravelViewSet)
-# travel_router.register(r'itineraries', ItineraryViewSet)
+travel_router.register(r'travels/(?P<travel_id>\d+)/itineraries', ItineraryViewSet, basename='travel-itineraries')
 
-# Nested itineraries (simpler, no extra features)
-itinerary_router = DefaultRouter()
-itinerary_router.register(r'itineraries', ItineraryViewSet)
+
 
