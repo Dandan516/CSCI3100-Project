@@ -3,7 +3,7 @@ from django.db import models
 class Travel(models.Model):
     user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="travels")
     title = models.CharField(max_length=100) 
-    start_date = models.DateField()
+    start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -15,7 +15,7 @@ class Travel(models.Model):
 class Itinerary(models.Model):
 
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name="itineraries")
-    date = models.DateField() 
+    date = models.DateField(null=True) 
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     activity = models.CharField(max_length=200)
