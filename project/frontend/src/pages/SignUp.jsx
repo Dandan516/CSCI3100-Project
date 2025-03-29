@@ -73,19 +73,6 @@ function SignUp() {
     }
   };
 
-  const handleSignUpError = (error) => {
-    const errors = [];
-    if (error.response.data) {
-      if (error.response.data.email) {
-        errors.push('User with this email already exists.');
-      }
-    } else {
-      errors.push("An unexpected error occurred. Please try again later.");
-    }
-    setErrorMessages(errors);
-    setSignUpError(true);
-  };
-
   const handleSignUp = async (e) => {
     e.preventDefault();
 
@@ -103,7 +90,16 @@ function SignUp() {
       }
     } catch (error) {
       console.error('Error signing up:', error);
-      handleSignUpError(error);
+      const errors = [];
+      if (error.response.data) {
+        if (error.response.data.email) {
+          errors.push('User with this email already exists.');
+        }
+      } else {
+        errors.push("An unexpected error occurred. Please try again later.");
+      }
+      setErrorMessages(errors);
+      setSignUpError(true);
     }
   };
 
@@ -266,7 +262,7 @@ function SignUp() {
 
                 <Form.Submit asChild onClick={handleSignUp}>
                   <Button asChild variant="solid" disabled={!agreeToTerms}>
-                    <Box width="380px" height="60px" my={step === 1 ? "0px": "10px"}>
+                    <Box width="380px" height="60px" my={step === 1 ? "0px" : "10px"}>
                       <Text size="5" weight="bold">
                         Continue
                       </Text>
@@ -287,8 +283,8 @@ function SignUp() {
           </Flex>
         </Card>
       </Box>
-      
-      <NavigateButton url="/portal" label="Back to portal"/>
+
+      <NavigateButton url="/portal" label="Back to portal" />
 
     </Flex>
   );

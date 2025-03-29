@@ -136,7 +136,7 @@ function Login() {
                     </Flex>
                   </Text>
                   <Text size="2" align="right">
-                    <Link href="/forgotpassword"> Forgot password? </Link>
+                    <Link href="/forgot-password"> Forgot password? </Link>
                   </Text>
                 </Flex>
 

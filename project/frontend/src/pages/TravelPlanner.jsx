@@ -12,12 +12,12 @@ import { useAuth } from "../hooks/AuthProvider";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
-function Itinerary() {
+function Travel() {
 
   const auth = useAuth();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newItineraryName, setNewItineraryName] = useState("");
+  const [newTravelPlanTitle, setNewTravelPlanTitle] = useState("");
 
 
   // Row Data: The data to be displayed.
@@ -56,9 +56,9 @@ function Itinerary() {
     },
   ]);
 
-  const getItinerary = async () => {
+  const getTravelPlans = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/travels/`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/`, {
         headers: {
           Authorization: `Token ${auth.token}`,
         },
@@ -71,27 +71,27 @@ function Itinerary() {
       }));
       setRowData(data);
     } catch (error) {
-      console.error("Error fetching itineraries:", error);
+      console.error("Error fetching travels:", error);
     }
   };
 
-  // Fetch itineraries when the component mounts
+  // Fetch Travel Plans when the component mounts
   useEffect(() => {
-    getItinerary();
+    getTravelPlans();
   }, []);
 
-  const createItinerary = async () => {
+  const handleCreateTravelPlan = async () => {
 
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}travel/travels/`, {
-      title: newItineraryName,
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}travel/`, {
+      title: newTravelPlanTitle,
       start_date: "2025-01-01",
     }, {
       headers: {
         Authorization: `Token ${auth.token}`,
       },
     });
-    alert(`New itinerary created: ${newItineraryName}`);
-    setNewItineraryName("");
+    alert(`New travel plan created: ${newTravelPlanTitle}`);
+    setNewTravelPlanTitle("");
     setIsDialogOpen(false);
 
   };
@@ -148,11 +148,11 @@ function Itinerary() {
                   zIndex: 2,
                 }}>
                 <Heading size="8" color="white">
-                  Itinerary Planner
+                  Travel Planner
                 </Heading >
                 <Box asChild width="100%">
                   <Text size="5" >
-                    Plan your trips effortlessly with our itinerary planner.<br />
+                    Plan your trips effortlessly with our travel planner.<br />
                     Create, view, and manage your travel plans all in one place.
                   </Text>
                 </Box>
@@ -163,7 +163,7 @@ function Itinerary() {
                     <Box asChild height="60px" px="30px">
                       <Button size="3" variant="solid">
                         <Text size="5" weight="medium">
-                          Create New Itinerary
+                          Create New Travel Plan
                         </Text>
                       </Button>
                     </Box>
@@ -172,13 +172,13 @@ function Itinerary() {
                   <Flex asChild direction="column" gap="10px">
                     <Dialog.Content size="3" maxWidth="450px">
                       <Box asChild p="4px">
-                        <Dialog.Title>Create New Itinerary</Dialog.Title>
+                        <Dialog.Title>Create New Travel Plan</Dialog.Title>
                       </Box>
                       <Box asChild height="40px">
                         <TextField.Root
-                          value={newItineraryName}
-                          onChange={(e) => setNewItineraryName(e.target.value)}
-                          placeholder="Enter title for your new itinerary...">
+                          value={newTravelPlanTitle}
+                          onChange={(e) => setNewTravelPlanTitle(e.target.value)}
+                          placeholder="Enter title for your new travel plan...">
                           <TextField.Slot pl="8px" />
                           <TextField.Slot pr="8px" />
                         </TextField.Root>
@@ -195,7 +195,7 @@ function Itinerary() {
 
                         </Dialog.Close>
                         <Box asChild px="20px">
-                          <Button size="3" onClick={createItinerary}>
+                          <Button size="3" onClick={handleCreateTravelPlan}>
                             Create
                           </Button>
                         </Box>
@@ -209,7 +209,7 @@ function Itinerary() {
 
           <Box asChild width="100%" px="60px">
             <Heading size="7" weight="medium">
-              Continue planning your next trip...
+              Continue planning your next journey...
             </Heading>
           </Box>
 
@@ -219,14 +219,14 @@ function Itinerary() {
 
           <Box asChild width="100%" px="60px">
             <Heading size="7" weight="medium">
-              All Itineraries
+              All trips
             </Heading>
           </Box>
 
           <Box width="100%" px="60px" style={{ overflowX: "auto" }}>
             {rowData.length === 0 ? (
               <Text size="5" weight="regular" m="20px">
-                <i>No itineraries available.</i>
+                <i>No travel plans available.</i>
               </Text>
             ) : (
               <AgGridReact
@@ -243,4 +243,4 @@ function Itinerary() {
   );
 }
 
-export default Itinerary;
+export default Travel;

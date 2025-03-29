@@ -17,13 +17,13 @@ function App() {
           <Route path="/" element={<Pages.Portal />} />
           <Route path="/portal" element={<Pages.Portal />} />
           <Route path="/signup" element={<Pages.SignUp />} />
-          <Route path="/forgotpassword" element={<Pages.ForgotPassword />} />
+          <Route path="/forgot-password" element={<Pages.ForgotPassword />} />
           <Route path="/login" element={<Pages.Login />} />
 
           <Route element={<PrivateRoute />}>
-            <Route path="/home" element={<Pages.Home />} />
+            <Route path="/home" element={<Pages.HomePage />} />
             <Route path="/profile" element={<Pages.Profile />} />
-            <Route path="/itinerary" element={<Pages.Itinerary />} />
+            <Route path="/travel" element={<Pages.Travel />} />
           </Route>
 
         </Routes>

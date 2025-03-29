@@ -30,7 +30,7 @@ function Sidebar() {
       <Flex direction="column" align="center" gap="20px" >
         <NavigateButton url="/portal" label="Portal" />
         <NavigateButton url="/home" label="Home" />
-        <NavigateButton url="/itinerary" label="Itinerary Planner" />
+        <NavigateButton url="/travel" label="Travel Planner" />
         <NavigateButton url="/budget" label="Budget Tracker" />
         <NavigateButton url="/calendar" label="Calendar" />
       </Flex>
