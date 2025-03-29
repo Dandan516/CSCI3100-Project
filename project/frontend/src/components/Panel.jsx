@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 import Sidebar from './Sidebar';
 import * as Icons from '../assets/Icons';
-import '../App.css';
 
 function Panel({ children }) {
 

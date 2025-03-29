@@ -4,7 +4,6 @@ import "@radix-ui/themes/styles.css";
 import { Text, Flex, Box, Card, Avatar, Link, Button } from "@radix-ui/themes";
 import { useNavigate } from 'react-router-dom';
 
-import '../App.css';
 import NavigateButton from './NavigateButton';
 import { useAuth } from "../hooks/AuthProvider";
 

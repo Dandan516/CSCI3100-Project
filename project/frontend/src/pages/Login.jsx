@@ -4,7 +4,6 @@ import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } fro
 import { Form } from "radix-ui";
 import "@radix-ui/themes/styles.css";
 
-import '../App.css';
 import * as Icons from '../assets/Icons';
 import NavigateButton from '../components/NavigateButton';
 import { useAuth } from "../hooks/AuthProvider";

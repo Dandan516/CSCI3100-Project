@@ -1,5 +1,5 @@
 import { useContext, createContext, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
@@ -46,7 +46,7 @@ const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ token, user, login, logout }}>
-      {children}
+      <Outlet />
     </AuthContext.Provider>
   );
 

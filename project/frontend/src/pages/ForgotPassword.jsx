@@ -6,7 +6,6 @@ import { Text, Button, Flex, Box, Card, TextField, Callout } from "@radix-ui/the
 import { Form } from "radix-ui";
 import axios from 'axios';
 
-import '../App.css';
 import * as Icons from '../assets/Icons';
 import NavigateButton from '../components/NavigateButton';
 

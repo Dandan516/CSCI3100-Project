@@ -8,7 +8,6 @@ import axios from 'axios';
 
 import * as Icons from '../assets/Icons';
 import NavigateButton from '../components/NavigateButton';
-import '../App.css';
 
 function SignUp() {
 
