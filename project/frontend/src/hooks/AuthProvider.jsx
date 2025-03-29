@@ -16,18 +16,6 @@ const AuthProvider = ({ children }) => {
     if (storedToken) {
       setToken(storedToken);
       // Fetch user data using the token
-      axios
-        .get(`${import.meta.env.VITE_API_URL}user/`, {
-          headers: { Authorization: `Bearer ${storedToken}` },
-        })
-        .then((response) => {
-          console.log("Fetched user data:", response.data); // Debugging log
-          setUser(response.data); // Ensure the response contains the user object
-        })
-        .catch((err) => {
-          console.error("Error fetching user data:", err);
-          setUser(null); // Reset user if fetching fails
-        });
     }
   }, []);
 

@@ -5,7 +5,7 @@
 - Forget Password  
 - PreviewFrame
     - 1 parameter: url  
-    - fetch image and description from api  
+    - fetch image and description from api (resourece url)
   
   
 # new modules  

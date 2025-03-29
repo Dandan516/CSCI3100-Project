@@ -21,8 +21,6 @@ function Portal() {
             <NavigateButton url="/forgotpassword" label="Forgot Password"/>
 
             <NavigateButton url="/home" label="Home"/>
-
-            <NavigateButton url="/profile" label="Profile"/>
             
           </Flex>
         </Card>
