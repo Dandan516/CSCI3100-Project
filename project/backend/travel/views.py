@@ -24,7 +24,7 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     serializer_class = ItinerarySerializer
     permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.AllowAny]
-
+    '''
     def get_queryset(self):
         # Filter itineraries by travel_id from URL if provided
         travel_id = self.kwargs.get('travel_id')
@@ -42,5 +42,35 @@ class ItineraryViewSet(viewsets.ModelViewSet):
             serializer.save(travel=travel)
         else:
             serializer.save()
+    '''
+    def get_queryset(self):
+        # Handle both ID and title-based filtering
+        travel_title = self.kwargs.get('travel_title')
+        travel_id = self.kwargs.get('travel_id')
+        
+        if travel_title:
+            travel = get_object_or_404(
+                Travel, 
+                title__iexact=travel_title, 
+                user=self.request.user
+            )
+            return travel.itineraries.all()
+        
+        return self.queryset.none()
 
+
+    def perform_create(self, serializer):
+        travel_title = self.kwargs.get('travel_title')
+        # travel_id = self.kwargs.get('travel_id')
+        
+        if travel_title:
+            travel = get_object_or_404(
+                Travel,
+                title__iexact=travel_title,
+                user=self.request.user
+            )
+        else:
+            raise serializer.ValidationError("Travel reference required")
+        
+        serializer.save(travel=travel)
     

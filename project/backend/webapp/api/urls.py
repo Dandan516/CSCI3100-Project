@@ -16,6 +16,6 @@ router.registry.extend(travel_router.registry)
 urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('knox.urls')),
-    path('travel/', include(travel_router.urls)),
+    # path('travel/', include(travel_router.urls)),
     # path('travel/itineraries/', include(itinerary_router.urls)),
 ]
