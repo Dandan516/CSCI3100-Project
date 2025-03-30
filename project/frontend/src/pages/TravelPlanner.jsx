@@ -13,13 +13,13 @@ function TravelPlanner() {
   const params = useParams([]);
   console.log(params);
 
-  const travelTitle = params.travelTitle;
+  const title = params.travelTitle;
 
   const [travelPlan, setTravelPlan] = useState([]);
 
   const getTravelPlan = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/${travelTitle}`, {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/${title}`, {
         headers: {
           Authorization: `Token ${auth.token}`,
         },
@@ -30,7 +30,7 @@ function TravelPlanner() {
         endDate: item.end_date,
         description: item.description,
       }));
-      setTravelPlans(data);
+      setTravelPlan(data);
     } catch (error) {
       console.error("Error fetching travel plan:", error);
     }
@@ -39,7 +39,7 @@ function TravelPlanner() {
   useEffect(() => {
     getTravelPlan();
   }
-    , [travelTitle]);
+    , [title]);
 
   return (
     <Panel>
@@ -47,7 +47,7 @@ function TravelPlanner() {
         <Flex direction="column" gap="6">
           <Box asChild width="100%" px="60px">
             <Heading size="7" weight="medium">
-              {travelTitle}
+              {title}
             </Heading>
           </Box>
 

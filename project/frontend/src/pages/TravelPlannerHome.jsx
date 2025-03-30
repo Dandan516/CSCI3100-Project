@@ -211,11 +211,13 @@ function TravelPlannerHome() {
           </Box>
 
           <Grid flow="column" rows="1" gap="6" px="60px">
-            {travelPlans.map((travelPlan) => (
+            {travelPlans.map((travelPlan, index) => (
               <PreviewFrame 
+                key={index} // Added unique key prop
                 linkUrl={`${travelPlan.title}`}
                 title={travelPlan.title}
-                imageUrl={travelPlan.imageUrl}/>
+                imageUrl={travelPlan.imageUrl}
+              />
             ))}
           </Grid>
 
