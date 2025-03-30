@@ -13,6 +13,9 @@ class TravelViewSet(viewsets.ModelViewSet):
 
     # only show travels owned by current user
     def get_queryset(self):
+        travel_title = self.kwargs.get('travel_title')
+        if travel_title:
+            return self.queryset.filter(user=self.request.user,title=travel_title)
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
@@ -24,25 +27,7 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     serializer_class = ItinerarySerializer
     permission_classes = [permissions.IsAuthenticated]
     # permission_classes = [permissions.AllowAny]
-    '''
-    def get_queryset(self):
-        # Filter itineraries by travel_id from URL if provided
-        travel_id = self.kwargs.get('travel_id')
-        if travel_id:
-            # Verify the travel belongs to the current user
-            travel = get_object_or_404(Travel, id=travel_id, user=self.request.user)
-            return travel.itineraries.all()
-        return self.queryset.none()  # Return empty if no travel_id
-
-    def perform_create(self, serializer):
-        travel_id = self.kwargs.get('travel_id')
-        if travel_id:
-            # Verify the travel belongs to the current user
-            travel = get_object_or_404(Travel, id=travel_id, user=self.request.user)
-            serializer.save(travel=travel)
-        else:
-            serializer.save()
-    '''
+    
     def get_queryset(self):
         # Handle both ID and title-based filtering
         travel_title = self.kwargs.get('travel_title')
