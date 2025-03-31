@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, generics, mixins
 from rest_framework.response import Response
 from .serializer import *
 from .models import *
@@ -52,3 +52,25 @@ class LoginViewset(viewsets.ViewSet):
 
         else:
             return Response(serializer.errors, status=400)
+
+
+class UserInfoViewSet(viewsets.ModelViewSet):
+    permission_class = [permissions.IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = UserInfoSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(email=self.request.user)
+    
+    def perform_update(self, serializer):
+        if 'password' in self.request.data:
+            raise serializers.ValidationError(
+                {"password": "Password changes are not allowed here. Use the password reset feature."}
+            )
+        serializer.save()
+    
+    def create(self, request, *args, **kwargs):
+        return Response({"detail": "Method not allowed."}, status=405)
+    
+    def destroy(self, request, *args, **kwargs):
+        return Response({"detail": "Method not allowed."}, status=405)
