@@ -28,21 +28,30 @@ function Profile() {
             <Table.Root size="3">
               <Table.Body>
                 <Table.Row>
+                  <Table.RowHeaderCell>Username</Table.RowHeaderCell>
+                  <Table.Cell>{auth.user?.username || "-"}</Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.RowHeaderCell>ID</Table.RowHeaderCell>
+                  <Table.Cell>{auth.user?.id || "-"}</Table.Cell>
+                </Table.Row>
+                <Table.Row>
                   <Table.RowHeaderCell>Name</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.name || "-"}</Table.Cell>
+                  <Table.Cell>{auth.user?.first_name || auth.user?.last_name ? `${auth.user.first_name} ${auth.user.last_name}` : "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
-                  <Table.RowHeaderCell>Email</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.email || "-"}</Table.Cell>
-                </Table.Row>
-                <Table.Row>
-                  <Table.RowHeaderCell>Role</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.role || "-"}</Table.Cell>
+                  <Table.RowHeaderCell>Birthday</Table.RowHeaderCell>
+                  <Table.Cell>{auth.user?.birthday || "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Joined</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.joinedDate || "-"}</Table.Cell>
+                  <Table.Cell>{auth.user?.date_joined || "-"}</Table.Cell>
                 </Table.Row>
+                <Table.Row>
+                  <Table.RowHeaderCell>Last Login</Table.RowHeaderCell>
+                  <Table.Cell>{auth.user?.last_login || "-"}</Table.Cell>
+                </Table.Row>
+
               </Table.Body>
             </Table.Root>
           </Box>

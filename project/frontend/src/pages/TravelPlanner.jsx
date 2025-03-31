@@ -84,9 +84,13 @@ function TravelPlanner() {
                 {travelPlan?.title}
               </Heading>
               {editMode ? (
-                <Button size="3" onClick={handleSave}>Save</Button>
+                <Box asChild width="80px" height="40px">
+                  <Button size="3" radius="medium" onClick={handleSave}>Save</Button>
+                </Box>
               ) : (
-                <Button size="3" onClick={() => setEditMode(true)}>Edit</Button>
+                <Box asChild width="80px" height="40px">
+                  <Button size="3" onClick={() => setEditMode(true)}>Edit</Button>
+                </Box>
               )}
             </Flex>
           </Box>

@@ -11,23 +11,21 @@ const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("site");
-    if (storedToken) {
-      setToken(storedToken);
-      axios
-        .get(`${import.meta.env.VITE_API_URL}userinfo/`, {
-          headers: { Authorization: `Token ${storedToken}` },
-        })
-        .then((response) => {
-          setUser(response.data.user);
-          console.log("User info fetched:", response.data.user); // Debugging log
-        })
-        .catch((err) => {
-          console.error("Error fetching user info:", err);
-          logout(); // Log out if token is invalid
-        });
-    }
-  }, []);
+      if (token) {
+        axios
+          .get(`${import.meta.env.VITE_API_URL}userinfo/`, {
+            headers: { Authorization: `Token ${token}` },
+          })
+          .then((response) => {
+            setUser(response.data[0]);
+            console.log("User info fetched:", response.data[0]); // Debugging log
+          })
+          .catch((err) => {
+            console.error("Error fetching user info:", err);
+            logout(); // Log out if token is invalid
+          });
+      }
+    }, [token]);
 
   const login = async (data) => {
     try {
