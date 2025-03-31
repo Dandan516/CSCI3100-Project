@@ -26,6 +26,13 @@ function TravelPlannerHome() {
   // Column Definitions: Defines the columns to be displayed.
   const [colDefs, setColDefs] = useState([
     {
+      field: "id",
+      resizable: false,
+      sortable: true,
+      flex: 1,
+      cellDataType: 'number',
+    },
+    {
       field: "title",
       resizable: false,
       sortable: true,
@@ -33,14 +40,14 @@ function TravelPlannerHome() {
       cellDataType: 'text',
     },
     {
-      field: "startDate",
+      field: "start_date",
       resizable: false,
       sortable: true,
       flex: 1,
       cellDataType: 'dateString',
     },
     {
-      field: "endDate",
+      field: "end_date",
       resizable: false,
       sortable: true,
       flex: 1,
@@ -64,8 +71,8 @@ function TravelPlannerHome() {
       });
       const data = response.data.map((item) => ({
         title: item.title,
-        startDate: item.start_date,
-        endDate: item.end_date,
+        start_date: item.start_date,
+        end_date: item.end_date,
         description: item.description,
       }));
       setTravelPlans(data);
@@ -204,22 +211,26 @@ function TravelPlannerHome() {
             </Flex>
           </Box>
 
-          <Box asChild width="100%" px="60px">
-            <Heading size="7" weight="medium">
-              Continue planning your next journey...
-            </Heading>
-          </Box>
+          {travelPlans.length !== 0 && (
+            <Box asChild width="100%" px="60px">
+              <Heading size="7" weight="medium">
+                Continue planning your next journey...
+              </Heading>
+            </Box>
+          )}
 
-          <Grid flow="column" rows="1" gap="6" px="60px">
-            {travelPlans.map((travelPlan, index) => (
-              <PreviewFrame 
-                key={index} // Added unique key prop
-                linkUrl={`${travelPlan.title}`}
-                title={travelPlan.title}
-                imageUrl={travelPlan.imageUrl}
-              />
-            ))}
-          </Grid>
+          {travelPlans.length !== 0 && (
+            <Grid flow="column" rows="1" gap="6" px="60px">
+              {travelPlans.map((travelPlan, index) => (
+                <PreviewFrame
+                  key={index} // Added unique key prop
+                  linkUrl={`${travelPlan.title}`}
+                  title={travelPlan.title}
+                  imageUrl={travelPlan.imageUrl}
+                />
+              ))}
+            </Grid>
+          )}
 
           <Box asChild width="100%" px="60px">
             <Heading size="7" weight="medium">
@@ -229,9 +240,11 @@ function TravelPlannerHome() {
 
           <Box width="100%" px="60px" style={{ overflowX: "auto" }}>
             {travelPlans.length === 0 ? (
-              <Text size="5" weight="regular" m="20px">
-                <i>No travel plans available.</i>
-              </Text>
+              <Box asChild width={"100%"} mt="60px" mb="100px">
+                <Text size="5" weight="regular">
+                  <i>No travel plans available.</i>
+                </Text>
+              </Box>
             ) : (
               <AgGridReact
                 theme={gridTheme}

@@ -34,35 +34,31 @@ function SignUp() {
   const [signUpError, setSignUpError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
 
-  const invalidEmail = () => {
+  const isInvalidEmail = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return !regex.test(formData.email);
   };
 
-  const invalidPassword = () => {
+  const isInvalidPassword = () => {
     const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return !regex.test(formData.password);
   };
 
-  const failConfirmPassword = () => {
-    return formData.password !== formData.confirmPassword;
-  };
-
-  const invalidForm = () => {
+  const isInvalidForm = () => {
     const errors = [];
 
     if (!formData.email) {
       errors.push("Email is required.");
-    } else if (invalidEmail()) {
+    } else if (isInvalidEmail()) {
       errors.push("Email is invalid.");
     }
 
     if (!formData.password) {
       errors.push("Password is required.");
-    } else if (invalidPassword()) {
+    } else if (isInvalidPassword()) {
       errors.push("Password should contain ≥ 8 characters, 1 uppercase letter, and 1 special character.");
     }
-    if (failConfirmPassword()) {
+    if (formData.password !== formData.confirmPassword) {
       errors.push("Passwords do not match.");
     }
 
@@ -75,7 +71,7 @@ function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (invalidForm()) {
+    if (isInvalidForm()) {
       return;
     }
 
@@ -137,9 +133,9 @@ function SignUp() {
                 {step === 1 && (
                   <>
                     {/* Email */}
-                    <Form.Field className="FormField" name="email">
+                    <Form.Field name="email">
 
-                      <Form.Label asChild className="FormLabel">
+                      <Form.Label asChild>
                         <Box asChild mb="10px" ml="6px">
                           <Text size="2" weight="medium">
                             Email
@@ -149,7 +145,6 @@ function SignUp() {
 
                       <Form.Control
                         asChild
-                        className="Input"
                         type="email"
                         placeholder="Enter your email address..."
                         value={formData.email}
@@ -165,9 +160,9 @@ function SignUp() {
                     </Form.Field>
 
                     {/* Password */}
-                    <Form.Field className="FormField" name="password">
+                    <Form.Field name="password">
 
-                      <Form.Label asChild className="FormLabel">
+                      <Form.Label asChild>
                         <Box asChild mb="10px" ml="6px">
                           <Text size="2" weight="medium">
                             Password
@@ -194,9 +189,9 @@ function SignUp() {
                     </Form.Field>
 
                     {/* Confirm Password */}
-                    <Form.Field className="FormField" name="confirmPassword">
+                    <Form.Field name="confirmPassword">
 
-                      <Form.Label asChild className="FormLabel">
+                      <Form.Label asChild>
                         <Box asChild mb="10px" ml="6px">
                           <Text size="2" weight="medium">
                             Confirm Password
@@ -206,7 +201,6 @@ function SignUp() {
 
                       <Form.Control
                         asChild
-                        className="Input"
                         type="password"
                         value={formData.confirmPassword}
                         onChange={updateFormData}
@@ -231,7 +225,7 @@ function SignUp() {
                 )}
 
                 {step === 2 && (
-                  <Form.Field className="FormField" name="code">
+                  <Form.Field name="code">
                     <Flex align="baseline" justify="between">
                       <Form.Label asChild className="FormLabel">
                         <Box asChild mb="10px" ml="6px">
@@ -243,7 +237,6 @@ function SignUp() {
                     </Flex>
                     <Form.Control
                       asChild
-                      className="Input"
                       type="text"
                       placeholder="Enter the code sent to your email..."
                       value={formData.code}

@@ -1,11 +1,63 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { Flex, Box, IconButton, Separator, ScrollArea, TextField } from "@radix-ui/themes";
+import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
 import PropTypes from 'prop-types';
 
-import Sidebar from './Sidebar';
+import NavigateButton from './NavigateButton';
+import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
+
+function Sidebar() {
+
+  const auth = useAuth();
+  const navigate = useNavigate();
+
+  return (
+    <Flex
+      minHeight="100vh"
+      direction="column"
+      justify="between"
+      p="40px"
+      pt="60px"
+      style={{
+        boxShadow: "4px 0 10px rgba(0, 0, 0, 0.1)", // Shadow effect
+        zIndex: 10, // Ensure it is above the main panel
+        transition: "width 0.3s ease-in-out", // Smooth transition for width
+        overflow: "hidden", // Prevent content overflow during collapse
+      }}>
+
+      <Flex direction="column" align="center" gap="20px" >
+        <NavigateButton url="/portal" label="Portal" />
+        <NavigateButton url="/home" label="Home" />
+        <NavigateButton url="/travel" label="Travel Planner" />
+        <NavigateButton url="/budget" label="Budget Tracker" />
+        <NavigateButton url="/calendar" label="Calendar" />
+      </Flex>
+
+      <Box asChild>
+        <Card asChild size="1" variant="ghost">
+          <Button variant="ghost" onClick={() => navigate("/profile")}>
+            <Flex direction="row" gap="14px" align="center" justify="start" display="flex">
+              <Avatar
+                size="4"
+                src={auth.user?.avatarUrl}
+                radius="full"
+                fallback="T"
+              />
+              <Box asChild maxWidth="140px">
+                <Text size="2" weight="medium" highContrast truncate>
+                  {auth.user?.email}
+                </Text>
+              </Box>
+            </Flex>
+          </Button>
+        </Card>
+      </Box>
+    </Flex>
+  );
+}
 
 function Panel({ children }) {
 
