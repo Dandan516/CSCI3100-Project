@@ -25,4 +25,13 @@ class LoginSerializer(serializers.Serializer):
         ret = super().to_representation(instance)
         ret.pop('password', None)
         return ret
-    
+
+'''
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'password')
+
+    def to_representation(self, instance):
+        return super().to_representation(instance)
+'''

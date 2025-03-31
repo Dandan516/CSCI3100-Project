@@ -52,3 +52,15 @@ class LoginViewset(viewsets.ViewSet):
 
         else:
             return Response(serializer.errors, status=400)
+
+'''
+class UserInfoViewSet(viewsets.ModelViewSet):
+    permission_class = [permissions.IsAuthenticated]
+    queryset = User.objects.all()
+    serialzer_class = UserInfoSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(user=self.request.user)
+
+'''
+    
