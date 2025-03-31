@@ -13,6 +13,8 @@ RUN npm install
 # Install Vite globally (or locally if preferred)
 RUN npm install -g vite
 
+RUN npm install --save ag-grid-community
+
 # Copy the rest of the application code
 COPY . .
 
