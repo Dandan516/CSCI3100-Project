@@ -77,7 +77,7 @@ function SignUp() {
 
     try {
       if (step === 1) {
-        await axios.post(`${import.meta.env.VITE_API_URL}users/`, { email: formData.email, password: formData.password });
+        await axios.post(`${import.meta.env.VITE_API_URL}signup/`, { email: formData.email, password: formData.password });
         setStep(2);
       } else if (step === 2) {
         // await axios.post(`${import.meta.env.VITE_API_URL}verify-code/`, { email: formData.email, code: formData.code });

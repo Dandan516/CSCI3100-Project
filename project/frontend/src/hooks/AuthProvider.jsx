@@ -6,16 +6,26 @@ import axios from "axios";
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({});
   const [token, setToken] = useState(localStorage.getItem("site") || "");
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("site");
-    console.log("Stored token:", storedToken); // Debugging log
     if (storedToken) {
       setToken(storedToken);
-      // Fetch user data using the token
+      axios
+        .get(`${import.meta.env.VITE_API_URL}userinfo/`, {
+          headers: { Authorization: `Token ${storedToken}` },
+        })
+        .then((response) => {
+          setUser(response.data.user);
+          console.log("User info fetched:", response.data.user); // Debugging log
+        })
+        .catch((err) => {
+          console.error("Error fetching user info:", err);
+          logout(); // Log out if token is invalid
+        });
     }
   }, []);
 

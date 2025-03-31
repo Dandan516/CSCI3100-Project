@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import NavigateButton from './NavigateButton';
 import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
+import axios from 'axios';
 
 function Sidebar() {
 
