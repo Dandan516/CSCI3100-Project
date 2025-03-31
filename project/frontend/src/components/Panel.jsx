@@ -29,7 +29,7 @@ function Sidebar() {
       }}>
 
       <Flex direction="column" align="center" gap="20px" >
-        <NavigateButton url="/portal" label="Portal" />
+        <NavigateButton url="/" label="Portal" />
         <NavigateButton url="/home" label="Home" />
         <NavigateButton url="/travel" label="Travel Planner" />
         <NavigateButton url="/budget" label="Budget Tracker" />

@@ -113,7 +113,7 @@ function SignUp() {
                 <Flex asChild direction="column" align="center" gap="10px">
                   <Callout.Root color="red">
                     <Callout.Icon>
-                      <Icons.AlertCircleOutline />
+                      <Icons.CrossCircled />
                     </Callout.Icon>
                     <Callout.Text>
                       {errorMessages.map((message, index) => (

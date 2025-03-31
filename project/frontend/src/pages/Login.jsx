@@ -63,7 +63,7 @@ function Login() {
               <Box width="380px">
                 <Callout.Root color="red">
                   <Callout.Icon>
-                    <Icons.AlertCircleOutline />
+                    <Icons.CrossCircled />
                   </Callout.Icon>
                   <Callout.Text>
                     Invalid credentials.
