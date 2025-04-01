@@ -16,13 +16,13 @@ function TravelPlanner() {
   const params = useParams([]);
   const navigate = useNavigate();
 
-  const title = params.travelTitle;
+  const id = params.id;
 
   const [editMode, setEditMode] = useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const [travelPlan, setTravelPlan] = useState([]);
+  const [travelPlan, setTravelPlan] = useState();
 
   const [formData, setFormData] = useState({
     id: 0,
@@ -30,26 +30,25 @@ function TravelPlanner() {
     start_date: "",
     end_date: "",
     description: "",
+    itineraries: [],
   });
 
-  const isDateInvalid = 
-    formData.start_date && formData.end_date
-      ? new Date(formData.start_date) > new Date(formData.end_date)
-      : false;
-
   const getTravelPlan = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/${title}`, {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}travel/${id}/`, {
         headers: {
           Authorization: `Token ${auth.token}`,
         },
+      })
+      .then(response => {
+        console.log("Travel plan fetched successfully:", response.data);
+        const data = response.data;
+        setTravelPlan(data);
+        setFormData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching travel plan:", error);
       });
-      const data = response.data[0]; // Extract the single element from the array
-      setTravelPlan(data);
-      setFormData(data);
-    } catch (error) {
-      console.error("Error fetching travel plan:", error);
-    }
   };
 
   const updateFormData = (e) => {
@@ -60,27 +59,23 @@ function TravelPlanner() {
   };
 
   const handleSave = async () => {
-    try {
-      await axios.put(`${import.meta.env.VITE_API_URL}travel/${title}/${travelPlan.id}/`, formData, {
+    axios
+      .put(`${import.meta.env.VITE_API_URL}travel/${id}/`, formData, {
         headers: {
           Authorization: `Token ${auth.token}`,
         },
+      })
+      .catch((error) => {
+        console.error("Error updating travel plan:", error);
       });
-      console.log("Travel plan updated successfully:", formData);
-    } catch (error) {
-      console.error("Error updating travel plan:", error);
-    }
-    if (title !== formData.title) {
-      console.log("Title changed, navigating to new URL:", formData.title);
-      await navigate(`/travel/${formData.title}`);
-    }
 
   }
 
   useEffect(() => {
     getTravelPlan();
+
   }
-    , [title]);
+    , [id]);
 
   return (
     <Panel>
@@ -143,11 +138,13 @@ function TravelPlanner() {
                   </Flex>
                 </Form.Field>
 
-                <Box asChild width="80px" height="40px">
-                  <Button size="3" radius="medium" onClick={handleSave} disabled={isDateInvalid}>
-                    Save
-                  </Button>
-                </Box>
+                <Form.Submit asChild >
+                  <Box asChild width="80px" height="40px">
+                    <Button size="3" radius="medium" onClick={handleSave}>
+                      Save
+                    </Button>
+                  </Box>
+                </Form.Submit>
 
               </Flex>
 
@@ -187,7 +184,8 @@ function TravelPlanner() {
                     asChild
                     type="date"
                     value={formData.end_date}
-                    onChange={updateFormData}>
+                    onChange={updateFormData}
+                    min={formData.start_date}>
                     <Box asChild height="50px">
                       <TextField.Root>
                         <TextField.Slot pl="10px" />
@@ -197,7 +195,7 @@ function TravelPlanner() {
                   </Form.Control>
                 </Form.Field>
 
-                {isDateInvalid && (
+                {false && (
                   <Callout.Root color="red">
                     <Callout.Icon>
                       <Icons.CrossCircled />
@@ -234,7 +232,7 @@ function TravelPlanner() {
         ) : (
           <Flex direction="column" gap="60px">
 
-            <Flex direction="row" align="center" justify="between">
+            <Flex direction="row" justify="between">
               <Heading size="8" weight="medium">
                 {travelPlan?.title}
               </Heading>
@@ -245,9 +243,26 @@ function TravelPlanner() {
               </Box>
             </Flex>
 
-            <Text size="5">{travelPlan?.start_date} ~ {travelPlan?.end_date}</Text><br />
+            <Text size="5">{travelPlan?.start_date} ~ {travelPlan?.end_date}</Text>
             <Text size="5">Description:</Text>
-            <Text size="5">{travelPlan?.description}</Text>
+            <Text size="3">{travelPlan?.description}</Text>
+
+            <Text size="5">Itineraries:</Text>
+            {travelPlan?.itineraries?.length > 0 ? (
+              <Flex direction="column" gap="10px">
+                {travelPlan.itineraries.map((itinerary, index) => (
+                  <Box key={index} p="10px" border="1px solid #ccc" borderRadius="8px">
+                    <Text size="4" weight="medium">{itinerary.activity}</Text><br />
+                    <Text size="3">{itinerary.description}</Text>
+                    <Text size="3">Start: {itinerary.start_time}</Text>
+                    <Text size="3">End: {itinerary.end_time}</Text>
+                  </Box>
+                ))}
+              </Flex>
+            ) : (
+              <Text size="3" color="gray">No itineraries available.</Text>
+            )}
+
           </Flex>
         )}
       </Box>

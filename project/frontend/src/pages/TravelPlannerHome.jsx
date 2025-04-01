@@ -63,23 +63,25 @@ function TravelPlannerHome() {
   ]);
 
   const getTravelPlans = async () => {
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}travel/`, {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}travel/`, {
         headers: {
           Authorization: `Token ${auth.token}`,
         },
+      })
+      .then(response => {
+        const data = response.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          start_date: item.start_date,
+          end_date: item.end_date,
+          description: item.description,
+        }));
+        setTravelPlans(data);
+      })
+      .catch(error => {
+        console.error("Error fetching travels:", error);
       });
-      const data = response.data.map((item) => ({
-        id: item.id,
-        title: item.title,
-        start_date: item.start_date,
-        end_date: item.end_date,
-        description: item.description,
-      }));
-      setTravelPlans(data);
-    } catch (error) {
-      console.error("Error fetching travels:", error);
-    }
   };
 
   // Fetch Travel Plans when the component mounts
@@ -89,16 +91,20 @@ function TravelPlannerHome() {
 
   const handleCreateTravelPlan = async () => {
 
-    const response = await axios.post(`${import.meta.env.VITE_API_URL}travel/`, {
-      title: newTravelPlanTitle,
-    }, {
-      headers: {
-        Authorization: `Token ${auth.token}`,
-      },
-    });
-    setNewTravelPlanTitle("");
-    setIsDialogOpen(false);
-    getTravelPlans();
+    axios
+      .post(`${import.meta.env.VITE_API_URL}travel/`, {
+        title: newTravelPlanTitle,
+      }, {
+        headers: {
+          Authorization: `Token ${auth.token}`,
+        },
+      })
+      .then(response => {
+        setNewTravelPlanTitle("");
+        setIsDialogOpen(false);
+        getTravelPlans();
+      });
+
   };
 
   const gridTheme = themeQuartz
@@ -225,7 +231,7 @@ function TravelPlannerHome() {
               {travelPlans.map((travelPlan, index) => (
                 <PreviewFrame
                   key={index} // Added unique key prop
-                  linkUrl={`${travelPlan.title}`}
+                  linkUrl={`${travelPlan.id}`}
                   title={travelPlan.title}
                   imageUrl={travelPlan.imageUrl}
                 />
