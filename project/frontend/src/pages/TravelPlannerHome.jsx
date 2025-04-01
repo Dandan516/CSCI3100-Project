@@ -29,7 +29,7 @@ function TravelPlannerHome() {
       field: "id",
       resizable: false,
       sortable: true,
-      flex: 1,
+      flex: 0.5,
       cellDataType: 'number',
     },
     {
@@ -70,6 +70,7 @@ function TravelPlannerHome() {
         },
       });
       const data = response.data.map((item) => ({
+        id: item.id,
         title: item.title,
         start_date: item.start_date,
         end_date: item.end_date,

@@ -61,8 +61,8 @@ function Sidebar() {
 
 function Panel({ children }) {
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
 
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearchQuery = (e) => setSearchQuery(e.target.value);
@@ -71,9 +71,9 @@ function Panel({ children }) {
 
     const handleResize = () => {
       if (window.innerWidth < 800) {
-        setSidebarCollapsed(true);
+        setIsSidebarCollapsed(true);
       } else {
-        setSidebarCollapsed(false);
+        setIsSidebarCollapsed(false);
       }
     };
 
@@ -89,16 +89,16 @@ function Panel({ children }) {
         <Flex direction="row" align="center">
           <Box
             style={{
-              width: sidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
+              width: isSidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
               transition: "width 0.3s ease-in-out", // Smooth transition for sidebar width
             }}>
-            {sidebarCollapsed ? null : <Sidebar />}
+            {isSidebarCollapsed ? null : <Sidebar />}
           </Box>
           <Box asChild width="100vw" height="100vh" minWidth="800px">
             <Flex direction="column">
               <Flex align="center" gap="20px" m="20px">
-                <IconButton asChild highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
-                  <Icons.Menu />
+                <IconButton highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
+                  <Icons.Menu width="40px"/>
                 </IconButton>
                 <Box asChild width="60%" minHeight="48px" px="6px">
                   <TextField.Root
@@ -107,7 +107,7 @@ function Panel({ children }) {
                     value={searchQuery}
                     onChange={updateSearchQuery} >
                     <TextField.Slot>
-                      <Icons.MagnifyingGlass />
+                      <Icons.MagnifyingGlass/>
                     </TextField.Slot>
                   </TextField.Root>
                 </Box>

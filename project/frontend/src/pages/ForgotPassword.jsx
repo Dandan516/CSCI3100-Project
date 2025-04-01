@@ -203,7 +203,9 @@ function ForgotPassword() {
         </Card>
       </Box>
 
-      <NavigateButton url="/portal" label="Back to portal"/>
+      <Box height="40px"/>
+
+      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
 
     </Flex>
   );

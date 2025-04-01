@@ -18,7 +18,6 @@ const AuthProvider = ({ children }) => {
           })
           .then((response) => {
             setUser(response.data[0]);
-            console.log("User info fetched:", response.data[0]); // Debugging log
           })
           .catch((err) => {
             console.error("Error fetching user info:", err);

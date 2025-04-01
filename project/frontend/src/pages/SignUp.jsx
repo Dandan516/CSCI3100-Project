@@ -34,28 +34,28 @@ function SignUp() {
   const [signUpError, setSignUpError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
 
-  const isInvalidEmail = () => {
+  const isEmailInvalid = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return !regex.test(formData.email);
   };
 
-  const isInvalidPassword = () => {
+  const isPasswordInvalid = () => {
     const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return !regex.test(formData.password);
   };
 
-  const isInvalidForm = () => {
+  const isFormInvalid = () => {
     const errors = [];
 
     if (!formData.email) {
       errors.push("Email is required.");
-    } else if (isInvalidEmail()) {
+    } else if (isEmailInvalid()) {
       errors.push("Email is invalid.");
     }
 
     if (!formData.password) {
       errors.push("Password is required.");
-    } else if (isInvalidPassword()) {
+    } else if (isPasswordInvalid()) {
       errors.push("Password should contain ≥ 8 characters, 1 uppercase letter, and 1 special character.");
     }
     if (formData.password !== formData.confirmPassword) {
@@ -71,7 +71,7 @@ function SignUp() {
   const handleSignUp = async (e) => {
     e.preventDefault();
 
-    if (isInvalidForm()) {
+    if (isFormInvalid()) {
       return;
     }
 
@@ -276,7 +276,9 @@ function SignUp() {
         </Card>
       </Box>
 
-      <NavigateButton url="/portal" label="Back to portal" />
+      <Box height="40px"/>
+
+      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
 
     </Flex>
   );

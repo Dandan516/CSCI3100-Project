@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import "@radix-ui/themes/styles.css";
 
 import * as Icons from '../assets/Icons';
-import NavigateButton from '../components/NavigateButton';
 import { useAuth } from "../hooks/AuthProvider";
 
 function Login() {
 
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -160,7 +161,9 @@ function Login() {
         </Card >
       </Box >
 
-      <NavigateButton url="/portal" label="Back to portal" />
+      <Box height="40px"/>
+
+      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
 
     </Flex >
   );
