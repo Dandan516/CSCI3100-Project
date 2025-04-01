@@ -13,9 +13,11 @@ class TravelViewSet(viewsets.ModelViewSet):
 
     # only show travels owned by current user
     def get_queryset(self):
+        '''
         travel_title = self.kwargs.get('travel_title')
         if travel_title:
             return self.queryset.filter(user=self.request.user,title=travel_title)
+        '''
         return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
