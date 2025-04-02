@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import "@radix-ui/themes/styles.css";
@@ -28,9 +28,6 @@ function SignUp() {
     });
   };
 
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const handleCheckboxChange = (checked) => setAgreeToTerms(checked);
-
   const [signUpError, setSignUpError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
 
@@ -44,11 +41,14 @@ function SignUp() {
     return !regex.test(formData.password);
   };
 
-  const isFormInvalid = () => {
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validateForm = () => {
+
     const errors = [];
 
     if (!formData.email) {
-      errors.push("Email is required.");
+      errors.push("Please enter your email.");
     } else if (isEmailInvalid()) {
       errors.push("Email is invalid.");
     }
@@ -58,21 +58,23 @@ function SignUp() {
     } else if (isPasswordInvalid()) {
       errors.push("Password should contain ≥ 8 characters, 1 uppercase letter, and 1 special character.");
     }
+
     if (formData.password !== formData.confirmPassword) {
       errors.push("Passwords do not match.");
     }
 
-    if (errors.length > 0) {
-      setErrorMessages(errors);
-      setSignUpError(true);
-    }
+    setErrorMessages(errors);
+    setSignUpError(errors.length > 0 && formTouched); // Only show errors if the form has been touched
+    setIsFormValid(errors.length === 0);
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-
-    if (isFormInvalid()) {
-      return;
+   
+    validateForm(); // Validate the form before proceeding
+    if (!isFormValid) {
+      setFormTouched(true); // Mark the form as touched when attempting to sign up
+      return; // Prevent submission if the form is invalid
     }
 
     try {
@@ -86,10 +88,8 @@ function SignUp() {
     } catch (error) {
       console.error('Error signing up:', error);
       const errors = [];
-      if (error.response.data) {
-        if (error.response.data.email) {
-          errors.push('User with this email already exists.');
-        }
+      if (error.response?.data?.email && !isEmailInvalid()) {
+        errors.push('User with this email already exists.');
       } else {
         errors.push("An unexpected error occurred. Please try again later.");
       }
@@ -215,12 +215,6 @@ function SignUp() {
                       </Form.Control>
                     </Form.Field>
 
-                    <Text as="label" size="2">
-                      <Flex as="span" gap='2' m="4px">
-                        <Checkbox onCheckedChange={handleCheckboxChange} /> I agree to Terms and Conditions
-                      </Flex>
-                    </Text>
-
                   </>
                 )}
 
@@ -252,9 +246,12 @@ function SignUp() {
                   </Form.Field>
                 )}
 
-                <Form.Submit asChild onClick={handleSignUp}>
-                  <Button asChild variant="solid" disabled={!agreeToTerms}>
-                    <Box width="380px" height="60px" my={step === 1 ? "0px" : "10px"}>
+                <Form.Submit asChild>
+                  <Button
+                    asChild
+                    variant="solid"
+                    onClick={handleSignUp}>
+                    <Box width="380px" height="60px" my="10px">
                       <Text size="5" weight="bold">
                         Continue
                       </Text>
@@ -276,7 +273,7 @@ function SignUp() {
         </Card>
       </Box>
 
-      <Box height="40px"/>
+      <Box height="40px" />
 
       <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
 

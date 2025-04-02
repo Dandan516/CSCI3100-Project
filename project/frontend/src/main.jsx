@@ -11,6 +11,7 @@ import PrivateRoute from "./router/PrivateRoute";
 const router = createBrowserRouter([
   {
     element: <AuthProvider />,
+    errorElement: <Pages.NotFound />,
     children:
       [
         {
