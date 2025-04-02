@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-&z#$+4@l)d*$=+gioe+nr$-)24$pjj^+t7nj1q2_flvx9_=gu!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '192.168.31.44', '192.168.31.241']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', '192.168.31.44', '192.168.31.241', '192.168.31.56']
 
 
 # Application definition
@@ -130,6 +130,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Example for Gmail SMTP
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "MY APP"
+EMAIL_HOST_USER = 'multiplanner3100@gmail.com'
+EMAIL_HOST_PASSWORD = 'bvksjcphpfhwckxy'
 
 
 # Internationalization
