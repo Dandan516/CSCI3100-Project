@@ -38,3 +38,33 @@ class CustomUser(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(reset_password_token, *args , **kwargs):
+    """
+    Function to send email when password reset token is created.
+    """
+    sitelink = "http://localhost:5173/"
+    token = "?token={}".format(reset_password_token.key)
+    full_url = str(sitelink) + str("password-reset") + str(token)
+    # token = ?token=abcdefghijklmnopqrstuvwxyz
+    # full_url = http://localhost:5173/password-reset?token=abcdefghijklmnopqrstuvwxyz
+
+    email = reset_password_token.user.email
+    context = {
+        'full_url': full_url,
+        'email_address': email,
+    }
+    html_message = render_to_string('backend/email.html', context=context)
+    plain_message = strip_tags(html_message)
+    
+    
+    msg = EmailMultiAlternatives(
+        subject = "Request for Password Reset for {title}".format(title=reset_password_token.user.email), 
+        body = plain_message, 
+        from_email = "noreply@email.com" ,
+        to = [reset_password_token.user.email],
+    )
+    msg.attach_alternative(html_message, "text/html")
+    msg.send()
+    
