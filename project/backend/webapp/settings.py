@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     
     'users', # User Authentication
     'travel',
-  
+
+    'django_filters',
     'rest_framework',
     'corsheaders',
     'knox',

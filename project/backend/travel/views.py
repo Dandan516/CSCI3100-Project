@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import Travel, Itinerary
 from .serializer import TravelSerializer, ItinerarySerializer
+from .filters import ItineraryFilter
 
 
 class TravelViewSet(viewsets.ModelViewSet):
@@ -28,7 +30,8 @@ class ItineraryViewSet(viewsets.ModelViewSet):
     queryset = Itinerary.objects.all()
     serializer_class = ItinerarySerializer
     permission_classes = [permissions.IsAuthenticated]
-    # permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ItineraryFilter
     
     def get_queryset(self):
         # Handle both ID and title-based filtering
@@ -48,7 +51,6 @@ class ItineraryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         travel_title = self.kwargs.get('travel_title')
-        # travel_id = self.kwargs.get('travel_id')
         
         if travel_title:
             travel = get_object_or_404(
