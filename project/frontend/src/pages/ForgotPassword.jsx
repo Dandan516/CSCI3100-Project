@@ -79,7 +79,7 @@ function ForgotPassword() {
                 {step === 1 && (
                   <Form.Field className="FormField" name="email">
                     <Form.Label asChild className="FormLabel">
-                      <Box asChild mb="10px" ml="6px">
+                      <Box asChild mb="6px" ml="6px">
                         <Text size="2" weight="medium">
                           Email
                         </Text>
@@ -109,7 +109,7 @@ function ForgotPassword() {
                   <Form.Field className="FormField" name="code">
                     <Flex align="baseline" justify="between">
                       <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Authentication Code
                           </Text>
@@ -138,7 +138,7 @@ function ForgotPassword() {
                   <>
                     <Form.Field className="FormField" name="newPassword">
                       <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             New Password
                           </Text>
@@ -163,7 +163,7 @@ function ForgotPassword() {
 
                     <Form.Field className="FormField" name="confirmNewPassword">
                       <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Confirm New Password
                           </Text>

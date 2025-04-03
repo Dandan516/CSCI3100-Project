@@ -79,7 +79,7 @@ function Login() {
                 {/* Email */}
                 <Form.Field className="FormField" name="email">
                   <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="10px" ml="6px">
+                    <Box asChild mb="6px" ml="6px">
                       <Text size="2" weight="medium">
                         Email
                       </Text>
@@ -104,7 +104,7 @@ function Login() {
 
                 <Form.Field className="FormField" name="password">
                   <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="10px" ml="6px">
+                    <Box asChild mb="6px" ml="6px">
                       <Text size="2" weight="medium">
                         Password
                       </Text>

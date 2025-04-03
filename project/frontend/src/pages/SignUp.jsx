@@ -136,7 +136,7 @@ function SignUp() {
                     <Form.Field name="email">
 
                       <Form.Label asChild>
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Email
                           </Text>
@@ -163,7 +163,7 @@ function SignUp() {
                     <Form.Field name="password">
 
                       <Form.Label asChild>
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Password
                           </Text>
@@ -192,7 +192,7 @@ function SignUp() {
                     <Form.Field name="confirmPassword">
 
                       <Form.Label asChild>
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Confirm Password
                           </Text>
@@ -222,7 +222,7 @@ function SignUp() {
                   <Form.Field name="code">
                     <Flex align="baseline" justify="between">
                       <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="10px" ml="6px">
+                        <Box asChild mb="6px" ml="6px">
                           <Text size="2" weight="medium">
                             Authentication Code
                           </Text>
