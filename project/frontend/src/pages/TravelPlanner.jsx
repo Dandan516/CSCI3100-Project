@@ -199,7 +199,7 @@ function TravelPlanner() {
 
                         <Form.Field name="end_date">
                           <Form.Label asChild>
-                            <Box asChild mb="6px" ml="6px">
+                            <Box asChild mb="6px">
                               <Text size="2" weight="medium">End Date</Text>
                             </Box>
                           </Form.Label>

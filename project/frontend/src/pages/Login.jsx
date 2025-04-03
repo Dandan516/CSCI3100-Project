@@ -79,7 +79,7 @@ function Login() {
                 {/* Email */}
                 <Form.Field className="FormField" name="email">
                   <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="6px" ml="6px">
+                    <Box asChild mb="6px">
                       <Text size="2" weight="medium">
                         Email
                       </Text>
@@ -93,7 +93,7 @@ function Login() {
                     value={formData.email}
                     onChange={updateFormData}
                     required>
-                    <Box asChild width="380px" height="50px">
+                    <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
                         <TextField.Slot pl="10px" />
                         <TextField.Slot pr="10px" />
@@ -104,7 +104,7 @@ function Login() {
 
                 <Form.Field className="FormField" name="password">
                   <Form.Label asChild className="FormLabel">
-                    <Box asChild mb="6px" ml="6px">
+                    <Box asChild mb="6px">
                       <Text size="2" weight="medium">
                         Password
                       </Text>
@@ -119,7 +119,7 @@ function Login() {
                     onChange={updateFormData}
                     required
                     placeholder="Enter your password...">
-                    <Box asChild width="380px" height="50px">
+                    <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
                         <TextField.Slot pl="10px" />
                         <TextField.Slot pr="10px" />

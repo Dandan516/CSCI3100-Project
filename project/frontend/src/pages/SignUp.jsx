@@ -136,7 +136,7 @@ function SignUp() {
                     <Form.Field name="email">
 
                       <Form.Label asChild>
-                        <Box asChild mb="6px" ml="6px">
+                        <Box asChild mb="6px">
                           <Text size="2" weight="medium">
                             Email
                           </Text>
@@ -150,7 +150,7 @@ function SignUp() {
                         value={formData.email}
                         onChange={updateFormData}
                         required>
-                        <Box asChild width="380px" height="50px">
+                        <Box asChild width="380px" height="50px" mt="10px">
                           <TextField.Root>
                             <TextField.Slot pl="10px" />
                             <TextField.Slot pr="10px" />
@@ -163,7 +163,7 @@ function SignUp() {
                     <Form.Field name="password">
 
                       <Form.Label asChild>
-                        <Box asChild mb="6px" ml="6px">
+                        <Box asChild mb="6px">
                           <Text size="2" weight="medium">
                             Password
                           </Text>
@@ -179,7 +179,7 @@ function SignUp() {
                         required
                         minLength="8"
                         placeholder="Enter a password of 8 characters or more...">
-                        <Box asChild width="380px" height="50px">
+                        <Box asChild width="380px" height="50px" mt="10px">
                           <TextField.Root>
                             <TextField.Slot pl="10px" />
                             <TextField.Slot pr="10px" />
@@ -192,7 +192,7 @@ function SignUp() {
                     <Form.Field name="confirmPassword">
 
                       <Form.Label asChild>
-                        <Box asChild mb="6px" ml="6px">
+                        <Box asChild mb="6px">
                           <Text size="2" weight="medium">
                             Confirm Password
                           </Text>
@@ -206,7 +206,7 @@ function SignUp() {
                         onChange={updateFormData}
                         required
                         placeholder="Re-enter the password...">
-                        <Box asChild width="380px" height="50px">
+                        <Box asChild width="380px" height="50px" mt="10px">
                           <TextField.Root>
                             <TextField.Slot pl="10px" />
                             <TextField.Slot pr="10px" />
@@ -222,7 +222,7 @@ function SignUp() {
                   <Form.Field name="code">
                     <Flex align="baseline" justify="between">
                       <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="6px" ml="6px">
+                        <Box asChild mb="6px">
                           <Text size="2" weight="medium">
                             Authentication Code
                           </Text>
@@ -236,7 +236,7 @@ function SignUp() {
                       value={formData.code}
                       onChange={updateFormData}
                       required>
-                      <Box asChild width="380px" height="50px">
+                      <Box asChild width="380px" height="50px" mt="10px">
                         <TextField.Root>
                           <TextField.Slot pl="10px" />
                           <TextField.Slot pr="10px" />
