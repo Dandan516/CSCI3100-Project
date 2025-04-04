@@ -29,6 +29,14 @@ html, body {
   justify-content: 'space-between';
 }
 
+.ag-cell-focus,.ag-cell-no-focus{
+  border:none !important;
+  }
+  .ag-cell:focus{
+  border:none !important;
+  outline: none;
+  }
+
 @media (max-width: 768px) {
   .collapsed {
     display: flex;

@@ -7,7 +7,6 @@ import { Form } from "radix-ui";
 import axios from 'axios';
 
 import * as Icons from '../assets/Icons';
-import NavigateButton from '../components/NavigateButton';
 
 function ForgotPassword() {
   const navigate = useNavigate();

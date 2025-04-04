@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button } from "@radix-ui/themes";
+import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button, Link } from "@radix-ui/themes";
 
 import PropTypes from 'prop-types';
 
@@ -61,8 +61,14 @@ function Sidebar() {
 
 function Panel({ children }) {
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+  const auth = useAuth();
+  const navigate = useNavigate();
+
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem("sidebarCollapsed") || true);
+  const toggleSidebar = () => {
+    localStorage.setItem("sidebar", !isSidebarCollapsed);
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
 
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearchQuery = (e) => setSearchQuery(e.target.value);
@@ -70,10 +76,12 @@ function Panel({ children }) {
   useEffect(() => {
 
     const handleResize = () => {
-      if (window.innerWidth < 800) {
+      if (window.innerWidth < 800 || localStorage.getItem("sidebarCollapsed")) {
         setIsSidebarCollapsed(true);
+        localStorage.setItem("sidebarCollapsed", true);
       } else {
         setIsSidebarCollapsed(false);
+        localStorage.setItem("sidebarCollapsed", false);
       }
     };
 
@@ -85,45 +93,55 @@ function Panel({ children }) {
 
   return (
     <Flex direction="column">
-      <Box asChild>
-        <Flex direction="row" align="center">
-          <Box
-            style={{
-              width: isSidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
-              transition: "width 0.3s ease-in-out", // Smooth transition for sidebar width
-            }}>
-            {isSidebarCollapsed ? null : <Sidebar />}
-          </Box>
-          <Box asChild width="100vw" height="100vh" minWidth="800px">
-            <Flex direction="column">
-              <Flex align="center" gap="20px" m="20px">
-                <IconButton highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
-                  <Icons.Menu width="40px"/>
-                </IconButton>
-                <Box asChild width="60%" minHeight="48px" px="6px">
-                  <TextField.Root
-                    size="3"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={updateSearchQuery} >
-                    <TextField.Slot>
-                      <Icons.MagnifyingGlass/>
-                    </TextField.Slot>
-                  </TextField.Root>
-                </Box>
-              </Flex>
 
-              <Separator orientation="horizontal" size="4" />
+      <Flex direction="row" align="center">
+        <Box
+          style={{
+            width: isSidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
+            transition: "width 0.3s ease-in-out", // Smooth transition for sidebar width
+          }}>
+          {isSidebarCollapsed ? null : <Sidebar />}
+        </Box>
 
-              <ScrollArea type="always" scrollbars="vertical">
-                <main>
-                  {children}
-                </main>
-              </ScrollArea>
+        <Flex width="100vw" height="100vh" minWidth="800px" direction="column">
+
+          {/* Header */}
+          <Flex justify="between" mx="20px" my="14px" >
+            <Flex width="100%" align="center" gap="20px" >
+              <IconButton highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
+                <Icons.Menu width="40px" />
+              </IconButton>
+              <Box asChild minWidth="60%" minHeight="48px" px="6px">
+                <TextField.Root
+                  size="3"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={updateSearchQuery} >
+                  <TextField.Slot>
+                    <Icons.MagnifyingGlass />
+                  </TextField.Slot>
+                </TextField.Root>
+              </Box>
             </Flex>
-          </Box>
+            <Avatar
+              size="4"
+              src={auth.user?.avatarUrl}
+              radius="full"
+              fallback="T"
+            />
+          </Flex>
+
+          <Separator orientation="horizontal" size="4" />
+
+          <ScrollArea type="always" scrollbars="vertical">
+            <main>
+              {children}
+            </main>
+          </ScrollArea>
         </Flex>
-      </Box>
+
+      </Flex>
+
     </Flex>
   );
 

@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Flex, Box, Card } from "@radix-ui/themes";
 
-
 import NavigateButton from '../components/NavigateButton';
 
 function Portal() {

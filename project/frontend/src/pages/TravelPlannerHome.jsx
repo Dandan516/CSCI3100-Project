@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu } from "@radix-ui/themes";
+import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Link } from "@radix-ui/themes";
 
 import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
@@ -33,25 +33,35 @@ function TravelPlannerHome() {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
     return [
-      {
-        field: "id",
-        resizable: false,
-        sortable: true,
-        flex: 0.5,
-        cellDataType: 'number',
-      },
+      // {
+      //   field: "id",
+      //   resizable: false,
+      //   sortable: true,
+      //   flex: 0.5,
+      //   suppressMovable: true,
+      //   cellDataType: 'number',
+      // },
       {
         field: "title",
         resizable: false,
         sortable: true,
         flex: 1.5,
+        suppressMovable: true,
         cellDataType: 'text',
+        cellRenderer: (params) => {
+          return (
+            <Link href={`/travel/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
+              {params.data.title}
+            </Link>
+          );
+        }
       },
       {
         field: "startDate",
         resizable: false,
         sortable: true,
         flex: 1,
+        suppressMovable: true,
         cellDataType: 'dateString',
       },
       {
@@ -59,6 +69,7 @@ function TravelPlannerHome() {
         resizable: false,
         sortable: true,
         flex: 1,
+        suppressMovable: true,
         cellDataType: 'dateString',
       },
       {
@@ -66,6 +77,7 @@ function TravelPlannerHome() {
         resizable: false,
         sortable: false,
         flex: 2,
+        suppressMovable: true,
         cellDataType: 'text',
       },
       {
@@ -73,6 +85,7 @@ function TravelPlannerHome() {
         resizable: false,
         sortable: false,
         flex: 0.6,
+        suppressMovable: true,
         cellRenderer: (params) => {
           return (
             <Flex width="100%" height="100%" align="center" justify="between">
@@ -86,6 +99,10 @@ function TravelPlannerHome() {
                   <DropdownMenu.Item onClick={() => navigate(`/travel/${params.data.id}`)}>
                     View
                   </DropdownMenu.Item>
+                  <DropdownMenu.Item onClick={() => navigate(`/travel/`)}>
+                    Share
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator />
                   <DropdownMenu.Item color="red" onClick={handleOpenDeleteDialog}>
                     Delete
                   </DropdownMenu.Item>
@@ -126,17 +143,15 @@ function TravelPlannerHome() {
   const getTravelPlans = async () => {
     axios
       .get(`${import.meta.env.VITE_API_URL}travel/`, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-        },
+        headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          startDate: item.start_date,
-          endDate: item.end_date,
-          description: item.description,
+          startDate: [item.start_date || "-"],
+          endDate: [item.end_date || "-"],
+          description: [item.description || "-"],
         }));
         setTravelPlans(data);
       })
@@ -156,9 +171,7 @@ function TravelPlannerHome() {
       .post(`${import.meta.env.VITE_API_URL}travel/`, {
         title: newTravelPlanTitle,
       }, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-        },
+        headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
         setNewTravelPlanTitle("");
@@ -171,9 +184,7 @@ function TravelPlannerHome() {
   const handleDeleteTravelPlan = async (id) => {
     axios
       .delete(`${import.meta.env.VITE_API_URL}travel/${id}/`, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-        },
+        headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
         getTravelPlans();
@@ -338,7 +349,6 @@ function TravelPlannerHome() {
               />
             )}
           </Box>
-          {/*  */}
         </Flex>
       </Box>
     </Panel>

@@ -1,6 +1,5 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { Outlet } from "react-router-dom";
 
 import axios from "axios";
 import { Form } from "radix-ui";
@@ -23,10 +22,11 @@ const formatTime = (time) => {
 };
 
 function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
+
+  const auth = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(itinerary);
-  const auth = useAuth();
 
   const matchBadgeColor = () => {
     switch (itinerary.tag) {
@@ -66,12 +66,8 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
 
   const handleSaveItinerary = async () => {
     axios
-      .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`,
-        editingItinerary,
-        {
-          headers: {
-            Authorization: `Token ${auth.token}`,
-          },
+      .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, editingItinerary, {
+          headers: { Authorization: `Token ${auth.token}` },
         })
       .then((response) => {
         onUpdate(editingItinerary); // Notify parent component about the update
@@ -85,9 +81,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   const handleDeleteItinerary = async () => {
     axios
       .delete(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-        },
+        headers: { Authorization: `Token ${auth.token}` },
       })
       .then(() => {
         onUpdate(editingItinerary); // Notify parent component about the update
@@ -353,15 +347,15 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Start</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
+                  {!(itinerary.date && itinerary.start_time) && (
+                    <Text size="3">
+                      -
+                    </Text>
+                  )}
                   <Text size="3"> {itinerary.date} </Text>
                   {itinerary.start_time && (
                     <Text size="3">
                       {formatTime(itinerary.start_time)}
-                    </Text>
-                  )}
-                  {!(itinerary.date && itinerary.start_time) && (
-                    <Text size="3">
-                      -
                     </Text>
                   )}
                 </Grid>
@@ -372,15 +366,15 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">End</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
+                  {!(itinerary.date && itinerary.end_time) && (
+                    <Text size="3">
+                      -
+                    </Text>
+                  )}
                   <Text size="3"> {itinerary.date} </Text>
                   {itinerary.end_time && (
                     <Text size="3">
                       {formatTime(itinerary.end_time)}
-                    </Text>
-                  )}
-                  {!(itinerary.date && itinerary.end_time) && (
-                    <Text size="3">
-                      -
                     </Text>
                   )}
                 </Grid>
