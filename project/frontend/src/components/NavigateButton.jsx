@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import "@radix-ui/themes/styles.css";
+
 import { Text, Button, Flex, Box } from "@radix-ui/themes";
 
 function NavigateButton({ url, label }) {

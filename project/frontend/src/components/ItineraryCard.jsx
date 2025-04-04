@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import axios from "axios";
 import { Form } from "radix-ui";
 import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButton, Dialog, TextField, Grid, TextArea, Select } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+
 
 import * as Icons from "../assets/Icons";
 import { useAuth } from "../hooks/AuthProvider";
@@ -38,6 +38,8 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
         return "orange";
       case "food":
         return "red";
+      case "other":
+        return "purple";
       default:
         return "gray";
     }
@@ -53,6 +55,14 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
       [name]: value,
     });
   };
+
+  const updateTagSelection = (value) => {
+    console.log("Selected tag:", value);
+    setEditingItinerary({
+      ...editingItinerary,
+      [tag]: value,
+    });
+  }
 
   const handleSaveItinerary = async () => {
     axios
@@ -91,7 +101,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   return (
     <Box asChild>
       <Card>
-        <Flex p="20px" direction="column" gap="30px" align="start">
+        <Flex direction="column" gap="30px" align="start" px="20px" py="10px">
           <Flex width="100%" direction="row" justify="between" align="center" gap="20px">
             <Heading as="h3" size="6" weight="medium">{itinerary.activity}</Heading>
             <Flex>
@@ -109,131 +119,48 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                     </IconButton>
                   </Dialog.Trigger>
                   <Dialog.Content size="3" maxWidth="600px">
-                    <Box asChild p="20px">
+                    <Box asChild p="10px">
                       <Dialog.Title>Edit Itinerary</Dialog.Title>
                     </Box>
-                    <Dialog.Description>
-                      <Form.Root className="FormRoot">
-                        <Flex direction="column" gap="20px" px="20px">
+                    <Dialog.Description></Dialog.Description>
+                    <Form.Root className="FormRoot">
+                      <Flex direction="column" gap="20px" px="10px">
 
-                          <Form.Field name="activity">
+                        <Form.Field name="activity">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px" >
+                              <Text size="2" weight="medium">Activity</Text>
+                            </Box>
+                          </Form.Label>
+                          <Form.Control
+                            asChild
+                            type="text"
+                            value={editingItinerary.activity}
+                            onChange={updateEditingItinerary}>
+                            <Box asChild height="40px">
+                              <TextField.Root>
+                                <TextField.Slot />
+                                <TextField.Slot >
+                                  <Text size="1" color="gray" mr="4px">
+                                    {editingItinerary.activity.length} / 60
+                                  </Text>
+                                </TextField.Slot>
+                              </TextField.Root>
+                            </Box>
+                          </Form.Control>
+                        </Form.Field>
+
+                        <Grid flow="column" gap="20px" columns={2}>
+                          <Form.Field name="date">
                             <Form.Label asChild>
                               <Box asChild mb="6px" >
-                                <Text size="2" weight="medium">Activity</Text>
+                                <Text size="2" weight="medium">Start Date</Text>
                               </Box>
                             </Form.Label>
                             <Form.Control
                               asChild
-                              type="text"
-                              value={editingItinerary.activity}
-                              onChange={updateEditingItinerary}>
-                              <Box asChild height="40px">
-                                <TextField.Root>
-                                  <TextField.Slot />
-                                  <TextField.Slot >
-                                    <Text size="1" color="gray" mr="4px">
-                                      {editingItinerary.activity.length} / 60
-                                    </Text>
-                                  </TextField.Slot>
-                                </TextField.Root>
-                              </Box>
-                            </Form.Control>
-                          </Form.Field>
-
-                          <Grid flow="column" gap="20px" columns={2}>
-                            <Form.Field name="date">
-                              <Form.Label asChild>
-                                <Box asChild mb="6px" >
-                                  <Text size="2" weight="medium">Start Date</Text>
-                                </Box>
-                              </Form.Label>
-                              <Form.Control
-                                asChild
-                                type="date"
-                                value={editingItinerary.date}
-                                onChange={updateEditingItinerary}>
-                                <Box asChild height="40px">
-                                  <TextField.Root>
-                                    <TextField.Slot />
-                                    <TextField.Slot />
-                                  </TextField.Root>
-                                </Box>
-                              </Form.Control>
-                            </Form.Field>
-
-                            <Form.Field name="start_time">
-                              <Form.Label asChild>
-                                <Box asChild mb="6px" >
-                                  <Text size="2" weight="medium">Start Time</Text>
-                                </Box>
-                              </Form.Label>
-                              <Form.Control
-                                asChild
-                                type="time"
-                                value={editingItinerary.start_time}
-                                onChange={updateEditingItinerary}>
-                                <Box asChild height="40px">
-                                  <TextField.Root>
-                                    <TextField.Slot />
-                                    <TextField.Slot />
-                                  </TextField.Root>
-                                </Box>
-                              </Form.Control>
-                            </Form.Field>
-                          </Grid>
-
-                          <Grid flow="column" gap="20px" columns={2}>
-                            <Form.Field name="date">
-                              <Form.Label asChild>
-                                <Box asChild mb="6px" >
-                                  <Text size="2" weight="medium">End Date</Text>
-                                </Box>
-                              </Form.Label>
-                              <Form.Control
-                                asChild
-                                type="date"
-                                value={editingItinerary.date}
-                                onChange={updateEditingItinerary}>
-                                <Box asChild height="40px">
-                                  <TextField.Root>
-                                    <TextField.Slot />
-                                    <TextField.Slot />
-                                  </TextField.Root>
-                                </Box>
-                              </Form.Control>
-                            </Form.Field>
-
-                            <Form.Field name="end_time">
-                              <Form.Label asChild>
-                                <Box asChild mb="6px" >
-                                  <Text size="2" weight="medium">End Time</Text>
-                                </Box>
-                              </Form.Label>
-                              <Form.Control
-                                asChild
-                                type="time"
-                                value={editingItinerary.end_time}
-                                onChange={updateEditingItinerary}>
-                                <Box asChild height="40px">
-                                  <TextField.Root>
-                                    <TextField.Slot />
-                                    <TextField.Slot />
-                                  </TextField.Root>
-                                </Box>
-                              </Form.Control>
-                            </Form.Field>
-                          </Grid>
-
-                          <Form.Field name="location">
-                            <Form.Label asChild>
-                              <Box asChild mb="6px" >
-                                <Text size="2" weight="medium">Location</Text>
-                              </Box>
-                            </Form.Label>
-                            <Form.Control
-                              asChild
-                              type="text"
-                              value={editingItinerary.location}
+                              type="date"
+                              value={editingItinerary.date}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
                                 <TextField.Root>
@@ -244,62 +171,140 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             </Form.Control>
                           </Form.Field>
 
-                          <Form.Field name="notes">
+                          <Form.Field name="start_time">
                             <Form.Label asChild>
                               <Box asChild mb="6px" >
-                                <Text size="2" weight="medium">Notes</Text>
+                                <Text size="2" weight="medium">Start Time</Text>
                               </Box>
                             </Form.Label>
                             <Form.Control
                               asChild
-                              type="text"
-                              value={editingItinerary.notes}
-                              onChange={updateEditingItinerary}>
-                              <Box asChild height="100px" p="2px">
-                                <TextArea size="2" />
-                              </Box>
-                            </Form.Control>
-                          </Form.Field>
-
-                          <Form.Field name="tag">
-                            <Form.Label asChild>
-                              <Box asChild mb="6px" >
-                                <Text size="2" weight="medium">Tag</Text>
-                              </Box>
-                            </Form.Label>
-                            <Form.Control
-                              asChild
-                              type="text"
-                              value={editingItinerary.tag}
+                              type="time"
+                              value={editingItinerary.start_time}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
-                                <Select.Root defaultValue="visit">
-                                  <Select.Trigger />
-                                  <Select.Content>
-                                    <Select.Item value="visit">Vist</Select.Item>
-                                    <Select.Item value="food">Food</Select.Item>
-                                    <Select.Item value="accommodation">Accommdation</Select.Item>
-                                    <Select.Item value="transit">Transit</Select.Item>
-                                    <Select.Item value="other">Other</Select.Item>
-                                  </Select.Content>
-                                </Select.Root>
+                                <TextField.Root>
+                                  <TextField.Slot />
+                                  <TextField.Slot />
+                                </TextField.Root>
                               </Box>
                             </Form.Control>
                           </Form.Field>
-                        </Flex>
+                        </Grid>
 
-                        <Flex gap="16px" mt="30px" justify="end">
-                          <Dialog.Close>
-                            <Button size="3" variant="soft" color="gray">
-                              Cancel
-                            </Button>
-                          </Dialog.Close>
-                          <Button size="3" variant="solid" onClick={handleSaveItinerary}>
-                            Save
+                        <Grid flow="column" gap="20px" columns={2}>
+                          <Form.Field name="date">
+                            <Form.Label asChild>
+                              <Box asChild mb="6px" >
+                                <Text size="2" weight="medium">End Date</Text>
+                              </Box>
+                            </Form.Label>
+                            <Form.Control
+                              asChild
+                              type="date"
+                              value={editingItinerary.date}
+                              onChange={updateEditingItinerary}>
+                              <Box asChild height="40px">
+                                <TextField.Root>
+                                  <TextField.Slot />
+                                  <TextField.Slot />
+                                </TextField.Root>
+                              </Box>
+                            </Form.Control>
+                          </Form.Field>
+
+                          <Form.Field name="end_time">
+                            <Form.Label asChild>
+                              <Box asChild mb="6px" >
+                                <Text size="2" weight="medium">End Time</Text>
+                              </Box>
+                            </Form.Label>
+                            <Form.Control
+                              asChild
+                              type="time"
+                              value={editingItinerary.end_time}
+                              onChange={updateEditingItinerary}>
+                              <Box asChild height="40px">
+                                <TextField.Root>
+                                  <TextField.Slot />
+                                  <TextField.Slot />
+                                </TextField.Root>
+                              </Box>
+                            </Form.Control>
+                          </Form.Field>
+                        </Grid>
+
+                        <Form.Field name="location">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px" >
+                              <Text size="2" weight="medium">Location</Text>
+                            </Box>
+                          </Form.Label>
+                          <Form.Control
+                            asChild
+                            type="text"
+                            value={editingItinerary.location}
+                            onChange={updateEditingItinerary}>
+                            <Box asChild height="40px">
+                              <TextField.Root>
+                                <TextField.Slot />
+                                <TextField.Slot />
+                              </TextField.Root>
+                            </Box>
+                          </Form.Control>
+                        </Form.Field>
+
+                        <Form.Field name="notes">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px" >
+                              <Text size="2" weight="medium">Notes</Text>
+                            </Box>
+                          </Form.Label>
+                          <Form.Control
+                            asChild
+                            type="text"
+                            value={editingItinerary.notes}
+                            onChange={updateEditingItinerary}>
+                            <Box asChild height="100px" p="2px">
+                              <TextArea size="2" />
+                            </Box>
+                          </Form.Control>
+                        </Form.Field>
+
+                        <Form.Field name="tag">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px" >
+                              <Text size="2" weight="medium">Tag</Text>
+                            </Box>
+                          </Form.Label>
+                          <Box asChild height="40px">
+                            <Select.Root defaultValue="no-tag" onValueChange={updateTagSelection}>
+                              <Select.Trigger radius="medium" />
+                              <Select.Content>
+                                <Select.Item value="no-tag">No tag</Select.Item>
+                                <Select.Item value="visit">Visit</Select.Item>
+                                <Select.Item value="food">Food</Select.Item>
+                                <Select.Item value="accommodation">Accommdation</Select.Item>
+                                <Select.Item value="transit">Transit</Select.Item>
+                                <Select.Item value="other">Other</Select.Item>
+                              </Select.Content>
+                            </Select.Root>
+                          </Box>
+                        </Form.Field>
+                      </Flex>
+
+                      <Flex gap="16px" mt="20px" justify="end">
+                        <Dialog.Close>
+                          <Button size="3" variant="soft" color="gray">
+                            Cancel
                           </Button>
-                        </Flex>
-                      </Form.Root>
-                    </Dialog.Description>
+                        </Dialog.Close>
+                        <Button size="3" variant="solid" onClick={handleSaveItinerary}>
+                          Save
+                        </Button>
+                      </Flex>
+                    </Form.Root>
+
                   </Dialog.Content>
                 </Dialog.Root>
 
@@ -315,17 +320,17 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                     </IconButton>
                   </Dialog.Trigger>
                   <Dialog.Content size="3" maxWidth="600px">
-                    <Box asChild p="20px" pb="0px">
+                    <Box asChild p="10px" pb="0px">
                       <Dialog.Title>Delete Itinerary</Dialog.Title>
                     </Box>
 
-                    <Box asChild px="20px">
+                    <Box asChild px="10px">
                       <Dialog.Description >
                         Are you sure you want to delete this itinerary? This action cannot be undone.
                       </Dialog.Description>
                     </Box>
 
-                    <Flex gap="16px" mt="30px" justify="end">
+                    <Flex gap="16px" mt="20px" justify="end">
                       <Dialog.Close>
                         <Button size="3" variant="soft" color="gray">
                           Cancel
@@ -345,18 +350,40 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
           <DataList.Root size="3">
 
             <DataList.Item>
-              <DataList.Label minWidth="88px">Date</DataList.Label>
+              <DataList.Label minWidth="88px">Start</DataList.Label>
               <DataList.Value>
-                <Text size="3">{itinerary.date}</Text>
+                <Grid flow="column" gap="20px" columns={2}>
+                  <Text size="3"> {itinerary.date} </Text>
+                  {itinerary.start_time && (
+                    <Text size="3">
+                      {formatTime(itinerary.start_time)}
+                    </Text>
+                  )}
+                  {!(itinerary.date && itinerary.start_time) && (
+                    <Text size="3">
+                      -
+                    </Text>
+                  )}
+                </Grid>
               </DataList.Value>
             </DataList.Item>
 
             <DataList.Item>
-              <DataList.Label minWidth="88px">Time</DataList.Label>
+              <DataList.Label minWidth="88px">End</DataList.Label>
               <DataList.Value>
-                <Text size="3">
-                  {itinerary.start_time} - {itinerary.end_time}
-                </Text>
+                <Grid flow="column" gap="20px" columns={2}>
+                  <Text size="3"> {itinerary.date} </Text>
+                  {itinerary.end_time && (
+                    <Text size="3">
+                      {formatTime(itinerary.end_time)}
+                    </Text>
+                  )}
+                  {!(itinerary.date && itinerary.end_time) && (
+                    <Text size="3">
+                      -
+                    </Text>
+                  )}
+                </Grid>
               </DataList.Value>
             </DataList.Item>
 
@@ -364,7 +391,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Location</DataList.Label>
               <DataList.Value>
                 <Link target="_blank" href="https://workos.com">
-                  <Text size="3">{itinerary.location}</Text>
+                  <Text size="3">{itinerary.location || "-"}</Text>
                 </Link>
               </DataList.Value>
             </DataList.Item>
@@ -372,7 +399,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
             <DataList.Item>
               <DataList.Label minWidth="88px">Notes</DataList.Label>
               <DataList.Value>
-                <Text size="3">{itinerary.notes}</Text>
+                <Text size="3">{itinerary.notes || "-"}</Text>
               </DataList.Value>
             </DataList.Item>
 
@@ -380,7 +407,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Tag</DataList.Label>
               <DataList.Value>
                 <Badge color={matchBadgeColor()} variant="soft" radius="medium" size="2">
-                  {itinerary.tag}
+                  {itinerary.tag || "No Tag"}
                 </Badge>
               </DataList.Value>
             </DataList.Item>

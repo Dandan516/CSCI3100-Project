@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet } from "react-router-dom";
-import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, Inset } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu } from "@radix-ui/themes";
+
 import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
@@ -9,58 +9,119 @@ import axios from 'axios';
 import Panel from '../components/Panel';
 import PreviewFrame from '../components/PreviewFrame';
 import { useAuth } from "../hooks/AuthProvider";
+import * as Icons from '../assets/Icons';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 function TravelPlannerHome() {
 
   const auth = useAuth();
+  const navigate = useNavigate();
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newTravelPlanTitle, setNewTravelPlanTitle] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const handleOpenDeleteDialog = (e) => {
+    e.preventDefault();
+    setIsDeleteDialogOpen(true);
+  };
 
   // Row Data: The data to be displayed.
   const [travelPlans, setTravelPlans] = useState([]);
 
   // Column Definitions: Defines the columns to be displayed.
-  const [colDefs, setColDefs] = useState([
-    {
-      field: "id",
-      resizable: false,
-      sortable: true,
-      flex: 0.5,
-      cellDataType: 'number',
-    },
-    {
-      field: "title",
-      resizable: false,
-      sortable: true,
-      flex: 2,
-      cellDataType: 'text',
-    },
-    {
-      field: "start_date",
-      resizable: false,
-      sortable: true,
-      flex: 1,
-      cellDataType: 'dateString',
-    },
-    {
-      field: "end_date",
-      resizable: false,
-      sortable: true,
-      flex: 1,
-      cellDataType: 'dateString',
-    },
-    {
-      field: "description",
-      resizable: false,
-      sortable: true,
-      flex: 2,
-      cellDataType: 'text',
-    },
-  ]);
+  const colDefs = useMemo(() => {
+    return [
+      {
+        field: "id",
+        resizable: false,
+        sortable: true,
+        flex: 0.5,
+        cellDataType: 'number',
+      },
+      {
+        field: "title",
+        resizable: false,
+        sortable: true,
+        flex: 1.5,
+        cellDataType: 'text',
+      },
+      {
+        field: "startDate",
+        resizable: false,
+        sortable: true,
+        flex: 1,
+        cellDataType: 'dateString',
+      },
+      {
+        field: "endDate",
+        resizable: false,
+        sortable: true,
+        flex: 1,
+        cellDataType: 'dateString',
+      },
+      {
+        field: "description",
+        resizable: false,
+        sortable: false,
+        flex: 2,
+        cellDataType: 'text',
+      },
+      {
+        field: "actions",
+        resizable: false,
+        sortable: false,
+        flex: 0.6,
+        cellRenderer: (params) => {
+          return (
+            <Flex width="100%" height="100%" align="center" justify="between">
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <IconButton variant="ghost" color="gray" size="3">
+                    <Icons.DotsHorizontal />
+                  </IconButton>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item onClick={() => navigate(`/travel/${params.data.id}`)}>
+                    View
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item color="red" onClick={handleOpenDeleteDialog}>
+                    Delete
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+
+              <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <Dialog.Content size="3" maxWidth="600px">
+                  <Box asChild p="10px" pb="0px">
+                    <Dialog.Title>Delete Itinerary</Dialog.Title>
+                  </Box>
+
+                  <Box asChild px="10px">
+                    <Dialog.Description>
+                      Are you sure you want to delete this travel plan? This action cannot be undone.
+                    </Dialog.Description>
+                  </Box>
+
+                  <Flex gap="16px" mt="20px" justify="end">
+                    <Dialog.Close>
+                      <Button size="3" variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </Dialog.Close>
+                    <Button size="3" variant="solid" color="red" onClick={handleDeleteTravelPlan.bind(this, params.data.id)}>
+                      Delete
+                    </Button>
+                  </Flex>
+                </Dialog.Content>
+              </Dialog.Root>
+            </Flex>
+          );
+        },
+      },
+    ];
+  });
 
   const getTravelPlans = async () => {
     axios
@@ -73,8 +134,8 @@ function TravelPlannerHome() {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          start_date: item.start_date,
-          end_date: item.end_date,
+          startDate: item.start_date,
+          endDate: item.end_date,
           description: item.description,
         }));
         setTravelPlans(data);
@@ -101,10 +162,26 @@ function TravelPlannerHome() {
       })
       .then(response => {
         setNewTravelPlanTitle("");
-        setIsDialogOpen(false);
+        setIsCreateDialogOpen(false);
         getTravelPlans();
       });
 
+  };
+
+  const handleDeleteTravelPlan = async (id) => {
+    axios
+      .delete(`${import.meta.env.VITE_API_URL}travel/${id}/`, {
+        headers: {
+          Authorization: `Token ${auth.token}`,
+        },
+      })
+      .then(response => {
+        getTravelPlans();
+      })
+      .catch(error => {
+        console.error("Error deleting travel plan:", error);
+      });
+    setIsDeleteDialogOpen(false);
   };
 
   const gridTheme = themeQuartz
@@ -168,7 +245,7 @@ function TravelPlannerHome() {
                   </Text>
                 </Box>
 
-                <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
 
                   <Dialog.Trigger asChild>
                     <Box asChild height="60px" px="30px">

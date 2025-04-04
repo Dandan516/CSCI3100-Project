@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+
 import PropTypes from 'prop-types';
 
 import NavigateButton from './NavigateButton';

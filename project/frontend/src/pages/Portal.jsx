@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Flex, Box, Card } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+
 
 import NavigateButton from '../components/NavigateButton';
 

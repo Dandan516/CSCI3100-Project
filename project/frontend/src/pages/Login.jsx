@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
-import "@radix-ui/themes/styles.css";
+
 
 import * as Icons from '../assets/Icons';
 import { useAuth } from "../hooks/AuthProvider";

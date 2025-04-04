@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Text, Flex, Box, Avatar, AlertDialog, IconButton, TextField, Table, Button } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+
 import PropTypes from 'prop-types';
 
 import Panel from '../components/Panel';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
+
 import PropTypes from 'prop-types';
 
 import Panel from '../components/Panel';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import "@radix-ui/themes/styles.css";
+
 import { Text, Button, Flex, Box, Card, TextField, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';

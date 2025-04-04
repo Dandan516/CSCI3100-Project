@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import "@radix-ui/themes/styles.css";
+
 import { Text, Inset, Flex, Box, Card } from "@radix-ui/themes";
 
 function PreviewFrame({ linkUrl, title, imageUrl }) {
