@@ -5,7 +5,7 @@ import axios from "axios";
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+const AuthProvider = () => {
   const [user, setUser] = useState({});
   const [token, setToken] = useState(localStorage.getItem("site") || "");
   const navigate = useNavigate();

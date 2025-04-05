@@ -45,7 +45,7 @@ function Profile() {
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Joined</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.date_joined || "-"}</Table.Cell>
+                  <Table.Cell>{auth.user?.date_joined ? new Date(auth.user.date_joined).toISOString().split('T')[0] : "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
                   <Table.RowHeaderCell>Last Login</Table.RowHeaderCell>

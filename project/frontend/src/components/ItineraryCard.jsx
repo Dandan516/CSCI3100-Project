@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import axios from "axios";
 import { Form } from "radix-ui";
-import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButton, Dialog, TextField, Grid, TextArea, Select } from "@radix-ui/themes";
+import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButton, Dialog, TextField, Grid, TextArea, Select, Tooltip } from "@radix-ui/themes";
 
 
 import * as Icons from "../assets/Icons";
@@ -60,15 +60,15 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
     console.log("Selected tag:", value);
     setEditingItinerary({
       ...editingItinerary,
-      [tag]: value,
+      tag: value,
     });
   }
 
   const handleSaveItinerary = async () => {
     axios
       .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, editingItinerary, {
-          headers: { Authorization: `Token ${auth.token}` },
-        })
+        headers: { Authorization: `Token ${auth.token}` },
+      })
       .then((response) => {
         onUpdate(editingItinerary); // Notify parent component about the update
         setIsEditDialogOpen(false); // Close the dialog
@@ -95,7 +95,8 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   return (
     <Box asChild>
       <Card>
-        <Flex direction="column" gap="30px" align="start" px="20px" py="10px">
+        <Flex direction="column" gap="30px" align="start" p="20px" pt="10px">
+
           <Flex width="100%" direction="row" justify="between" align="center" gap="20px">
             <Heading as="h3" size="6" weight="medium">{itinerary.activity}</Heading>
             <Flex>
@@ -103,15 +104,17 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <Grid flow="column" gap="16px" columns={2}>
 
                 <Dialog.Root open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-                  <Dialog.Trigger asChild>
-                    <IconButton
-                      variant="soft"
-                      radius="medium"
-                      color="gray"
-                      size="3">
-                      <Icons.Pencil />
-                    </IconButton>
-                  </Dialog.Trigger>
+                  <Tooltip content="Edit itinerary">
+                    <Dialog.Trigger asChild>
+                      <IconButton
+                        variant="soft"
+                        radius="medium"
+                        color="gray"
+                        size="3">
+                        <Icons.Pencil />
+                      </IconButton>
+                    </Dialog.Trigger>
+                  </Tooltip>
                   <Dialog.Content size="3" maxWidth="600px">
                     <Box asChild p="10px">
                       <Dialog.Title>Edit Itinerary</Dialog.Title>
@@ -302,17 +305,18 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                   </Dialog.Content>
                 </Dialog.Root>
 
-
                 <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-                  <Dialog.Trigger asChild>
-                    <IconButton
-                      variant="soft"
-                      color="red"
-                      radius="medium"
-                      size="3">
-                      <Icons.Trash />
-                    </IconButton>
-                  </Dialog.Trigger>
+                  <Tooltip content="Delete itinerary">
+                    <Dialog.Trigger asChild>
+                      <IconButton
+                        variant="soft"
+                        color="red"
+                        radius="medium"
+                        size="3">
+                        <Icons.Trash />
+                      </IconButton>
+                    </Dialog.Trigger>
+                  </Tooltip>
                   <Dialog.Content size="3" maxWidth="600px">
                     <Box asChild p="10px" pb="0px">
                       <Dialog.Title>Delete Itinerary</Dialog.Title>
@@ -347,7 +351,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Start</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
-                  {!(itinerary.date && itinerary.start_time) && (
+                  {!(itinerary.date || itinerary.start_time) && (
                     <Text size="3">
                       -
                     </Text>
@@ -366,7 +370,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">End</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
-                  {!(itinerary.date && itinerary.end_time) && (
+                  {!(itinerary.date || itinerary.end_time) && (
                     <Text size="3">
                       -
                     </Text>

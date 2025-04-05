@@ -64,9 +64,8 @@ function Panel({ children }) {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(localStorage.getItem("sidebarCollapsed") || true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const toggleSidebar = () => {
-    localStorage.setItem("sidebar", !isSidebarCollapsed);
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
@@ -78,10 +77,8 @@ function Panel({ children }) {
     const handleResize = () => {
       if (window.innerWidth < 800 || localStorage.getItem("sidebarCollapsed")) {
         setIsSidebarCollapsed(true);
-        localStorage.setItem("sidebarCollapsed", true);
       } else {
         setIsSidebarCollapsed(false);
-        localStorage.setItem("sidebarCollapsed", false);
       }
     };
 
