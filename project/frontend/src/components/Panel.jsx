@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button, Link } from "@radix-ui/themes";
+import { Flex, Box, IconButton, Separator, ScrollArea, TextField, Text, Card, Avatar, Button, Tooltip, DropdownMenu } from "@radix-ui/themes";
 
 import PropTypes from 'prop-types';
 
@@ -39,19 +39,21 @@ function Sidebar() {
       <Box asChild>
         <Card asChild size="1" variant="ghost">
           <Button variant="ghost" onClick={() => navigate("/profile")}>
-            <Flex direction="row" gap="14px" align="center" justify="start" display="flex">
-              <Avatar
-                size="4"
-                src={auth.user?.avatarUrl}
-                radius="full"
-                fallback="T"
-              />
-              <Box asChild maxWidth="140px">
-                <Text size="2" weight="medium" highContrast truncate>
-                  {auth.user?.email}
-                </Text>
-              </Box>
-            </Flex>
+            <Tooltip content="View Profile">
+              <Flex direction="row" gap="14px" align="center" justify="start" display="flex">
+                <Avatar
+                  size="4"
+                  src={auth.user?.avatarUrl}
+                  radius="full"
+                  fallback="T"
+                />
+                <Box asChild maxWidth="140px">
+                  <Text size="2" weight="medium" highContrast truncate>
+                    {auth.user?.email}
+                  </Text>
+                </Box>
+              </Flex>
+            </Tooltip>
           </Button>
         </Card>
       </Box>
@@ -120,12 +122,33 @@ function Panel({ children }) {
                 </TextField.Root>
               </Box>
             </Flex>
-            <Avatar
-              size="4"
-              src={auth.user?.avatarUrl}
-              radius="full"
-              fallback="T"
-            />
+
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger asChild>
+                <Button style={{ all: 'unset', cursor: 'pointer' }}>
+                  <Avatar
+                    size="4"
+                    src={auth.user?.avatarUrl}
+                    radius="full"
+                    fallback="T"
+                  />
+                </Button>
+              </DropdownMenu.Trigger>
+              <Box asChild height="auto">
+                <DropdownMenu.Content align="end">
+                  <DropdownMenu.Item onClick={() => navigate('/profile')}>
+                    <Icons.Person />Profile
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onClick={() => navigate('/settings')}>
+                    <Icons.Gear />Settings
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Separator />
+                  <DropdownMenu.Item color="red" onClick={() => auth.logout()}>
+                    <Icons.Exit />Sign out
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </Box>
+            </DropdownMenu.Root>
           </Flex>
 
           <Separator orientation="horizontal" size="4" />

@@ -32,10 +32,6 @@ function Profile() {
                   <Table.Cell>{auth.user?.username || "-"}</Table.Cell>
                 </Table.Row>
                 <Table.Row>
-                  <Table.RowHeaderCell>ID</Table.RowHeaderCell>
-                  <Table.Cell>{auth.user?.id || "-"}</Table.Cell>
-                </Table.Row>
-                <Table.Row>
                   <Table.RowHeaderCell>Name</Table.RowHeaderCell>
                   <Table.Cell>{auth.user?.first_name || auth.user?.last_name ? `${auth.user.first_name} ${auth.user.last_name}` : "-"}</Table.Cell>
                 </Table.Row>
@@ -90,6 +86,7 @@ function Profile() {
               </Flex>
             </AlertDialog.Content>
           </AlertDialog.Root>
+          
         </Flex>
       </Box>
     </Panel>

@@ -97,14 +97,14 @@ function TravelPlannerHome() {
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
                   <DropdownMenu.Item onClick={() => navigate(`/travel/${params.data.id}`)}>
-                    View
+                    <Icons.EyeOpen />View
                   </DropdownMenu.Item>
                   <DropdownMenu.Item onClick={() => navigate(`/travel/`)}>
-                    Share
+                    <Icons.Share2 />Share
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
                   <DropdownMenu.Item color="red" onClick={handleOpenDeleteDialog}>
-                    Delete
+                    <Icons.Trash15 />Delete
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
