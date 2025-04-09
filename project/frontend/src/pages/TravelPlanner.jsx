@@ -20,6 +20,7 @@ function TravelPlanner() {
 
   const [isEditTravelDialogOpen, setIsEditTravelDialogOpen] = useState(false);
   const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);
+  const [isInviteCollaboratorDialogOpen, setIsInviteCollaboratorDialogOpen] = useState(false);
 
   const [travelPlan, setTravelPlan] = useState({
     id: 0,
@@ -28,6 +29,9 @@ function TravelPlanner() {
     end_date: null,
     description: '',
     itineraries: [],
+    collaborators: [],
+    location: '',
+    image: null,
   });
 
   const [editingTravelPlan, setEditingTravelPlan] = useState({
@@ -37,6 +41,9 @@ function TravelPlanner() {
     end_date: null,
     description: '',
     itineraries: [],
+    collaborators: [],
+    location: '',
+    image: null,
   });
 
   const [newItinerary, setNewItinerary] = useState({
@@ -47,6 +54,11 @@ function TravelPlanner() {
     location: "",
     notes: "",
     tag: null,
+  });
+
+  const [newCollaborator, setNewCollaborator] = useState({
+    email: "",
+    status: "pending",
   });
 
   const getTravelPlan = async () => {
@@ -70,6 +82,9 @@ function TravelPlanner() {
     // Enforce title length limit
     if (name === "title" && value.length > 60) {
       return; // Prevent updating if the title exceeds 60 characters
+    }
+    if (name === "description" && value.length > 2000) {
+      return; // Prevent updating if the description exceeds 2000 characters
     }
 
     setEditingTravelPlan({
@@ -127,6 +142,10 @@ function TravelPlanner() {
       });
   };
 
+  useEffect(() => {
+    getTravelPlan();
+  }, [params.id]);
+
   const getDailyItinerary = (date) => {
     if (!date || !(date instanceof Date)) {
       return [];
@@ -139,9 +158,21 @@ function TravelPlanner() {
     return filteredItineraries;
   };
 
-  useEffect(() => {
-    getTravelPlan();
-  }, [params.id]);
+  const pendingCollaborators = travelPlan?.collaborators?.filter((collaborator) => collaborator.status === "pending") || [];
+
+  const handleInviteCollaborator = async () => {
+    axios
+      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.title}/collaborators/`, newCollaborator, {
+        headers: { Authorization: `Token ${auth.token}` },
+      })
+      .then((response) => {
+        alert("Collaborator invited!", response.data);
+        getTravelPlan();
+      })
+      .catch((error) => {
+        console.error("Error adding itinerary:", error);
+      });
+  }
 
   return (
     <Panel>
@@ -156,123 +187,183 @@ function TravelPlanner() {
             </Heading>
 
             {/* Edit Travel Plan Button */}
+            <Flex direction="row" gap="20px" align="center">
 
-            <Dialog.Root open={isEditTravelDialogOpen} onOpenChange={setIsEditTravelDialogOpen}>
-              <Box asChild width="80px" height="40px">
-                <Button size="3" variant="soft" radius="medium" onClick={() => setIsEditTravelDialogOpen(true)}>
-                  Edit
-                </Button>
-              </Box>
-              <Dialog.Content size="3" maxWidth="600px">
-                <Box asChild p="10px" pb="20px">
-                  <Dialog.Title>Edit Travel Plan</Dialog.Title>
+              <Dialog.Root open={isEditTravelDialogOpen} onOpenChange={setIsEditTravelDialogOpen}>
+                <Box asChild width="80px" height="40px">
+                  <Button size="3" variant="soft" radius="medium" onClick={() => setIsEditTravelDialogOpen(true)}>
+                    Edit
+                  </Button>
                 </Box>
-                <Dialog.Description></Dialog.Description>
-                <Form.Root>
-                  <Flex direction="column" gap="20px" px="10px">
-                    <Form.Field name="title">
-                      <Form.Label asChild>
-                        <Box asChild mb="6px">
-                          <Text size="2" weight="medium">Title</Text>
-                        </Box>
-                      </Form.Label>
-                      <Form.Control
-                        asChild
-                        type="text"
-                        name="title"
-                        value={editingTravelPlan.title}
-                        onChange={updateEditingTravelPlan}>
-                        <Box asChild height="40px">
-                          <TextField.Root>
-                            <TextField.Slot />
-                            <TextField.Slot >
-                              <Text size="1" color="gray" mr="4px">
-                                {editingTravelPlan.title.length} / 60
-                              </Text>
-                            </TextField.Slot>
-                          </TextField.Root>
-                        </Box>
-                      </Form.Control>
-                    </Form.Field>
-
-                    <Grid flow="column" gap="20px" columns={2}>
-                      <Form.Field name="start_date">
+                <Dialog.Content size="3" maxWidth="600px">
+                  <Box asChild p="10px" pb="20px">
+                    <Dialog.Title>Edit Travel Plan</Dialog.Title>
+                  </Box>
+                  <Dialog.Description></Dialog.Description>
+                  <Form.Root>
+                    <Flex direction="column" gap="20px" px="10px">
+                      <Form.Field name="title">
                         <Form.Label asChild>
                           <Box asChild mb="6px">
-                            <Text size="2" weight="medium">Start Date</Text>
+                            <Text size="2" weight="medium">Title</Text>
                           </Box>
                         </Form.Label>
                         <Form.Control
                           asChild
-                          type="date"
-                          name="start_date"
-                          value={editingTravelPlan.start_date}
+                          type="text"
+                          name="title"
+                          value={editingTravelPlan.title}
                           onChange={updateEditingTravelPlan}>
                           <Box asChild height="40px">
                             <TextField.Root>
                               <TextField.Slot />
-                              <TextField.Slot />
+                              <TextField.Slot >
+                                <Text size="1" color="gray" mr="4px">
+                                  {editingTravelPlan.title.length} / 60
+                                </Text>
+                              </TextField.Slot>
                             </TextField.Root>
                           </Box>
                         </Form.Control>
                       </Form.Field>
 
-                      <Form.Field name="end_date">
+                      <Grid flow="column" gap="20px" columns={2}>
+                        <Form.Field name="start_date">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px">
+                              <Text size="2" weight="medium">Start Date</Text>
+                            </Box>
+                          </Form.Label>
+                          <Form.Control
+                            asChild
+                            type="date"
+                            name="start_date"
+                            value={editingTravelPlan.start_date}
+                            onChange={updateEditingTravelPlan}>
+                            <Box asChild height="40px">
+                              <TextField.Root>
+                                <TextField.Slot />
+                                <TextField.Slot />
+                              </TextField.Root>
+                            </Box>
+                          </Form.Control>
+                        </Form.Field>
+
+                        <Form.Field name="end_date">
+                          <Form.Label asChild>
+                            <Box asChild mb="6px">
+                              <Text size="2" weight="medium">End Date</Text>
+                            </Box>
+                          </Form.Label>
+                          <Form.Control
+                            asChild
+                            type="date"
+                            name="end_date"
+                            value={editingTravelPlan.end_date}
+                            onChange={updateEditingTravelPlan}
+                            min={editingTravelPlan.start_date}>
+                            <Box asChild height="40px">
+                              <TextField.Root>
+                                <TextField.Slot />
+                                <TextField.Slot />
+                              </TextField.Root>
+                            </Box>
+                          </Form.Control>
+                        </Form.Field>
+                      </Grid>
+
+                      <Form.Field name="description">
                         <Form.Label asChild>
                           <Box asChild mb="6px">
-                            <Text size="2" weight="medium">End Date</Text>
+                            <Text size="2" weight="medium">Description</Text>
                           </Box>
                         </Form.Label>
                         <Form.Control
                           asChild
-                          type="date"
-                          name="end_date"
-                          value={editingTravelPlan.end_date}
-                          onChange={updateEditingTravelPlan}
-                          min={editingTravelPlan.start_date}>
-                          <Box asChild height="40px">
-                            <TextField.Root>
-                              <TextField.Slot />
-                              <TextField.Slot />
-                            </TextField.Root>
+                          type="text"
+                          name="description"
+                          value={editingTravelPlan.description}
+                          onChange={updateEditingTravelPlan}>
+                          <Box asChild height="100px" p="2px">
+                            <TextArea size="2" />
                           </Box>
                         </Form.Control>
+                        <Text size="1" color="gray" mr="4px">
+                          {editingTravelPlan.description.length} / 2000
+                        </Text>
                       </Form.Field>
-                    </Grid>
-
-                    <Form.Field name="description">
-                      <Form.Label asChild>
-                        <Box asChild mb="6px">
-                          <Text size="2" weight="medium">Description</Text>
-                        </Box>
-                      </Form.Label>
-                      <Form.Control
-                        asChild
-                        type="text"
-                        name="description"
-                        value={editingTravelPlan.description}
-                        onChange={updateEditingTravelPlan}>
-                        <Box asChild height="100px" p="2px">
-                          <TextArea size="2" />
-                        </Box>
-                      </Form.Control>
-                    </Form.Field>
-                  </Flex>
-                </Form.Root>
+                    </Flex>
+                  </Form.Root>
 
 
-                <Flex gap="16px" mt="30px" justify="end">
-                  <Dialog.Close>
-                    <Button size="3" variant="soft" color="gray">
-                      Cancel
+                  <Flex gap="16px" mt="30px" justify="end">
+                    <Dialog.Close>
+                      <Button size="3" variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </Dialog.Close>
+                    <Button size="3" variant="solid" onClick={handleSaveTravelPlan}>
+                      Save
                     </Button>
-                  </Dialog.Close>
-                  <Button size="3" variant="solid" onClick={handleSaveTravelPlan}>
-                    Save
+                  </Flex>
+                </Dialog.Content>
+              </Dialog.Root>
+
+              <Dialog.Root open={isInviteCollaboratorDialogOpen} onOpenChange={setIsInviteCollaboratorDialogOpen}>
+                <Box asChild height="40px">
+                  <Button size="3" variant="soft" radius="medium" onClick={() => setIsInviteCollaboratorDialogOpen(true)}>
+                    Invite Collaborator
                   </Button>
-                </Flex>
-              </Dialog.Content>
-            </Dialog.Root>
+                </Box>
+                <Dialog.Content maxWidth="600px">
+                  <Box asChild p="10px">
+                    <Dialog.Title>Invite Collaborators</Dialog.Title>
+                  </Box>
+                  <Box asChild p="10px">
+                    <Dialog.Description size="2">
+                      Enter the email address of the users you want to invite.
+                    </Dialog.Description>
+                  </Box>
+                  <Grid flow="column" gap="20px" mx="10px">
+                    <Box asChild height="40px">
+                      <TextField.Root 
+                        name="newCollaborator" 
+                        value={newCollaborator.email} onChange={(e) => setNewCollaborator({ ...newCollaborator, email: e.target.value })}>
+                        <TextField.Slot />
+                      </TextField.Root>
+                    </Box>
+                    <Button size="3" variant="so" onClick={handleInviteCollaborator}>
+                      Invite
+                    </Button>
+                  </Grid>
+                  <Flex direction="column" gap="20px" px="10px" my="30px">
+                    <Text size="3" weight="medium">
+                      Current Collaborators ({travelPlan?.collaborators?.length || 0})
+                    </Text>
+                    {travelPlan?.collaborators?.length > 0 ? (
+                      travelPlan?.collaborators?.map((collaborator) => (
+                        <Flex key={collaborator.id} direction="row" gap="20px" align="center">
+                          <Text size="3">{collaborator.email}</Text>
+                          <Text size="3" color="gray">{collaborator.status}</Text>
+                        </Flex>
+                      ))
+                    ) : (
+                      <Flex asChild justify="center" py="40px">
+                        <Text size="3" color="gray">No collaborators available.</Text>
+                      </Flex>
+                    )}
+                  </Flex>
+                  <Flex gap="16px" mt="30px" justify="end">
+                    <Dialog.Close>
+                      <Button size="3" variant="solid">
+                        Done
+                      </Button>
+                    </Dialog.Close>
+                  </Flex>
+                </Dialog.Content>
+              </Dialog.Root>
+
+            </Flex>
 
           </Flex>
 
@@ -526,30 +617,38 @@ function TravelPlanner() {
                   ))}
                 </Flex>
               ) : (
-                <Text size="3" color="gray">No itineraries available.</Text>
+                <Flex asChild justify="center" py="60px">
+                  <Text size="3" color="gray">No itineraries available.</Text>
+                </Flex>
               )}
             </Tabs.Content>
 
             <Tabs.Content value="daily">
-              <DailyView startDate={travelPlan.start_date} endDate={travelPlan.end_date}>
-                {(selectedDate) => (
-                  getDailyItinerary(selectedDate).length > 0 ? (
-                    <Flex direction="column" gap="40px" pb="40px">
-                      {getDailyItinerary(selectedDate).map((item) => (
-                        <ItineraryCard
-                          // key={item.id}
-                          itinerary={item}
-                          travelTitle={travelPlan.title}
-                          onUpdate={getTravelPlan} />
-                      ))}
-                    </Flex>
-                  ) : (
-                    <Flex asChild justify="center" py="60px">
-                      <Text size="3" color="gray">No itineraries available.</Text>
-                    </Flex>
-                  )
-                )}
-              </DailyView>
+              {travelPlan?.itineraries?.length > 0 ? (
+                <DailyView startDate={travelPlan.start_date} endDate={travelPlan.end_date}>
+                  {(selectedDate) => (
+                    getDailyItinerary(selectedDate).length > 0 ? (
+                      <Flex direction="column" gap="40px" pb="40px">
+                        {getDailyItinerary(selectedDate).map((item) => (
+                          <ItineraryCard
+                            key={item.id}
+                            itinerary={item}
+                            travelTitle={travelPlan.title}
+                            onUpdate={getTravelPlan} />
+                        ))}
+                      </Flex>
+                    ) : (
+                      <Flex asChild justify="center" py="60px">
+                        <Text size="3" color="gray">No itineraries available.</Text>
+                      </Flex>
+                    )
+                  )}
+                </DailyView>
+              ) : (
+                <Flex asChild justify="center" py="60px">
+                  <Text size="3" color="gray">No itineraries available.</Text>
+                </Flex>
+              )}
             </Tabs.Content>
 
             <Tabs.Content value="upcoming">

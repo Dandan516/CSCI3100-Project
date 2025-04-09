@@ -10,21 +10,21 @@ const AuthProvider = () => {
   const [token, setToken] = useState(localStorage.getItem("site") || "");
   const navigate = useNavigate();
 
-  useEffect(() => {
-      if (token) {
-        axios
-          .get(`${import.meta.env.VITE_API_URL}userinfo/`, {
-            headers: { Authorization: `Token ${token}` },
-          })
-          .then((response) => {
-            setUser(response.data[0]);
-          })
-          .catch((err) => {
-            console.error("Error fetching user info:", err);
-            logout(); // Log out if token is invalid
-          });
-      }
-    }, [token]);
+  const getUserInfo = async () => {
+    if (token) {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}userinfo/`, {
+          headers: { Authorization: `Token ${token}` },
+        })
+        .then((response) => {
+          setUser(response.data[0]);
+        })
+        .catch((err) => {
+          console.error("Error fetching user info:", err);
+          logout(); // Log out if token is invalid
+        });
+    }
+  }
 
   const login = async (data) => {
     try {
@@ -51,8 +51,12 @@ const AuthProvider = () => {
     navigate("/login");
   };
 
+  useEffect(() => {
+    getUserInfo();
+  }, [token]);
+
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, getUserInfo, login, logout }}>
       <Outlet />
     </AuthContext.Provider>
   );

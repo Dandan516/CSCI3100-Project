@@ -7,3 +7,5 @@ export {default as Profile} from './Profile';
 export {default as TravelPlannerHome} from  './TravelPlannerHome';
 export {default as TravelPlanner} from './TravelPlanner';
 export {default as NotFound} from './NotFound';
+export {default as Settings} from './Settings';
+export {default as BudgetPlannerHome} from './BudgetPlannerHome';

@@ -8,6 +8,7 @@ import './index.css'
 import * as Pages from './pages/index';
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
+import { ThemeProvider } from "./hooks/ThemeProvider";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +46,10 @@ const router = createBrowserRouter([
                 element: <Pages.Profile />,
               },
               {
+                path: "/settings",
+                element: <Pages.Settings />,
+              },
+              {
                 path: "/travel/*",
                 children:
                   [
@@ -58,6 +63,20 @@ const router = createBrowserRouter([
                     },
                   ]
               },
+              {
+                path: "/budget/*",
+                children:
+                  [
+                    {
+                      path: "*",
+                      element: <Pages.BudgetPlannerHome />,
+                    },
+                    // {
+                    //   path: ":id",
+                    //   element: <Pages.BudgetPlanner />,
+                    // }
+                  ]
+              }
             ]
         },
       ]
@@ -66,9 +85,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <Theme className="theme" accentColor="indigo" grayColor="slate" radius="full" scaling="100%" appearance="dark">
+    <ThemeProvider>
       <RouterProvider router={router} />
-    </Theme>
+    </ThemeProvider>
   </StrictMode>,
 )
 

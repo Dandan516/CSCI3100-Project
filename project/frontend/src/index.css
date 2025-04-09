@@ -31,11 +31,12 @@ html, body {
 
 .ag-cell-focus,.ag-cell-no-focus{
   border:none !important;
-  }
-  .ag-cell:focus{
+}
+  
+.ag-cell:focus {
   border:none !important;
   outline: none;
-  }
+}
 
 @media (max-width: 768px) {
   .collapsed {

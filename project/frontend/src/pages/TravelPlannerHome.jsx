@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Link } from "@radix-ui/themes";
+import { useNavigate, Link } from 'react-router-dom';
+import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Card, Inset } from "@radix-ui/themes";
 
 import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
@@ -33,14 +33,6 @@ function TravelPlannerHome() {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
     return [
-      // {
-      //   field: "id",
-      //   resizable: false,
-      //   sortable: true,
-      //   flex: 0.5,
-      //   suppressMovable: true,
-      //   cellDataType: 'number',
-      // },
       {
         field: "title",
         resizable: false,
@@ -50,7 +42,7 @@ function TravelPlannerHome() {
         cellDataType: 'text',
         cellRenderer: (params) => {
           return (
-            <Link href={`/travel/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
+            <Link to={`/travel/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
               {params.data.title}
             </Link>
           );
@@ -60,7 +52,7 @@ function TravelPlannerHome() {
         field: "startDate",
         resizable: false,
         sortable: true,
-        flex: 1,
+        flex: 0.8,
         suppressMovable: true,
         cellDataType: 'dateString',
       },
@@ -68,7 +60,7 @@ function TravelPlannerHome() {
         field: "endDate",
         resizable: false,
         sortable: true,
-        flex: 1,
+        flex: 0.8,
         suppressMovable: true,
         cellDataType: 'dateString',
       },
@@ -81,14 +73,14 @@ function TravelPlannerHome() {
         cellDataType: 'text',
       },
       {
-        field: "actions",
+        field: "",
         resizable: false,
         sortable: false,
-        flex: 0.6,
+        flex: 0.3,
         suppressMovable: true,
         cellRenderer: (params) => {
           return (
-            <Flex width="100%" height="100%" align="center" justify="between">
+            <Flex width="100%" height="100%" align="center" justify="end">
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                   <IconButton variant="ghost" color="gray" size="3">
@@ -104,7 +96,7 @@ function TravelPlannerHome() {
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
                   <DropdownMenu.Item color="red" onClick={handleOpenDeleteDialog}>
-                    <Icons.Trash15 />Delete
+                    <Icons.Trash />Delete
                   </DropdownMenu.Item>
                 </DropdownMenu.Content>
               </DropdownMenu.Root>
@@ -160,6 +152,12 @@ function TravelPlannerHome() {
       });
   };
 
+  const recentTravelPlan = useMemo(() => {
+
+    return travelPlans[0];
+
+  }, [travelPlans]);
+
   // Fetch Travel Plans when the component mounts
   useEffect(() => {
     getTravelPlans();
@@ -203,154 +201,196 @@ function TravelPlannerHome() {
       fontSize: 16,
       backgroundColor: 'rgba(40, 40, 40, 0.22)',
       width: "100%",
-      height: `${travelPlans.length * 50}px`
+      height: `${travelPlans.length * 50}px`,
+      cellHorizontalPadding: 30,
+      cellVerticalPadding: 20,
     });
 
   return (
     <Panel>
-
-      <Box asChild width="100%" my="60px">
-        <Flex direction="column" align="start" gap="60px">
-          <Box asChild width="100%" p="100px">
-            <Flex
-              direction="column"
-              align="start"
-              justify="center"
-              gap="40px"
-              style={{
-                width: "100%",
-                backgroundImage: "url('/images/sky.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center", // Center the image to handle sidebar collapse
-                backgroundRepeat: "no-repeat", // Prevent tiling
-                marginTop: "-60px",
-                position: "relative", // Added for positioning the shadow
-              }}>
-              <Box
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(to right, rgba(59, 58, 58, 0.85), rgba(0, 0, 0, 0))", // Shadow effect
-                  zIndex: 1,
-                }}
-              />
-              <Flex
-                direction="column"
-                align="start"
-                justify="center"
-                gap="40px"
-                style={{
-                  position: "relative", // Ensure content is above the shadow
-                  zIndex: 2,
-                }}>
-                <Heading size="8" color="white">
-                  Travel Planner
-                </Heading >
-                <Box asChild width="100%">
-                  <Text size="5" >
-                    Plan your trips effortlessly with our travel planner.<br />
-                    Create, view, and manage your travel plans all in one place.
-                  </Text>
-                </Box>
-
-                <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-
-                  <Dialog.Trigger asChild>
-                    <Box asChild height="60px" px="30px">
-                      <Button size="3" variant="solid">
-                        <Text size="5" weight="medium">
-                          Create New Travel Plan
-                        </Text>
-                      </Button>
-                    </Box>
-                  </Dialog.Trigger>
-
-                  <Flex asChild direction="column" gap="10px">
-                    <Dialog.Content size="3" maxWidth="450px">
-                      <Box asChild p="4px">
-                        <Dialog.Title>Create New Travel Plan</Dialog.Title>
-                      </Box>
-                      <Box asChild height="40px">
-                        <TextField.Root
-                          value={newTravelPlanTitle}
-                          onChange={(e) => setNewTravelPlanTitle(e.target.value)}
-                          placeholder="Enter title for your new travel plan...">
-                          <TextField.Slot pl="8px" />
-                          <TextField.Slot pr="8px" />
-                        </TextField.Root>
-                      </Box>
-
-
-                      <Flex gap="3" mt="4" justify="end">
-                        <Dialog.Close>
-                          <Box asChild px="20px">
-                            <Button size="3" variant="soft" color="gray">
-                              Cancel
-                            </Button>
-                          </Box>
-
-                        </Dialog.Close>
-                        <Box asChild px="20px">
-                          <Button size="3" onClick={handleCreateTravelPlan}>
-                            Create
-                          </Button>
-                        </Box>
-                      </Flex>
-                    </Dialog.Content>
-                  </Flex>
-                </Dialog.Root>
-              </Flex>
-            </Flex>
-          </Box>
-
-          {travelPlans.length !== 0 && (
-            <Box asChild width="100%" px="60px">
-              <Heading size="7" weight="medium">
-                Continue planning your next journey...
-              </Heading>
+      <Box asChild width="100%" p="80px" pt="60px">
+        <Flex
+          direction="column"
+          align="start"
+          justify="center"
+          gap="40px"
+          style={{
+            width: "100%",
+            backgroundImage: "url('/images/sky.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center", // Center the image to handle sidebar collapse
+            backgroundRepeat: "no-repeat", // Prevent tiling
+            position: "relative", // Added for positioning the shadow
+          }}>
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(59, 58, 58, 0.85), rgba(0, 0, 0, 0))", // Shadow effect
+              zIndex: 1,
+            }}
+          />
+          <Flex
+            direction="column"
+            align="start"
+            justify="center"
+            gap="40px"
+            style={{
+              position: "relative", // Ensure content is above the shadow
+              zIndex: 1,
+            }}>
+            <Heading size="8" color="white">
+              Travel Planner
+            </Heading >
+            <Box asChild width="100%">
+              <Text size="5" >
+                Plan your trips effortlessly with our travel planner.<br />
+                Create, view, and manage your travel plans all in one place.
+              </Text>
             </Box>
-          )}
 
-          {travelPlans.length !== 0 && (
-            <Grid flow="column" rows="1" gap="6" px="60px">
-              {travelPlans.map((travelPlan, index) => (
-                <PreviewFrame
-                  key={index} // Added unique key prop
-                  linkUrl={`${travelPlan.id}`}
-                  title={travelPlan.title}
-                  imageUrl={travelPlan.imageUrl}
-                />
-              ))}
-            </Grid>
-          )}
-
-          <Box asChild width="100%" px="60px">
-            <Heading size="7" weight="medium">
-              All trips
-            </Heading>
-          </Box>
-
-          <Box width="100%" px="60px" style={{ overflowX: "auto" }}>
-            {travelPlans.length === 0 ? (
-              <Box asChild width={"100%"} mt="60px" mb="100px">
-                <Text size="5" weight="regular">
-                  <i>No travel plans available.</i>
-                </Text>
-              </Box>
-            ) : (
-              <AgGridReact
-                theme={gridTheme}
-                rowData={travelPlans}
-                columnDefs={colDefs}
-                domLayout="autoHeight"
-              />
-            )}
-          </Box>
+          </Flex>
         </Flex>
       </Box>
+
+      <Flex width="100%" direction="column" align="start" gap="40px" p="60px">
+
+        {travelPlans.length !== 0 && (
+          <Box asChild width="100%">
+            <Heading size="7" weight="medium">
+              Continue planning your next journey...
+            </Heading>
+          </Box>
+        )}
+
+        {recentTravelPlan && (
+          <Box asChild width="800px" height="300px">
+            <Card asChild>
+              <Link to={`${recentTravelPlan.id}`}>
+                <Grid flow="row" columns="2">
+                  <Flex
+                    direction="column"
+                    align="start"
+                    justify="start"
+                    gap="20px"
+                    p="40px"
+                    style={{
+                      boxShadow: "inset -10px 0px 10px -10px rgba(0, 0, 0, 0.3)", // Add shadow between text and image
+                      zIndex: 1,
+                    }}
+                  >
+                    <Box asChild width="100%" pb="16px">
+                      <Heading as="h3" size="6" weight="medium">
+                        {recentTravelPlan.title}
+                      </Heading>
+                    </Box>
+                    <Flex gap="20px" align="center">
+                      <Icons.Calendar />
+                      <Text size="3" weight="regular">
+                        {recentTravelPlan.startDate} - {recentTravelPlan.endDate}
+                      </Text>
+                    </Flex>
+                    <Flex gap="20px" align="center">
+                      <Icons.SewingPinFilled />
+                      <Text size="3" weight="regular">
+                        {recentTravelPlan.location || "-"}
+                      </Text>
+                    </Flex>
+                    <Flex gap="20px" align="center">
+                      <Icons.Person20 />
+                      <Text size="3" weight="regular">
+                        {recentTravelPlan.collaborators || "-"}
+                      </Text>
+                    </Flex>
+                  </Flex>
+
+                  <Inset asChild clip="padding-box" side="right" pb="0">
+                    <Box height="300px" overflow="hidden">
+                      <img
+                        src="/public/images/Greece.jpeg"
+                        width="100%"
+                        height="100%"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </Box>
+                  </Inset>
+                </Grid>
+              </Link>
+            </Card>
+          </Box>
+        )}
+
+        <Flex width="100%" align="center" justify="between">
+          <Heading size="7" weight="medium">
+            All trips
+          </Heading>
+          <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+
+            <Dialog.Trigger asChild>
+              <Button variant="soft" radius="medium" size="3">
+                <Flex direction="row" gap="8px" align="center" justify="center">
+                  <Icons.Plus />
+                  <Text size="3" weight="medium">New Travel Plan</Text>
+                </Flex>
+              </Button>
+            </Dialog.Trigger>
+
+            <Flex asChild direction="column" gap="10px">
+              <Dialog.Content size="3" maxWidth="450px">
+                <Box asChild p="4px">
+                  <Dialog.Title>Create New Travel Plan</Dialog.Title>
+                </Box>
+                <Box asChild height="40px">
+                  <TextField.Root
+                    value={newTravelPlanTitle}
+                    onChange={(e) => setNewTravelPlanTitle(e.target.value)}
+                    placeholder="Enter title for your new travel plan...">
+                    <TextField.Slot pl="8px" />
+                    <TextField.Slot pr="8px" />
+                  </TextField.Root>
+                </Box>
+
+
+                <Flex gap="3" mt="4" justify="end">
+                  <Dialog.Close>
+                    <Box asChild px="20px">
+                      <Button size="3" variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </Box>
+
+                  </Dialog.Close>
+                  <Box asChild px="20px">
+                    <Button size="3" onClick={handleCreateTravelPlan}>
+                      Create
+                    </Button>
+                  </Box>
+                </Flex>
+              </Dialog.Content>
+            </Flex>
+          </Dialog.Root>
+        </Flex>
+
+        <Box width="100%" style={{ overflowX: "auto" }}>
+          {travelPlans.length === 0 ? (
+            <Box asChild width={"100%"} mt="60px" mb="100px">
+              <Text size="5" weight="regular">
+                <i>No travel plans available.</i>
+              </Text>
+            </Box>
+          ) : (
+            <AgGridReact
+              theme={gridTheme}
+              rowData={travelPlans}
+              columnDefs={colDefs}
+              domLayout="autoHeight"
+            />
+          )}
+        </Box>
+      </Flex>
     </Panel>
   );
 }

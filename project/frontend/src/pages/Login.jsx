@@ -12,14 +12,14 @@ function Login() {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  const [credentials, setCredentials] = useState({
     email: '',
     password: '',
   });
 
-  const updateFormData = (e) => {
-    setFormData({
-      ...formData,
+  const updateCredentials = (e) => {
+    setCredentials({
+      ...credentials,
       [e.target.name]: e.target.value
     });
   };
@@ -30,7 +30,7 @@ function Login() {
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberedEmail');
     if (savedEmail) {
-      setFormData((prevData) => ({ ...prevData, email: savedEmail }));
+      setCredentials((prevData) => ({ ...prevData, email: savedEmail }));
       setRememberMe(true);
     }
   }, []);
@@ -40,13 +40,13 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (rememberMe) {
-      localStorage.setItem('rememberedEmail', formData.email);
-      localStorage.setItem('rememberedPassword', formData.password);
+      localStorage.setItem('rememberedEmail', credentials.email);
+      localStorage.setItem('rememberedPassword', credentials.password);
     } else {
       localStorage.removeItem('rememberedEmail');
       localStorage.removeItem('rememberedPassword');
     }
-    setLoginError(!(await auth.login(formData)));
+    setLoginError(!(await auth.login(credentials)));
   };
 
   return (
@@ -89,8 +89,8 @@ function Login() {
                     className="Input"
                     type="email"
                     placeholder="Enter your email address..."
-                    value={formData.email}
-                    onChange={updateFormData}
+                    value={credentials.email}
+                    onChange={updateCredentials}
                     required>
                     <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
@@ -114,8 +114,8 @@ function Login() {
                     asChild
                     className="Input"
                     type="password"
-                    value={formData.password}
-                    onChange={updateFormData}
+                    value={credentials.password}
+                    onChange={updateCredentials}
                     required
                     placeholder="Enter your password...">
                     <Box asChild width="380px" height="50px" mt="10px">

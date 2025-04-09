@@ -111,7 +111,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                         radius="medium"
                         color="gray"
                         size="3">
-                        <Icons.Pencil />
+                        <Icons.Pencil24 />
                       </IconButton>
                     </Dialog.Trigger>
                   </Tooltip>
@@ -313,7 +313,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                         color="red"
                         radius="medium"
                         size="3">
-                        <Icons.Trash />
+                        <Icons.Trash24 />
                       </IconButton>
                     </Dialog.Trigger>
                   </Tooltip>

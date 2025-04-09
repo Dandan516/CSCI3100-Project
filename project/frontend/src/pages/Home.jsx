@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
 
 import PropTypes from 'prop-types';
@@ -11,12 +11,38 @@ function Home() {
 
   const auth = useAuth();
 
+  const [recentPlans, setRecentPlans] = useState([
+    {
+      id: "1",
+    },
+    {
+      id: "2",
+    },
+  ]);
+
+  const [sharedPlans, setSharedPlans] = useState([
+    {
+      id: "3",
+    },
+    {
+      id: "4",
+    },
+  ]);
+  const [allPlans, setAllPlans] = useState([
+    {
+      id: "5",
+    },
+    {
+      id: "6",
+    },
+  ]);
+
   return (
     <Panel>
       <Box asChild width="100%" my="60px">
         <Flex direction="column" align="start" gap="60px">
 
-          <Box asChild px="60px" > 
+          <Box asChild px="60px" >
             <Text size="6" weight="medium">
               Welcome {auth.user?.email}!
             </Text>
@@ -32,38 +58,48 @@ function Home() {
               </Tabs.List>
 
               <Tabs.Content value="recent">
-                <Grid flow="row" columns="repeat(auto-fill, minmax(200px, 200px))" gap="6">
-                  <PreviewFrame partialUrl="/images/thailand.jpeg" description="Itinerary: Trip to Thailand" />
-                  <PreviewFrame partialUrl="/images/budget.jpeg" description="April budget" />
-                  <PreviewFrame partialUrl="/images/3.jpeg" description="Document 3" />
-                  <PreviewFrame partialUrl="/images/4.jpeg" description="Document 4" />
-                  <PreviewFrame partialUrl="/images/5.jpeg" description="Document 5" />
-                  <PreviewFrame partialUrl="/images/6.jpeg" description="Document 6" />
-                  <PreviewFrame partialUrl="/images/7.jpeg" description="Document 7" />
-                  <PreviewFrame partialUrl="/images/8.jpeg" description="Document 8" />
-                  <PreviewFrame partialUrl="/images/thailand.jpeg" description="Itinerary: Trip to Thailand" />
-                  <PreviewFrame partialUrl="/images/budget.jpeg" description="April budget" />
-                  <PreviewFrame partialUrl="/images/3.jpeg" description="Document 3" />
-                  <PreviewFrame partialUrl="/images/4.jpeg" description="Document 4" />
-                  <PreviewFrame partialUrl="/images/5.jpeg" description="Document 5" />
-                  <PreviewFrame partialUrl="/images/6.jpeg" description="Document 6" />
-                  <PreviewFrame partialUrl="/images/7.jpeg" description="Document 7" />
-                  <PreviewFrame partialUrl="/images/8.jpeg" description="Document 8" />
-                </Grid>
+                {recentPlans.length !== 0 && (
+                  <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
+                    {recentPlans.map((recentPlan, index) => (
+                      <PreviewFrame
+                        key={index} // Added unique key prop
+                        linkUrl={`${recentPlan.id}`}
+                        title={recentPlan.title}
+                        imageUrl={recentPlan.imageUrl}
+                      />
+                    ))}
+                  </Grid>
+                )}
               </Tabs.Content>
 
               <Tabs.Content value="shared">
-                <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
-                  <PreviewFrame partialUrl="/images/3.jpeg" description="Document 3" />
-                  <PreviewFrame partialUrl="/images/4.jpeg" description="Document 4" />
-                </Grid>
+                {sharedPlans.length !== 0 && (
+                  <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
+                    {sharedPlans.map((sharedPlan, index) => (
+                      <PreviewFrame
+                        key={index} // Added unique key prop
+                        linkUrl={`${sharedPlan.id}`}
+                        title={sharedPlan.title}
+                        imageUrl={sharedPlan.imageUrl}
+                      />
+                    ))}
+                  </Grid>
+                )}
               </Tabs.Content>
 
               <Tabs.Content value="all">
-                <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
-                  <PreviewFrame partialUrl="/images/3.jpeg" description="Document 3" />
-                  <PreviewFrame partialUrl="/images/4.jpeg" description="Document 4" />
-                </Grid>
+                {allPlans.length !== 0 && (
+                  <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
+                    {allPlans.map((allPlan, index) => (
+                      <PreviewFrame
+                        key={index} // Added unique key prop
+                        linkUrl={`${allPlan.id}`}
+                        title={allPlan.title}
+                        imageUrl={allPlan.imageUrl}
+                      />
+                    ))}
+                  </Grid>
+                )}
               </Tabs.Content>
 
             </Tabs.Root>
