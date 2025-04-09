@@ -16,7 +16,7 @@
     "@radix-ui/themes": "^3.2.1",
     "@tailwindcss/vite": "^4.0.15",
     "ag-grid-community": "^33.2.1",
-    "ag-grid-react": "^33.2.1",
+    "ag-grid-react": "^33.2.2",
     "axios": "^1.8.4",
     "dotenv": "^16.4.7",
     "prop-types": "^15.8.1",

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Card, Inset } from "@radix-ui/themes";
+import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Card, Inset, Popover } from "@radix-ui/themes";
 
-import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 
@@ -11,7 +11,7 @@ import PreviewFrame from '../components/PreviewFrame';
 import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule]);
 
 function TravelPlannerHome() {
 
@@ -257,70 +257,67 @@ function TravelPlannerHome() {
       </Box>
 
       <Flex width="100%" direction="column" align="start" gap="40px" p="60px">
-
-        {travelPlans.length !== 0 && (
-          <Box asChild width="100%">
-            <Heading size="7" weight="medium">
-              Continue planning your next journey...
-            </Heading>
-          </Box>
-        )}
-
         {recentTravelPlan && (
-          <Box asChild width="800px" height="300px">
-            <Card asChild>
-              <Link to={`${recentTravelPlan.id}`}>
-                <Grid flow="row" columns="2">
-                  <Flex
-                    direction="column"
-                    align="start"
-                    justify="start"
-                    gap="20px"
-                    p="40px"
-                    style={{
-                      boxShadow: "inset -10px 0px 10px -10px rgba(0, 0, 0, 0.3)", // Add shadow between text and image
-                      zIndex: 1,
-                    }}
-                  >
-                    <Box asChild width="100%" pb="16px">
-                      <Heading as="h3" size="6" weight="medium">
-                        {recentTravelPlan.title}
-                      </Heading>
-                    </Box>
-                    <Flex gap="20px" align="center">
-                      <Icons.Calendar />
-                      <Text size="3" weight="regular">
-                        {recentTravelPlan.startDate} - {recentTravelPlan.endDate}
-                      </Text>
+          <>
+            <Box asChild width="100%">
+              <Heading size="7" weight="medium">
+                Continue planning your next journey...
+              </Heading>
+            </Box>
+            <Box asChild width="800px" height="300px">
+              <Card asChild>
+                <Link to={`${recentTravelPlan.id}`}>
+                  <Grid flow="row" columns="2">
+                    <Flex
+                      direction="column"
+                      align="start"
+                      justify="start"
+                      gap="20px"
+                      p="40px"
+                      style={{
+                        boxShadow: "inset -10px 0px 10px -10px rgba(0, 0, 0, 0.3)", // Add shadow between text and image
+                        zIndex: 1,
+                      }}>
+                      <Box asChild width="100%" pb="16px">
+                        <Heading as="h3" size="6" weight="medium">
+                          {recentTravelPlan.title}
+                        </Heading>
+                      </Box>
+                      <Flex gap="20px" align="center">
+                        <Icons.Calendar />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.startDate} - {recentTravelPlan.endDate}
+                        </Text>
+                      </Flex>
+                      <Flex gap="20px" align="center">
+                        <Icons.SewingPinFilled />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.location || "-"}
+                        </Text>
+                      </Flex>
+                      <Flex gap="20px" align="center">
+                        <Icons.Person20 />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.collaborators || "-"}
+                        </Text>
+                      </Flex>
                     </Flex>
-                    <Flex gap="20px" align="center">
-                      <Icons.SewingPinFilled />
-                      <Text size="3" weight="regular">
-                        {recentTravelPlan.location || "-"}
-                      </Text>
-                    </Flex>
-                    <Flex gap="20px" align="center">
-                      <Icons.Person20 />
-                      <Text size="3" weight="regular">
-                        {recentTravelPlan.collaborators || "-"}
-                      </Text>
-                    </Flex>
-                  </Flex>
 
-                  <Inset asChild clip="padding-box" side="right" pb="0">
-                    <Box height="300px" overflow="hidden">
-                      <img
-                        src="/public/images/Greece.jpeg"
-                        width="100%"
-                        height="100%"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </Box>
-                  </Inset>
-                </Grid>
-              </Link>
-            </Card>
-          </Box>
+                    <Inset asChild clip="padding-box" side="right" pb="0">
+                      <Box height="300px" overflow="hidden">
+                        <img
+                          src="/images/Greece.jpeg"
+                          width="100%"
+                          height="100%"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                    </Inset>
+                  </Grid>
+                </Link>
+              </Card>
+            </Box>
+          </>
         )}
 
         <Flex width="100%" align="center" justify="between">

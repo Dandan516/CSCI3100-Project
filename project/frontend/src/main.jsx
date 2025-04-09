@@ -50,6 +50,10 @@ const router = createBrowserRouter([
                 element: <Pages.Settings />,
               },
               {
+                path: "/calendar",
+                element: <Pages.Calendar />,
+              },
+              {
                 path: "/travel/*",
                 children:
                   [
