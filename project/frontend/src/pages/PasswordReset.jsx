@@ -25,7 +25,6 @@ function PasswordReset() {
   };
 
   const [isFormValid, setIsFormValid] = useState(false);
-  const [formTouched, setFormTouched] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
 
   const isPasswordInvalid = () => {

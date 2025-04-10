@@ -63,7 +63,7 @@ function SignUp() {
     }
 
     setErrorMessages(errors);
-    setSignUpError(errors.length > 0 && formTouched); // Only show errors if the form has been touched
+    setSignUpError(errors.length > 0); // Only show errors if the form has been touched
     setIsFormValid(errors.length === 0);
   };
 
@@ -72,7 +72,6 @@ function SignUp() {
    
     validateForm(); // Validate the form before proceeding
     if (!isFormValid) {
-      setFormTouched(true); // Mark the form as touched when attempting to sign up
       return; // Prevent submission if the form is invalid
     }
 
