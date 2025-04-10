@@ -29,6 +29,7 @@ function SignUp() {
 
   const [signUpError, setSignUpError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
+  const [formTouched, setFormTouched] = useState(false);
 
   const isEmailInvalid = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -56,6 +57,7 @@ function SignUp() {
       errors.push("Password is required.");
     } else if (isPasswordInvalid()) {
       errors.push("Password should contain ≥ 8 characters, 1 uppercase letter, and 1 special character.");
+      errors.push("Special characters: !@#$%^&*");
     }
 
     if (formData.password !== formData.confirmPassword) {
