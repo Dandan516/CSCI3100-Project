@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { Text, Button, Flex, Box, Card, TextField, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Callout, Spinner } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
 
@@ -10,14 +10,12 @@ import * as Icons from '../assets/Icons';
 
 function ForgotPassword() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     email: '',
-    code: '',
-    newPassword: '',
-    confirmNewPassword: ''
   });
-  const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateFormData = (e) => {
     setFormData({
@@ -26,15 +24,36 @@ function ForgotPassword() {
     });
   };
 
-  const handleNextStep = async (e) => {
-    e.preventDefault();
-    try {
-        await axios.post(`${import.meta.env.VITE_API_URL}password_reset/`, { email: formData.email });
+  const handleSendEmail = async (e) => {
 
-    } catch (error) {
-      const errorResponse = JSON.parse(error.request.response);
-      setError(errorResponse.message);
+    e.preventDefault();
+
+    if (!formData.email) {
+      return;
     }
+
+    setEmailError(false);
+    setIsLoading(true);
+
+    axios
+      .post(`${import.meta.env.VITE_API_URL}password_reset/`, {
+        email: formData.email
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setIsLoading(false);
+          setEmailError(false);
+          setEmailSent(true);
+          setTimeout(() => {
+            navigate("/");
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        setEmailSent(false);
+        setEmailError(true);
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -43,60 +62,86 @@ function ForgotPassword() {
         <Card size="3">
           <Flex direction="column" align="center" justify="center" gap="20px">
 
-            {error && (
-              <Box width="380px">
-                <Callout.Root color="red">
-                  <Callout.Icon>
-                    <Icons.AlertCircleOutline />
-                  </Callout.Icon>
-                  <Callout.Text>
-                    {error}
-                  </Callout.Text>
-                </Callout.Root>
-              </Box>
-            )}
-
             <Form.Root asChild className="FormRoot">
               <Flex direction="column" gap="20px">
 
                 <Text align="center" size="7" weight="bold" my="20px">
-                  Reset Password
+                  Forgot Password
                 </Text>
 
-                {step === 1 && (
-                  <Form.Field className="FormField" name="email">
-                    <Form.Label asChild className="FormLabel">
-                      <Box asChild mb="6px">
-                        <Text size="2" weight="medium">
-                          Email
-                        </Text>
-                      </Box>
-                    </Form.Label>
-
-                    <Form.Control
-                      asChild
-                      className="Input"
-                      type="email"
-                      placeholder="Enter your email address..."
-                      value={formData.email}
-                      onChange={updateFormData}
-                      required>
-                      <Box asChild width="380px" height="50px" mt="10px">
-                        <TextField.Root>
-                          <TextField.Slot pl="10px" />
-                          <TextField.Slot pr="10px" />
-                        </TextField.Root>
-                      </Box>
-                    </Form.Control>
-                  </Form.Field>
-
+                {emailError && !isLoading && (
+                  <Box width="380px">
+                    <Callout.Root color="red">
+                      <Callout.Icon>
+                        <Icons.CrossCircled />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        Email not found.
+                      </Callout.Text>
+                    </Callout.Root>
+                  </Box>
                 )}
 
-                <Form.Submit asChild onClick={handleNextStep}>
-                  <Button asChild variant="solid">
+                {emailSent && (
+                  <Box width="380px">
+                    <Callout.Root color="green">
+                      <Callout.Icon>
+                        <Icons.Check />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        Reset email has been sent to your email!<br />
+                        Please check your inbox.<br />
+                        Redirecting you to home page...
+                      </Callout.Text>
+                    </Callout.Root>
+                  </Box>
+                )}
+
+                {isLoading && (
+                  <Box width="380px">
+                    <Callout.Root color={emailError ? "red" : "blue"}>
+                      <Callout.Icon>
+                        <Spinner />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        Sending email...
+                      </Callout.Text>
+                    </Callout.Root>
+                  </Box>
+                )}
+
+
+                <Form.Field className="FormField" name="email">
+                  <Form.Label asChild className="FormLabel">
+                    <Box asChild mb="6px">
+                      <Text size="2" weight="medium">
+                        Email
+                      </Text>
+                    </Box>
+                  </Form.Label>
+
+                  <Form.Control
+                    asChild
+                    className="Input"
+                    type="email"
+                    placeholder="Enter your email address..."
+                    value={formData.email}
+                    onChange={updateFormData}
+                    required>
+                    <Box asChild width="380px" height="50px" mt="10px">
+                      <TextField.Root>
+                        <TextField.Slot pl="10px" />
+                        <TextField.Slot pr="10px" />
+                      </TextField.Root>
+                    </Box>
+                  </Form.Control>
+                </Form.Field>
+
+                <Form.Submit asChild onClick={handleSendEmail}>
+                  <Button asChild variant="solid" disabled={(isLoading || emailSent)} className={(isLoading || emailSent) && "no-click"}>
                     <Box width="380px" height="60px" my="10px">
                       <Text size="5" weight="bold">
-                        Continue
+                        Send Reset Email
                       </Text>
                     </Box>
                   </Button>
@@ -107,9 +152,9 @@ function ForgotPassword() {
         </Card>
       </Box>
 
-      <Box height="40px"/>
+      <Box height="40px" />
 
-      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
+      <Button variant="outline" onClick={() => navigate("/")}>Go Back</Button>
 
     </Flex>
   );

@@ -162,7 +162,7 @@ function Login() {
 
       <Box height="40px"/>
 
-      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
+      <Button variant="outline" onClick={() => navigate("/")}>Go Back</Button>
 
     </Flex >
   );

@@ -57,7 +57,6 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   };
 
   const handleSaveItinerary = async () => {
-    alert(JSON.stringify(editingItinerary))
     axios
       .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, editingItinerary, {
         headers: { Authorization: `Token ${auth.token}` },

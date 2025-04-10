@@ -38,6 +38,10 @@ html, body {
   outline: none;
 }
 
+.no-click {
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   .collapsed {
     display: flex;

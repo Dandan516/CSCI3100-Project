@@ -84,7 +84,11 @@ function SignUp() {
           });
         setStep(2);
       } else if (step === 2) {
-        // await axios.post(`${import.meta.env.VITE_API_URL}verify-code/`, { email: formData.email, code: formData.code });
+        axios
+          .post(`${import.meta.env.VITE_API_URL}password_reset/`, { 
+            email: formData.email, 
+            code: formData.code 
+          })
         navigate("/login");
       }
     } catch (error) {
@@ -277,7 +281,7 @@ function SignUp() {
 
       <Box height="40px" />
 
-      <Button variant="outline" onClick={() => navigate(-1)}>Go Back</Button>
+      <Button variant="outline" onClick={() => navigate("/")}>Go Back</Button>
 
     </Flex>
   );
