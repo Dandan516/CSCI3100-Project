@@ -5,9 +5,9 @@ import axios from "axios";
 import { Form } from "radix-ui";
 import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButton, Dialog, TextField, Grid, TextArea, Select, Tooltip } from "@radix-ui/themes";
 
-
 import * as Icons from "../assets/Icons";
 import { useAuth } from "../hooks/AuthProvider";
+import LocationSearch from "../components/LocationSearch";
 
 const formatTime = (time) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -52,24 +52,18 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
     }
     setEditingItinerary({
       ...editingItinerary,
-      [name]: value,
+      name: value,
     });
   };
 
-  const updateTagSelection = (value) => {
-    console.log("Selected tag:", value);
-    setEditingItinerary({
-      ...editingItinerary,
-      tag: value,
-    });
-  }
-
   const handleSaveItinerary = async () => {
+    alert(JSON.stringify(editingItinerary))
     axios
       .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, editingItinerary, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then((response) => {
+        alert(JSON.stringify(response.data))
         onUpdate(editingItinerary); // Notify parent component about the update
         setIsEditDialogOpen(false); // Close the dialog
       })
@@ -237,18 +231,14 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                               <Text size="2" weight="medium">Location</Text>
                             </Box>
                           </Form.Label>
-                          <Form.Control
-                            asChild
-                            type="text"
-                            value={editingItinerary.location}
-                            onChange={updateEditingItinerary}>
-                            <Box asChild height="40px">
-                              <TextField.Root>
-                                <TextField.Slot />
-                                <TextField.Slot />
-                              </TextField.Root>
-                            </Box>
-                          </Form.Control>
+                          <LocationSearch
+                            onSelectLocation={(location) => {
+                              setEditingItinerary({
+                                ...editingItinerary,
+                                location: location.display_name,
+                              });
+                            }}
+                          />
                         </Form.Field>
 
                         <Form.Field name="notes">
@@ -275,7 +265,14 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             </Box>
                           </Form.Label>
                           <Box asChild height="40px">
-                            <Select.Root defaultValue="no-tag" onValueChange={updateTagSelection}>
+                            <Select.Root
+                              defaultValue={itinerary.tag}
+                              onValueChange={(value) => {
+                                setEditingItinerary({
+                                  ...editingItinerary,
+                                  tag: value,
+                                });
+                              }}>
                               <Select.Trigger radius="medium" />
                               <Select.Content>
                                 <Select.Item value="no-tag">No tag</Select.Item>

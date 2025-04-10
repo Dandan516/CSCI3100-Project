@@ -11,6 +11,7 @@ import Panel from '../components/Panel';
 import ItineraryCard from '../components/ItineraryCard';
 import * as Icons from "../assets/Icons";
 import DailyView from '../components/DailyView';
+import LocationSearch from '../components/LocationSearch';
 
 function TravelPlanner() {
 
@@ -30,7 +31,7 @@ function TravelPlanner() {
     description: '',
     itineraries: [],
     collaborators: [],
-    location: '',
+    destination: '',
     image: null,
   });
 
@@ -42,7 +43,7 @@ function TravelPlanner() {
     description: '',
     itineraries: [],
     collaborators: [],
-    location: '',
+    destination: '',
     image: null,
   });
 
@@ -51,7 +52,7 @@ function TravelPlanner() {
     date: null,
     start_time: null,
     end_time: null,
-    location: "",
+    location: {},
     notes: "",
     tag: null,
   });
@@ -326,8 +327,8 @@ function TravelPlanner() {
                   </Box>
                   <Grid flow="column" gap="20px" mx="10px">
                     <Box asChild height="40px">
-                      <TextField.Root 
-                        name="newCollaborator" 
+                      <TextField.Root
+                        name="newCollaborator"
                         value={newCollaborator.email} onChange={(e) => setNewCollaborator({ ...newCollaborator, email: e.target.value })}>
                         <TextField.Slot />
                       </TextField.Root>
@@ -535,18 +536,14 @@ function TravelPlanner() {
                             <Text size="2" weight="medium">Location</Text>
                           </Box>
                         </Form.Label>
-                        <Form.Control
-                          asChild
-                          type="text"
-                          value={newItinerary.location}
-                          onChange={updateNewItinerary}>
-                          <Box asChild height="40px">
-                            <TextField.Root>
-                              <TextField.Slot />
-                              <TextField.Slot />
-                            </TextField.Root>
-                          </Box>
-                        </Form.Control>
+                        <LocationSearch
+                          onSelectLocation={(location) => {
+                            setNewItinerary({
+                              ...newItinerary,
+                              location: newItinerary.location.display_name,
+                            });
+                          }}
+                        />
                       </Form.Field>
 
                       <Form.Field name="notes">
@@ -573,7 +570,14 @@ function TravelPlanner() {
                           </Box>
                         </Form.Label>
                         <Box asChild height="40px">
-                          <Select.Root defaultValue="no-tag" onValueChange={updateTagSelection}>
+                          <Select.Root
+                            defaultValue="no-tag"
+                            onValueChange={(value) => {
+                              setNewItinerary({
+                                ...newItinerary,
+                                tag: value,
+                              });
+                            }}>
                             <Select.Trigger radius="medium" />
                             <Select.Content>
                               <Select.Item value="no-tag">No tag</Select.Item>
