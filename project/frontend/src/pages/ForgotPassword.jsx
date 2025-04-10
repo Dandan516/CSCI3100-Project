@@ -29,20 +29,8 @@ function ForgotPassword() {
   const handleNextStep = async (e) => {
     e.preventDefault();
     try {
-      if (step === 1) {
-        await axios.post(`${import.meta.env.VITE_API_URL}forgot-password/`, { email: formData.email });
-        setStep(2);
-      } else if (step === 2) {
-        await axios.post(`${import.meta.env.VITE_API_URL}verify-code/`, { email: formData.email, code: formData.code });
-        setStep(3);
-      } else if (step === 3) {
-        if (formData.newPassword !== formData.confirmNewPassword) {
-          setError('Passwords do not match.');
-          return;
-        }
-        await axios.post(`${import.meta.env.VITE_API_URL}reset-password/`, { email: formData.email, newPassword: formData.newPassword });
-        navigate("/login");
-      }
+        await axios.post(`${import.meta.env.VITE_API_URL}password_reset/`, { email: formData.email });
+
     } catch (error) {
       const errorResponse = JSON.parse(error.request.response);
       setError(errorResponse.message);
@@ -104,94 +92,11 @@ function ForgotPassword() {
 
                 )}
 
-                {step === 2 && (
-                  <Form.Field className="FormField" name="code">
-                    <Flex align="baseline" justify="between">
-                      <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="6px">
-                          <Text size="2" weight="medium">
-                            Authentication Code
-                          </Text>
-                        </Box>
-                      </Form.Label>
-                    </Flex>
-                    <Form.Control
-                      asChild
-                      className="Input"
-                      type="text"
-                      placeholder="Enter the code sent to your email..."
-                      value={formData.code}
-                      onChange={updateFormData}
-                      required>
-                      <Box asChild width="380px" height="50px" >
-                        <TextField.Root>
-                          <TextField.Slot pl="10px" />
-                          <TextField.Slot pr="10px" />
-                        </TextField.Root>
-                      </Box>
-                    </Form.Control>
-                  </Form.Field>
-                )}
-
-                {step === 3 && (
-                  <>
-                    <Form.Field className="FormField" name="newPassword">
-                      <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="6px">
-                          <Text size="2" weight="medium">
-                            New Password
-                          </Text>
-                        </Box>
-                      </Form.Label>
-                      <Form.Control
-                        asChild
-                        className="Input"
-                        type="password"
-                        placeholder="Enter your new password..."
-                        value={formData.newPassword}
-                        onChange={updateFormData}
-                        required>
-                        <Box asChild width="380px" height="50px" mt="10px">
-                          <TextField.Root>
-                            <TextField.Slot pl="10px" />
-                            <TextField.Slot pr="10px" />
-                          </TextField.Root>
-                        </Box>
-                      </Form.Control>
-                    </Form.Field>
-
-                    <Form.Field className="FormField" name="confirmNewPassword">
-                      <Form.Label asChild className="FormLabel">
-                        <Box asChild mb="6px">
-                          <Text size="2" weight="medium">
-                            Confirm New Password
-                          </Text>
-                        </Box>
-                      </Form.Label>
-                      <Form.Control
-                        asChild
-                        className="Input"
-                        type="password"
-                        placeholder="Confirm your new password..."
-                        value={formData.confirmNewPassword}
-                        onChange={updateFormData}
-                        required>
-                        <Box asChild width="380px" height="50px" mt="10px">
-                          <TextField.Root>
-                            <TextField.Slot pl="10px" />
-                            <TextField.Slot pr="10px" />
-                          </TextField.Root>
-                        </Box>
-                      </Form.Control>
-                    </Form.Field>
-                  </>
-                )}
-
                 <Form.Submit asChild onClick={handleNextStep}>
                   <Button asChild variant="solid">
                     <Box width="380px" height="60px" my="10px">
                       <Text size="5" weight="bold">
-                        {step === 3 ? 'Reset Password' : 'Continue'}
+                        Continue
                       </Text>
                     </Box>
                   </Button>
