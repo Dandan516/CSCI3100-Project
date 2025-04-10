@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider, Routes, Route } from 'react-router-dom';
-import { Theme } from "@radix-ui/themes";
+
 import "@radix-ui/themes/styles.css";
 
 import './index.css'
@@ -31,6 +31,10 @@ const router = createBrowserRouter([
         {
           path: "/login",
           element: <Pages.Login />,
+        },
+        {
+          path: "/location-search",
+          element: <Pages.LocationSearch />,
         },
         // protected routes
         {
