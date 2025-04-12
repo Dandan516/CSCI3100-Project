@@ -225,7 +225,7 @@ function Profile() {
           <AlertDialog.Trigger>
             <Box asChild>
               <Button size="3" variant="soft" color="red">
-                Sign out
+                Delete Account
               </Button>
             </Box>
           </AlertDialog.Trigger>

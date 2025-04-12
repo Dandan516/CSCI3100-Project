@@ -163,8 +163,10 @@ function TravelPlanner() {
 
   const handleInviteCollaborator = async () => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.title}/collaborators/`, newCollaborator, {
-        headers: { Authorization: `Token ${auth.token}` },
+      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/invite_collaborator/`, { email: newCollaborator.email}, {
+        headers: { Authorization: `Token ${auth.token}`,
+                   "Content-Type": "application/json"
+       },
       })
       .then((response) => {
         alert("Collaborator invited!", response.data);

@@ -144,6 +144,8 @@ function TravelPlannerHome() {
           startDate: [item.start_date || "-"],
           endDate: [item.end_date || "-"],
           description: [item.description || "-"],
+          user : item.user.username,
+          collaborators: item.collaborators.map((collab) => collab.username).join(", ") || "-",
         }));
         setTravelPlans(data);
       })
@@ -298,7 +300,7 @@ function TravelPlannerHome() {
                       <Flex gap="20px" align="center">
                         <Icons.Person20 />
                         <Text size="3" weight="regular">
-                          {recentTravelPlan.collaborators || "-"}
+                          {recentTravelPlan.user + ", " + recentTravelPlan.collaborators || "-"}
                         </Text>
                       </Flex>
                     </Flex>
