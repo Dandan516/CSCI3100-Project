@@ -29,7 +29,6 @@ function SignUp() {
 
   const [signUpError, setSignUpError] = useState(false);
   const [errorMessages, setErrorMessages] = useState([]);
-  const [formTouched, setFormTouched] = useState(false);
 
   const isEmailInvalid = () => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -65,45 +64,38 @@ function SignUp() {
     }
 
     setErrorMessages(errors);
-    setSignUpError(errors.length > 0); // Only show errors if the form has been touched
+    setSignUpError(errors.length > 0);
     setIsFormValid(errors.length === 0);
   };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-   
+
     validateForm(); // Validate the form before proceeding
     if (!isFormValid) {
       return; // Prevent submission if the form is invalid
     }
 
-    try {
-      if (step === 1) {
-        axios
-          .post(`${import.meta.env.VITE_API_URL}signup/`, {
-            email: formData.email, 
-            password: formData.password 
-          });
+    axios
+      .post(`${import.meta.env.VITE_API_URL}signup/`, {
+        email: formData.email,
+        password: formData.password
+      })
+      .then((response) => {
+        console.log('Sign up valid:', response.data);
         setStep(2);
-      } else if (step === 2) {
-        axios
-          .post(`${import.meta.env.VITE_API_URL}password_reset/`, { 
-            email: formData.email, 
-            code: formData.code 
-          })
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error('Error signing up:', error);
-      const errors = [];
-      if (error.response?.data?.email && !isEmailInvalid()) {
-        errors.push('User with this email already exists.');
-      } else {
-        errors.push("An unexpected error occurred. Please try again later.");
-      }
-      setErrorMessages(errors);
-      setSignUpError(true);
-    }
+      })
+      .catch(error => {
+        console.error('Error signing up:', error);
+        const errors = [];
+        if (JSON.parse(error.request.response).email) {
+          errors.push('User with this email already exists.');
+        } else {
+          errors.push("An unexpected error occurred. Please try again later.");
+        }
+        setErrorMessages(errors);
+        setSignUpError(true);
+      });
   };
 
   return (

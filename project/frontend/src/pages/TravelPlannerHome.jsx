@@ -7,7 +7,7 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 
 import Panel from '../components/Panel';
-import PreviewFrame from '../components/PreviewFrame';
+
 import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
 
@@ -141,9 +141,9 @@ function TravelPlannerHome() {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          startDate: [item.start_date || "-"],
-          endDate: [item.end_date || "-"],
-          description: [item.description || "-"],
+          startDate: item.start_date,
+          endDate: item.end_date,
+          description: item.description,
           user : item.user.username,
           collaborators: item.collaborators.map((collab) => collab.username).join(", ") || "-",
         }));

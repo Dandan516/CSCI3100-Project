@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
 
 import PropTypes from 'prop-types';

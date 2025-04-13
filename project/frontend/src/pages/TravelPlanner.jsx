@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 
 import axios from 'axios';
-import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, IconButton, Select, Tabs } from "@radix-ui/themes";
+import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs } from "@radix-ui/themes";
 
 import { Form } from "radix-ui";
 
@@ -26,35 +26,35 @@ function TravelPlanner() {
   const [travelPlan, setTravelPlan] = useState({
     id: 0,
     title: '',
-    start_date: null,
-    end_date: null,
+    start_date: undefined,
+    end_date: undefined,
     description: '',
     itineraries: [],
     collaborators: [],
     destination: '',
-    image: null,
+    image: undefined,
   });
 
   const [editingTravelPlan, setEditingTravelPlan] = useState({
     id: 0,
     title: '',
-    start_date: null,
-    end_date: null,
+    start_date: undefined,
+    end_date: undefined,
     description: '',
     itineraries: [],
     collaborators: [],
     destination: '',
-    image: null,
+    image: undefined,
   });
 
   const [newItinerary, setNewItinerary] = useState({
     activity: "",
-    date: null,
-    start_time: null,
-    end_time: null,
-    location: {},
+    date: undefined,
+    start_time: undefined,
+    end_time: undefined,
+    location: "",
     notes: "",
-    tag: null,
+    tag: undefined,
   });
 
   const [newCollaborator, setNewCollaborator] = useState({
@@ -71,6 +71,7 @@ function TravelPlanner() {
         const data = response.data;
         setTravelPlan(data);
         setEditingTravelPlan(data);
+        //console.log("Travel plan fetched successfully:", JSON.stringify(data));
       })
       .catch((error) => {
         console.error("Error fetching travel plan:", error);
@@ -108,13 +109,6 @@ function TravelPlanner() {
       });
   };
 
-  const updateTagSelection = (value) => {
-    setNewItinerary({
-      ...newItinerary,
-      tag: value,
-    });
-  }
-
   const updateNewItinerary = (e) => {
 
     const { name, value } = e.target;
@@ -139,7 +133,7 @@ function TravelPlanner() {
         getTravelPlan();
       })
       .catch((error) => {
-        console.error("Error adding itinerary:", error);
+        alert("Error adding itinerary:", error);
       });
   };
 
@@ -159,14 +153,23 @@ function TravelPlanner() {
     return filteredItineraries;
   };
 
-  const pendingCollaborators = travelPlan?.collaborators?.filter((collaborator) => collaborator.status === "pending") || [];
+  const [inviteErrorMessage, setInviteErrorMessage] = useState("");
+
+  // const pendingCollaborators = travelPlan?.collaborators?.filter((collaborator) => collaborator.status === "pending") || [];
 
   const handleInviteCollaborator = async () => {
+    setInviteErrorMessage("");
+    console.log(JSON.stringify(travelPlan.collaborators));
+    if (newCollaborator.email === "") {
+      setInviteErrorMessage("Please enter a valid email.");
+      return;
+    }
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/invite_collaborator/`, { email: newCollaborator.email}, {
-        headers: { Authorization: `Token ${auth.token}`,
-                   "Content-Type": "application/json"
-       },
+      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/invite_collaborator/`, { email: newCollaborator.email }, {
+        headers: {
+          Authorization: `Token ${auth.token}`,
+          "Content-Type": "application/json"
+        },
       })
       .then((response) => {
         alert("Collaborator invited!", response.data);
@@ -174,7 +177,21 @@ function TravelPlanner() {
       })
       .catch((error) => {
         console.error("Error adding itinerary:", error);
+        const message = JSON.parse(error.request.response).error
+        if ( message === "User with this email not found") {
+          setInviteErrorMessage("User with this email not found.");
+        } else if (message === "User is already a collaborator") {
+          setInviteErrorMessage("User is already a collaborator.");
+        }
       });
+  }
+
+  const getUsernames = () => {
+    return (
+      travelPlan.user?.username 
+      + (travelPlan.collaborators.length > 0 && ", " || "")
+      + travelPlan.collaborators.map((collab) => collab.username).join(", ") || "-"
+    );
   }
 
   return (
@@ -322,16 +339,32 @@ function TravelPlanner() {
                   <Box asChild p="10px">
                     <Dialog.Title>Invite Collaborators</Dialog.Title>
                   </Box>
+                  {(inviteErrorMessage !== "") && (
+                    <Box asChild my="10px">
+                      <Flex asChild direction="column" align="center" gap="10px">
+                        <Callout.Root color="red">
+                          <Callout.Icon>
+                            <Icons.CrossCircled />
+                          </Callout.Icon>
+                          <Callout.Text>
+                            <Text size="2" color="red" mb="5px">
+                              {inviteErrorMessage}
+                            </Text>
+                          </Callout.Text>
+                        </Callout.Root>
+                      </Flex>
+                    </Box>
+                  )}
                   <Box asChild p="10px">
                     <Dialog.Description size="2">
-                      Enter the email address of the users you want to invite.
+                      Enter the email of the user you want to invite.
                     </Dialog.Description>
                   </Box>
                   <Grid flow="column" gap="20px" mx="10px">
                     <Box asChild height="40px">
                       <TextField.Root
                         name="newCollaborator"
-                        value={newCollaborator.email} onChange={(e) => setNewCollaborator({ ...newCollaborator, email: e.target.value })}>
+                        onChange={(e) => setNewCollaborator({ ...newCollaborator, email: e.target.value })}>
                         <TextField.Slot />
                       </TextField.Root>
                     </Box>
@@ -341,12 +374,12 @@ function TravelPlanner() {
                   </Grid>
                   <Flex direction="column" gap="20px" px="10px" my="30px">
                     <Text size="3" weight="medium">
-                      Current Collaborators ({travelPlan?.collaborators?.length || 0})
+                      Current Collaborators ({travelPlan.collaborators.length || 0})
                     </Text>
-                    {travelPlan?.collaborators?.length > 0 ? (
-                      travelPlan?.collaborators?.map((collaborator) => (
-                        <Flex key={collaborator.id} direction="row" gap="20px" align="center">
-                          <Text size="3">{collaborator.email}</Text>
+                    {travelPlan.collaborators.length > 0 ? (
+                      travelPlan.collaborators?.map((collaborator) => (
+                        <Flex key={collaborator.username} direction="row" gap="20px" align="center">
+                          <Text size="3">{collaborator.username}</Text>
                           <Text size="3" color="gray">{collaborator.status}</Text>
                         </Flex>
                       ))
@@ -376,11 +409,14 @@ function TravelPlanner() {
             <Box width="30px" />
             <Icons.SewingPinFilled />
             <Text size="3">{travelPlan?.location || "-"}</Text>
+            <Box width="30px" />
+            <Icons.Person20></Icons.Person20>
+            <Text size="3">{getUsernames() || "No collaborators yet."}</Text>
           </Flex>
 
           <Box asChild maxWidth="100vw">
             <Text as="p" size="4" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-              {travelPlan?.description || <i>Add a description to your travel plan...</i>}
+              {travelPlan.description || <i>Add a description to your travel plan...</i>}
             </Text>
           </Box>
 
@@ -539,10 +575,10 @@ function TravelPlanner() {
                           </Box>
                         </Form.Label>
                         <LocationSearch
-                          onSelectLocation={(location) => {
+                          onSelectLocation={() => {
                             setNewItinerary({
                               ...newItinerary,
-                              location: newItinerary.location.display_name,
+                              location: newItinerary.location?.display_name || "yeet",
                             });
                           }}
                         />
@@ -623,7 +659,7 @@ function TravelPlanner() {
                   ))}
                 </Flex>
               ) : (
-                <Flex asChild justify="center" py="60px">
+                <Flex asChild justify="center" py="120px">
                   <Text size="3" color="gray">No itineraries available.</Text>
                 </Flex>
               )}
@@ -644,14 +680,14 @@ function TravelPlanner() {
                         ))}
                       </Flex>
                     ) : (
-                      <Flex asChild justify="center" py="60px">
+                      <Flex asChild justify="center" py="120px">
                         <Text size="3" color="gray">No itineraries available.</Text>
                       </Flex>
                     )
                   )}
                 </DailyView>
               ) : (
-                <Flex asChild justify="center" py="60px">
+                <Flex asChild justify="center" py="120px">
                   <Text size="3" color="gray">No itineraries available.</Text>
                 </Flex>
               )}

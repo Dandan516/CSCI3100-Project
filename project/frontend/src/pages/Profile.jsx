@@ -20,7 +20,7 @@ function Profile() {
     username: auth.user?.username || "",
     first_name: auth.user?.first_name || "",
     last_name: auth.user?.last_name || "",
-    birthday: auth.user?.birthday || null,
+    birthday: auth.user?.birthday || undefined,
   });
 
   const updateEditingUserInfo = (e) => {

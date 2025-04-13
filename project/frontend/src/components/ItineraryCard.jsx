@@ -28,8 +28,8 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(itinerary);
 
-  const matchBadgeColor = () => {
-    switch (itinerary.tag) {
+  const matchBadgeColor = (tag) => {
+    switch (tag) {
       case "accommodation":
         return "blue";
       case "transit":
@@ -400,7 +400,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
             <DataList.Item>
               <DataList.Label minWidth="88px">Tag</DataList.Label>
               <DataList.Value>
-                <Badge color={matchBadgeColor()} variant="soft" radius="medium" size="2">
+                <Badge color={matchBadgeColor(itinerary.tag)} variant="soft" radius="medium" size="2">
                   {itinerary.tag || "No Tag"}
                 </Badge>
               </DataList.Value>

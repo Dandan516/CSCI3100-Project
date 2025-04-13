@@ -46,6 +46,7 @@ function LocationSearch({ onSelectLocation }) {
               onChange={handleLocationQueryChange}
               placeholder="Enter location...">
               <TextField.Slot></TextField.Slot>
+              <TextField.Slot></TextField.Slot>
             </TextField.Root>
           </Box>
           <Popover.Trigger asChild>

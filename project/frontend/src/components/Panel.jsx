@@ -45,7 +45,7 @@ function Sidebar() {
                   size="4"
                   src={auth.user?.avatarUrl}
                   radius="full"
-                  fallback="T"
+                  fallback={auth.user.username}
                 />
                 <Box asChild maxWidth="140px">
                   <Text size="2" weight="medium" highContrast truncate>
@@ -77,7 +77,7 @@ function Panel({ children }) {
   useEffect(() => {
 
     const handleResize = () => {
-      if (window.innerWidth < 800 || localStorage.getItem("sidebarCollapsed")) {
+      if (window.innerWidth < 800) {
         setIsSidebarCollapsed(true);
       } else {
         setIsSidebarCollapsed(false);
@@ -130,7 +130,7 @@ function Panel({ children }) {
                     size="4"
                     src={auth.user?.avatarUrl}
                     radius="full"
-                    fallback="T"
+                    fallback={auth.user.username}
                   />
                 </Button>
               </DropdownMenu.Trigger>

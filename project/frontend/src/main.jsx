@@ -36,15 +36,16 @@ const router = createBrowserRouter([
           path: "/password-reset",
           element: <Pages.PasswordReset />,
         },
-        {
-          path: "/location-search",
-          element: <Pages.LocationSearch />,
-        },
-        // protected routes
+        
+        // Private routes
         {
           element: <PrivateRoute />,
           children:
             [
+              {
+                path: "/start",
+                element: <Pages.Start />,
+              },
               {
                 path: "/home",
                 element: <Pages.Home />,

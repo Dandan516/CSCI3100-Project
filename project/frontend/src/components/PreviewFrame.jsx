@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { Text, Inset, Flex, Box, Card } from "@radix-ui/themes";
 
-function PreviewFrame({ key, linkUrl, title, imageUrl }) {
+function PreviewFrame({ linkUrl, title, imageUrl }) {
   
   return (
     <Box asChild width="200px" height="200px">

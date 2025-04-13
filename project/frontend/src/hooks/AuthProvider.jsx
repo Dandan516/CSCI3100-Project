@@ -33,7 +33,6 @@ const AuthProvider = () => {
         setUser(response.data.user);
         setToken(response.data.token);
         localStorage.setItem("site", response.data.token);
-        console.log("Token stored:", response.data.token); // Debugging log
         navigate("/home");
         return true;
       }
