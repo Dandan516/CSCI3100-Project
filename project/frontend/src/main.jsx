@@ -47,8 +47,8 @@ const router = createBrowserRouter([
                 element: <Pages.Start />,
               },
               {
-                path: "/home",
-                element: <Pages.Home />,
+                path: "/dashboard",
+                element: <Pages.Dashboard />,
               },
               {
                 path: "/profile",

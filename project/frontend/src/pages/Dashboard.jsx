@@ -7,7 +7,7 @@ import Panel from '../components/Panel';
 import PreviewFrame from '../components/PreviewFrame';
 import { useAuth } from "../hooks/AuthProvider";
 
-function Home() {
+function Dashboard() {
 
   const auth = useAuth();
 
@@ -110,4 +110,4 @@ function Home() {
   );
 }
 
-export default Home
+export default Dashboard

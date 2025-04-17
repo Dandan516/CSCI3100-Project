@@ -11,9 +11,6 @@ import * as Icons from '../assets/Icons';
 
 function Sidebar() {
 
-  const auth = useAuth();
-  const navigate = useNavigate();
-
   return (
     <Flex
       minHeight="100vh"
@@ -30,43 +27,21 @@ function Sidebar() {
 
       <Flex direction="column" align="center" gap="20px" >
         <NavigateButton url="/" label="Portal" />
-        <NavigateButton url="/home" label="Home" />
+        <NavigateButton url="/dashboard" label="Dashboard" />
         <NavigateButton url="/travel" label="Travel Planner" />
         <NavigateButton url="/budget" label="Budget Tracker" />
         <NavigateButton url="/calendar" label="Calendar" />
       </Flex>
 
-      <Box asChild>
-        <Card asChild size="1" variant="ghost">
-          <Button variant="ghost" onClick={() => navigate("/profile")}>
-            <Tooltip content="View Profile">
-              <Flex direction="row" gap="14px" align="center" justify="start" display="flex">
-                <Avatar
-                  size="4"
-                  src={auth.user?.avatarUrl}
-                  radius="full"
-                  fallback={auth.user.username}
-                />
-                <Box asChild maxWidth="140px">
-                  <Text size="2" weight="medium" highContrast truncate>
-                    {auth.user?.email}
-                  </Text>
-                </Box>
-              </Flex>
-            </Tooltip>
-          </Button>
-        </Card>
-      </Box>
     </Flex>
   );
 }
 
 function Panel({ children }) {
-
   const auth = useAuth();
   const navigate = useNavigate();
 
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Sidebar is collapsed by default
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
@@ -75,12 +50,10 @@ function Panel({ children }) {
   const updateSearchQuery = (e) => setSearchQuery(e.target.value);
 
   useEffect(() => {
-
+    // Remove the logic that auto-expands the sidebar based on window size
     const handleResize = () => {
       if (window.innerWidth < 800) {
         setIsSidebarCollapsed(true);
-      } else {
-        setIsSidebarCollapsed(false);
       }
     };
 
@@ -92,21 +65,20 @@ function Panel({ children }) {
 
   return (
     <Flex direction="column">
-
       <Flex direction="row" align="center">
         <Box
           style={{
             width: isSidebarCollapsed ? "0px" : "280px", // Adjust width dynamically
             transition: "width 0.3s ease-in-out", // Smooth transition for sidebar width
-          }}>
+          }}
+        >
           {isSidebarCollapsed ? null : <Sidebar />}
         </Box>
 
         <Flex width="100vw" height="100vh" minWidth="800px" direction="column">
-
           {/* Header */}
-          <Flex justify="between" mx="20px" my="14px" >
-            <Flex width="100%" align="center" gap="20px" >
+          <Flex justify="between" mx="20px" my="14px">
+            <Flex width="100%" align="center" gap="20px">
               <IconButton highContrast variant="ghost" radius="medium" onClick={toggleSidebar}>
                 <Icons.Menu width="40px" />
               </IconButton>
@@ -115,7 +87,8 @@ function Panel({ children }) {
                   size="3"
                   placeholder="Search..."
                   value={searchQuery}
-                  onChange={updateSearchQuery} >
+                  onChange={updateSearchQuery}
+                >
                   <TextField.Slot>
                     <Icons.MagnifyingGlass />
                   </TextField.Slot>
@@ -130,41 +103,42 @@ function Panel({ children }) {
                     size="4"
                     src={auth.user?.avatarUrl}
                     radius="full"
-                    fallback={auth.user.username}
+                    fallback={auth.user.username?.charAt(0)}
                   />
                 </Button>
               </DropdownMenu.Trigger>
-              <Box asChild height="auto">
-                <DropdownMenu.Content align="end">
-                  <DropdownMenu.Item onClick={() => navigate('/profile')}>
-                    <Icons.Person />Profile
+
+              <DropdownMenu.Content align="end">
+                <Box asChild height="50px">
+                  <DropdownMenu.Item disabled>
+                    <Text size="3" weight="medium" truncate style={{ color: 'white', cursor: 'default' }}>
+                      {auth.user.email}
+                    </Text>
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item onClick={() => navigate('/settings')}>
-                    <Icons.Gear />Settings
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Separator />
-                  <DropdownMenu.Item color="red" onClick={() => auth.logout()}>
-                    <Icons.Exit />Sign out
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </Box>
+                </Box>
+                <DropdownMenu.Item onClick={() => navigate('/profile')}>
+                  <Icons.Person />Profile
+                </DropdownMenu.Item>
+                <DropdownMenu.Item onClick={() => navigate('/settings')}>
+                  <Icons.Gear />Settings
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item color="red" onClick={() => auth.logout()}>
+                  <Icons.Exit />Sign out
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
             </DropdownMenu.Root>
           </Flex>
 
           <Separator orientation="horizontal" size="4" />
 
           <ScrollArea type="always" scrollbars="vertical">
-            <main>
-              {children}
-            </main>
+            <main>{children}</main>
           </ScrollArea>
         </Flex>
-
       </Flex>
-
     </Flex>
   );
-
 }
 
 Panel.propTypes = {

@@ -7,65 +7,69 @@ import axios from 'axios';
 
 import * as Icons from '../assets/Icons';
 
+const isPasswordInvalid = (password) => {
+  const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  return !regex.test(password);
+};
+
 function PasswordReset() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const token = params.get('token');
-  const [formData, setFormData] = useState({
+  const [resetForm, setResetForm] = useState({
     newPassword: '',
     confirmNewPassword: ''
   });
-  const [error, setError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState([]);
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [resetError, setResetError] = useState(false);
+  const [errorMessages, setErrorMessages] = useState([]);
 
-  const updateFormData = (e) => {
-    setFormData({
-      ...formData,
+  const updateResetForm = (e) => {
+    setResetForm({
+      ...resetForm,
       [e.target.name]: e.target.value
     });
-  };
-
-  const isPasswordInvalid = () => {
-    const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    return !regex.test(formData.newPassword);
   };
 
   const validateForm = () => {
 
     const errors = [];
 
-    if (isPasswordInvalid()) {
-      errors.push("Password must be at least 8 characters long, contain at least one uppercase letter and one special character.");
-    }
-
-    if (!formData.newPassword) {
+    if (!resetForm.newPassword) {
       errors.push("Password is required.");
+    } else if (isPasswordInvalid(resetForm.newPassword)) {
+      errors.push("Password should contain ≥ 8 characters, with:");
+      errors.push("- 1 uppercase letter ( A-Z )");
+      errors.push("- 1 special character ( !@#$%^&* )");
     }
 
-    if (formData.newPassword !== formData.confirmNewPassword) {
+    if (resetForm.newPassword !== resetForm.confirmNewPassword) {
       errors.push("Passwords do not match.");
     }
 
-    setErrorMessages(errors);
-    setError(errors.length > 0);
+    return errors;
   };
 
   const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    validateForm();
 
-    if (errorMessages.length > 0) {
-      return; 
+    e.preventDefault();
+  
+    setErrorMessages([]); // Clear previous error messages
+    const errors = validateForm(); // Validate the form and get errors
+
+    if (errors.length > 0) {
+      setSignUpError(true);
+      setErrorMessages(errors); // Update error messages
+      return; // Prevent submission if the form is invalid
     }
 
     axios
       .post(`${import.meta.env.VITE_API_URL}password_reset/confirm/`, {
-        password: formData.newPassword,
+        password: resetForm.newPassword,
         token: token
       })
       .then((response) => {
-        setError(false);
+        setResetError(false);
         setResetSuccess(true);
         setTimeout(() => {
           navigate("/login");
@@ -73,7 +77,7 @@ function PasswordReset() {
       })
       .catch((error) => {
         console.error("Error resetting password:", error.response.data.password);
-        setError(true);
+        setResetError(true);
         setErrorMessages([error.response.data.password]);
       });
   };
@@ -87,11 +91,11 @@ function PasswordReset() {
             <Form.Root asChild className="FormRoot">
               <Flex direction="column" gap="20px">
 
-                <Text align="center" size="7" weight="bold" my="20px">
+                <Text align="center" size="7" weight="medium" my="20px">
                   Reset Password
                 </Text>
 
-                {error && (
+                {resetError && (
                   <Box asChild width="380px">
                     <Flex asChild direction="column" align="center" gap="10px">
                       <Callout.Root color="red">
@@ -139,8 +143,8 @@ function PasswordReset() {
                     className="Input"
                     type="password"
                     placeholder="Enter your new password..."
-                    value={formData.newPassword}
-                    onChange={updateFormData}
+                    value={resetForm.newPassword}
+                    onChange={updateResetForm}
                     required>
                     <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
@@ -165,8 +169,8 @@ function PasswordReset() {
                     className="Input"
                     type="password"
                     placeholder="Confirm your new password..."
-                    value={formData.confirmNewPassword}
-                    onChange={updateFormData}
+                    value={resetForm.confirmNewPassword}
+                    onChange={updateResetForm}
                     required>
                     <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
@@ -179,8 +183,8 @@ function PasswordReset() {
 
                 <Form.Submit asChild onClick={handlePasswordReset}>
                   <Button asChild variant="solid">
-                    <Box width="380px" height="60px" my="10px" disabled={resetSuccess} className={resetSuccess && "no-click"}>
-                      <Text size="5" weight="bold">
+                    <Box width="380px" height="50px" my="10px" disabled={resetSuccess} className={resetSuccess && "no-click"}>
+                      <Text size="4" weight="medium">
                         Reset Password
                       </Text>
                     </Box>

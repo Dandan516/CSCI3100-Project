@@ -6,9 +6,13 @@ import axios from "axios";
 const AuthContext = createContext();
 
 const AuthProvider = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState({});
   const [token, setToken] = useState(localStorage.getItem("site") || "");
-  const navigate = useNavigate();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [loginError, setLoginError] = useState(false);
 
   const getUserInfo = async () => {
     if (token) {
@@ -27,20 +31,27 @@ const AuthProvider = () => {
   }
 
   const login = async (data) => {
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, data);
-      if (response.data) {
-        setUser(response.data.user);
-        setToken(response.data.token);
-        localStorage.setItem("site", response.data.token);
-        navigate("/home");
-        return true;
-      }
-      throw new Error(response.data.message);
-    } catch (err) {
-      console.error("Login error:", err);
-      return false;
-    }
+
+    axios
+      .post(`${import.meta.env.VITE_API_URL}login/`, data)
+      .then((response) => {
+        if (response.status === 200) {
+          setLoginError(false);
+          setLoginSuccess(true);
+          setToken(response.data.token);
+          getUserInfo();
+          localStorage.setItem("site", response.data.token);
+          if (!user.username) {    // user is new
+            navigate("/start");
+          } else {
+            navigate("/dashboard");
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Login error:", err);
+        setLoginError(true);
+      });
   };
 
   const logout = () => {
@@ -55,7 +66,7 @@ const AuthProvider = () => {
   }, [token]);
 
   return (
-    <AuthContext.Provider value={{ token, user, getUserInfo, login, logout }}>
+    <AuthContext.Provider value={{ token, user, isLoading, loginSuccess, loginError, getUserInfo, login, logout }}>
       <Outlet />
     </AuthContext.Provider>
   );
