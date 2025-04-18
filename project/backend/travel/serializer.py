@@ -26,5 +26,5 @@ class TravelSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Travel
-        fields = ['id', 'title', 'start_date', 'end_date', 'description', 'itineraries','user', 'collaborators']
+        fields = ['id', 'title', 'start_date', 'end_date', 'description', 'itineraries', 'user', 'collaborators']
         read_only_fields = ['user']

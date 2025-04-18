@@ -42,8 +42,7 @@ function Start() {
           'Content-Type': 'application/json',
         },
       })
-      .then((response) => {
-        auth.getUserInfo();
+      .then(() => {
         navigate('/dashboard');
       })
       .catch((error) => {
@@ -65,10 +64,12 @@ function Start() {
   }
 
   useEffect(() => {
-    if (auth.user?.username) {
+    const isNewUser = !auth.user.username;
+    if (!isNewUser) {
+      auth.getUserInfo();
       navigate('/dashboard');
     }
-  }, [auth.user?.username, navigate]);
+  }, [auth.user.username, navigate]);
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Flex, TextField, Button, Box, Text, Card, Separator, Grid, ScrollArea, Popover, Inset, Spinner } from "@radix-ui/themes";
@@ -66,10 +66,10 @@ function LocationSearch({ onSelectLocation }) {
               {results.length > 0 ? (
                 <>
                   {results.map((result, index) => (
-                    <>
+                    <Fragment key={index}>
                       <Box asChild width="402px">
                         <Card asChild variant="ghost" >
-                          <Link key={index} onClick={() => handleSelectLocation(result)}>
+                          <Link  onClick={() => handleSelectLocation(result)}>
                             <Flex direction="column" p="10px">
                               <Text size="4">{result.name}</Text>
                               <Text size="2" color="gray">{result.display_name}</Text>
@@ -80,7 +80,7 @@ function LocationSearch({ onSelectLocation }) {
                       {index < results.length - 1 && (
                         <Separator orientation="horizontal" size="4" color="gray" width="100%" />
                       )}
-                    </>
+                    </Fragment>
                   ))}
                 </>
               ) : (

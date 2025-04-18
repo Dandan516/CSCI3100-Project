@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
-import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 
 import * as Icons from '../assets/Icons';
@@ -55,7 +55,7 @@ function Login() {
           <Flex direction="column" align="center" justify="center" gap="20px">
 
             <Text size="7" weight="medium" my="20px">
-              Sign In
+              Login
             </Text>
 
             {auth.loginError && (
@@ -150,7 +150,7 @@ function Login() {
                     </Flex>
                   </Text>
                   <Text size="2" align="right">
-                    <Link href="/forgot-password"> Forgot password? </Link>
+                    <Link to="/forgot-password"> Forgot password? </Link>
                   </Text>
                 </Flex>
 
@@ -168,7 +168,7 @@ function Login() {
             </Form.Root>
 
             <Text size="2" m="4px">
-              Don't have an account? <Link href="/signup">Create an account</Link>
+              Don't have an account? <Link to="/signup">Create an account</Link>
             </Text>
 
           </Flex>

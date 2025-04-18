@@ -85,8 +85,8 @@ function TravelPlanner() {
     const { name, value } = e.target;
 
     // Enforce title length limit
-    if (name === "title" && value.length > 60) {
-      return; // Prevent updating if the title exceeds 60 characters
+    if (name === "title" && value.length > 100) {
+      return;
     }
     if (name === "description" && value.length > 2000) {
       return; // Prevent updating if the description exceeds 2000 characters
@@ -115,8 +115,8 @@ function TravelPlanner() {
   const updateNewItinerary = (e) => {
 
     const { name, value } = e.target;
-    if (name === "activity" && value.length > 60) {
-      return; // Prevent updating if the title exceeds 60 characters
+    if (name === "activity" && value.length > 100) {
+      return; // Prevent updating if the title exceeds 100 characters
     }
     setNewItinerary({
       ...newItinerary,
@@ -251,7 +251,7 @@ function TravelPlanner() {
                               <TextField.Slot />
                               <TextField.Slot >
                                 <Text size="1" color="gray" mr="4px">
-                                  {editingTravelPlan.title.length} / 60
+                                  {editingTravelPlan.title.length} / 100
                                 </Text>
                               </TextField.Slot>
                             </TextField.Root>
@@ -500,7 +500,7 @@ function TravelPlanner() {
                               <TextField.Slot />
                               <TextField.Slot >
                                 <Text size="1" color="gray" mr="4px">
-                                  {newItinerary.activity.length} / 60
+                                  {newItinerary.activity.length} / 100
                                 </Text>
                               </TextField.Slot>
                             </TextField.Root>
@@ -520,7 +520,7 @@ function TravelPlanner() {
                             type="date"
                             min={travelPlan.start_date}
                             max={travelPlan.end_date}
-                            value={newItinerary.date}
+                            // value={newItinerary.date}
                             onChange={updateNewItinerary}>
                             <Box asChild height="40px">
                               <TextField.Root>
@@ -540,7 +540,7 @@ function TravelPlanner() {
                           <Form.Control
                             asChild
                             type="time"
-                            value={newItinerary.start_time}
+                            // value={newItinerary.start_time}
                             onChange={updateNewItinerary}>
                             <Box asChild height="40px">
                               <TextField.Root>
@@ -564,7 +564,7 @@ function TravelPlanner() {
                             type="date"
                             min={travelPlan.start_date}
                             max={travelPlan.end_date}
-                            value={newItinerary.date}
+                            // value={newItinerary.date}
                             onChange={updateNewItinerary}>
                             <Box asChild height="40px">
                               <TextField.Root>
@@ -584,7 +584,7 @@ function TravelPlanner() {
                           <Form.Control
                             asChild
                             type="time"
-                            value={newItinerary.end_time}
+                            // value={newItinerary.end_time}
                             onChange={updateNewItinerary}>
                             <Box asChild height="40px">
                               <TextField.Root>

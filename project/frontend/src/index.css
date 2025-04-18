@@ -38,6 +38,10 @@ html, body {
   outline: none;
 }
 
+.ag-center-cols-viewport {
+  min-height: unset !important;
+}
+
 .no-click {
   pointer-events: none;
 }

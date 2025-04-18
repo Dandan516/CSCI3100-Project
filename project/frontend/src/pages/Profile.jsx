@@ -60,13 +60,13 @@ function Profile() {
   }
 
   const handleChangePassword = async () => {
+    setResetEmailSent(true);
     axios
       .post(`${import.meta.env.VITE_API_URL}password_reset/`, {
         email: auth.user.email
       })
       .then((response) => {
         if (response.status === 200) {
-          setResetEmailSent(true);
           setTimeout(() => {
             auth.logout();
           }, 3000);

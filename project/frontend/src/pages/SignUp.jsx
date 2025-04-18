@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
-import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
 
@@ -71,7 +71,6 @@ function SignUp() {
   };
 
   const handleSignUp = async (e) => {
-
     e.preventDefault(); // Prevent default form submission behavior
     setIsLoading(true); // Set loading state
     setErrorMessages([]); // Clear previous error messages
@@ -80,6 +79,7 @@ function SignUp() {
     if (errors.length > 0) {
       setSignUpError(true);
       setErrorMessages(errors); // Update error messages
+      setIsLoading(false); // Reset loading state
       return; // Prevent submission if the form is invalid
     }
 
@@ -89,12 +89,19 @@ function SignUp() {
         password: signUpForm.password,
       })
       .then((response) => {
-        console.log("Sign up valid:", response.data);
-        setSignUpError(false);
-        setSignUpSuccess(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
+        if (response.status === 200) {
+          console.log("Sign up valid:", response.data);
+          setSignUpError(false);
+          setSignUpSuccess(true);
+
+          // Redirect to login page after 3 seconds
+          const timeoutId = setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+
+          // Cleanup timeout on unmount
+          return () => clearTimeout(timeoutId);
+        }
       })
       .catch((error) => {
         console.error("Error signing up:", error);
@@ -106,8 +113,17 @@ function SignUp() {
         }
         setSignUpError(true);
         setErrorMessages(errors);
+      })
+      .finally(() => {
+        setIsLoading(false); // Reset loading state
       });
   };
+
+  useEffect(() => {
+    setSignUpError(false);
+    setSignUpSuccess(false);
+    setErrorMessages([]);
+  }, []);
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
@@ -294,7 +310,7 @@ function SignUp() {
 
             {step === 1 && (
               <Text size="2" m="4px">
-                Already have an account? <Link href="/login">Sign in</Link>
+                Already have an account? <Link to="/login">Sign in</Link>
               </Text>
             )}
 

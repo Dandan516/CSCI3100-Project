@@ -21,6 +21,22 @@ const formatTime = (time) => {
   }).format(date);
 };
 
+const tags = [
+  { value: "no-tag", label: "No tag", color: "gray" },
+  { value: "sightseeing", label: "Sightseeing", color: "bronze" },
+  { value: "food", label: "Food", color: "red" },
+  { value: "transit", label: "Transit", color: "green" },
+  { value: "accommodation", label: "Accommodation", color: "blue" },
+  { value: "shopping", label: "Shopping", color: "yellow" },
+  { value: "leisure", label: "Leisure", color: "teal" },
+  { value: "activity", label: "Activity", color: "violet" },
+  { value: "other", label: "Other", color: "purple" }, 
+]
+
+const matchBadgeColor = (tag) => {
+  return tags.find((t) => t.value === tag)?.color || "gray";
+};
+
 function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
 
   const auth = useAuth();
@@ -28,27 +44,10 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [editingItinerary, setEditingItinerary] = useState(itinerary);
 
-  const matchBadgeColor = (tag) => {
-    switch (tag) {
-      case "accommodation":
-        return "blue";
-      case "transit":
-        return "green";
-      case "visit":
-        return "orange";
-      case "food":
-        return "red";
-      case "other":
-        return "purple";
-      default:
-        return "gray";
-    }
-  };
-
   const updateEditingItinerary = (e) => {
     const { name, value } = e.target;
-    if (name === "activity" && value.length > 60) {
-      return; // Prevent updating if the title exceeds 60 characters
+    if (name === "title" && value.length > 100) {
+      return;
     }
     setEditingItinerary({
       ...editingItinerary,
@@ -132,7 +131,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                                 <TextField.Slot />
                                 <TextField.Slot >
                                   <Text size="1" color="gray" mr="4px">
-                                    {editingItinerary.activity.length} / 60
+                                    {editingItinerary.activity.length} / 100
                                   </Text>
                                 </TextField.Slot>
                               </TextField.Root>
@@ -265,7 +264,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                           </Form.Label>
                           <Box asChild height="40px">
                             <Select.Root
-                              defaultValue={itinerary.tag}
+                              defaultValue={itinerary.tag || "no-tag"}
                               onValueChange={(value) => {
                                 setEditingItinerary({
                                   ...editingItinerary,
@@ -274,12 +273,9 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                               }}>
                               <Select.Trigger radius="medium" />
                               <Select.Content>
-                                <Select.Item value="no-tag">No tag</Select.Item>
-                                <Select.Item value="visit">Visit</Select.Item>
-                                <Select.Item value="food">Food</Select.Item>
-                                <Select.Item value="accommodation">Accommdation</Select.Item>
-                                <Select.Item value="transit">Transit</Select.Item>
-                                <Select.Item value="other">Other</Select.Item>
+                                {tags.map((tag) => (
+                                  <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
+                                ))}
                               </Select.Content>
                             </Select.Root>
                           </Box>
@@ -385,7 +381,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Location</DataList.Label>
               <DataList.Value>
                 <Link target="_blank" href="https://workos.com">
-                  <Text size="3">{itinerary.location || "-"}</Text>
+                  <Text size="3">{itinerary.location}</Text>
                 </Link>
               </DataList.Value>
             </DataList.Item>
@@ -393,16 +389,18 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
             <DataList.Item>
               <DataList.Label minWidth="88px">Notes</DataList.Label>
               <DataList.Value>
-                <Text size="3">{itinerary.notes || "-"}</Text>
+                <Text size="3">{itinerary.notes}</Text>
               </DataList.Value>
             </DataList.Item>
 
             <DataList.Item>
               <DataList.Label minWidth="88px">Tag</DataList.Label>
               <DataList.Value>
-                <Badge color={matchBadgeColor(itinerary.tag)} variant="soft" radius="medium" size="2">
-                  {itinerary.tag || "No Tag"}
-                </Badge>
+                {itinerary.tag && (
+                  <Badge color={matchBadgeColor(itinerary.tag)} variant="soft" radius="medium" size="2">
+                    {itinerary.tag}
+                  </Badge>
+                )}
               </DataList.Value>
             </DataList.Item>
           </DataList.Root>

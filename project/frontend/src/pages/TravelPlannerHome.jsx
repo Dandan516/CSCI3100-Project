@@ -144,7 +144,7 @@ function TravelPlannerHome() {
           startDate: item.start_date,
           endDate: item.end_date,
           description: item.description,
-          user : item.user.username,
+          user: item.user.username,
           collaborators: item.collaborators.map((collab) => collab.username).join(", ") || "",
         }));
         setTravelPlans(data);
@@ -339,11 +339,20 @@ function TravelPlannerHome() {
               </Button>
             </Dialog.Trigger>
 
+
+
             <Flex asChild direction="column" gap="10px">
               <Dialog.Content size="3" maxWidth="450px">
                 <Box asChild p="4px">
                   <Dialog.Title>Create New Travel Plan</Dialog.Title>
                 </Box>
+
+                <Dialog.Description>
+                  <Text size="2" weight="medium" mx="6px">
+                    Travel plan title
+                  </Text>
+                </Dialog.Description>
+
                 <Box asChild height="40px">
                   <TextField.Root
                     value={newTravelPlanTitle}
@@ -353,7 +362,6 @@ function TravelPlannerHome() {
                     <TextField.Slot pr="8px" />
                   </TextField.Root>
                 </Box>
-
 
                 <Flex gap="3" mt="4" justify="end">
                   <Dialog.Close>

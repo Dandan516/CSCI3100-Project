@@ -19,21 +19,20 @@ class Itinerary(models.Model):
     date = models.DateField(null=True) 
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
-    activity = models.CharField(max_length=200)
+    activity = models.CharField(max_length=100)
     location = models.CharField(max_length=200, blank=True)
     notes = models.TextField(blank=True)
 
     TAGS = (
+        ('no-tag', 'No Tag'),
         ('transit', 'Transit'),
-        ('visit', 'Visit'),
+        ('sightseeing', 'Sightseeing'),
         ('food', 'Food'),
         ('accommodation', 'Accommodation'),
-        ('other', 'Other'),
         ('activity', 'Activity'),
-        ('sightseeing', 'Sightseeing'),
         ('shopping', 'Shopping'),
         ('leisure', 'Leisure'),
-        ('sports', 'Sports'),
+        ('other', 'Other'),
     )
     tag = models.CharField(max_length=20, choices=TAGS, blank=True, null=True, default=None)
     
