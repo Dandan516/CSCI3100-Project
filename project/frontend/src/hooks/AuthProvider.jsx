@@ -41,7 +41,7 @@ const AuthProvider = () => {
           setToken(response.data.token);
           getUserInfo();
           localStorage.setItem("site", response.data.token);
-          if (!user.username) {    // user is new
+          if (!user?.username) {    // user is new
             navigate("/start");
           } else {
             navigate("/dashboard");
@@ -63,6 +63,9 @@ const AuthProvider = () => {
 
   useEffect(() => {
     getUserInfo();
+    setIsLoading(false);
+    setLoginSuccess(false);
+    setLoginError(false);
   }, [token]);
 
   return (

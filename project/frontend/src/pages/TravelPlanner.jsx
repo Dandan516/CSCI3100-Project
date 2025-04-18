@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 
 import axios from 'axios';
-import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs } from "@radix-ui/themes";
+import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs, Avatar } from "@radix-ui/themes";
 
 import { Form } from "radix-ui";
 
@@ -61,6 +61,9 @@ function TravelPlanner() {
     email: "",
     status: "pending",
   });
+
+  const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [inviteErrorMessage, setInviteErrorMessage] = useState("");
 
   const getTravelPlan = async () => {
     axios
@@ -124,7 +127,9 @@ function TravelPlanner() {
   const handleNewItinerary = async () => {
     axios
       .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.title}/itineraries/`, newItinerary, {
-        headers: { Authorization: `Token ${auth.token}` },
+        headers: { 
+          Authorization: `Token ${auth.token}` 
+        },
         ContentType: "multipart/form-data",
       })
       .then((response) => {
@@ -137,15 +142,12 @@ function TravelPlanner() {
       });
   };
 
-  useEffect(() => {
-    getTravelPlan();
-  }, [params.id]);
+
 
   const getDailyItinerary = (date) => {
     if (!date || !(date instanceof Date)) {
       return [];
     }
-
     const filteredItineraries = travelPlan.itineraries.filter((itinerary) => {
       const itineraryDate = new Date(itinerary.date);
       return itineraryDate.toDateString() === date.toDateString();
@@ -153,7 +155,7 @@ function TravelPlanner() {
     return filteredItineraries;
   };
 
-  const [inviteErrorMessage, setInviteErrorMessage] = useState("");
+
 
   // const pendingCollaborators = travelPlan?.collaborators?.filter((collaborator) => collaborator.status === "pending") || [];
 
@@ -172,27 +174,37 @@ function TravelPlanner() {
         },
       })
       .then((response) => {
-        alert("Collaborator invited!", response.data);
+        setInviteSuccess(true);
         getTravelPlan();
+        setTimeout(() => {
+          setInviteSuccess(false);
+        }, 2000);
       })
       .catch((error) => {
         console.error("Error adding itinerary:", error);
         const message = JSON.parse(error.request.response).error
-        if ( message === "User with this email not found") {
+        if (message === "User with this email not found") {
           setInviteErrorMessage("User with this email not found.");
         } else if (message === "User is already a collaborator") {
           setInviteErrorMessage("User is already a collaborator.");
         }
+        setTimeout(() => {
+          setInviteErrorMessage("");
+        }, 2000);
       });
   }
 
   const getUsernames = () => {
     return (
-      travelPlan.user?.username 
+      travelPlan.user?.username
       + (travelPlan.collaborators.length > 0 && ", " || "")
       + travelPlan.collaborators.map((collab) => collab.username).join(", ") || "-"
     );
   }
+
+  useEffect(() => {
+    getTravelPlan();
+  }, [params.id]);
 
   return (
     <Panel>
@@ -355,6 +367,22 @@ function TravelPlanner() {
                       </Flex>
                     </Box>
                   )}
+                  {inviteSuccess && (
+                    <Box asChild my="10px">
+                      <Flex asChild direction="column" align="center" gap="10px">
+                        <Callout.Root color="green">
+                          <Callout.Icon>
+                            <Icons.Check />
+                          </Callout.Icon>
+                          <Callout.Text>
+                            <Text size="2" color="greed" mb="5px">
+                              Collaborator invited successfully!
+                            </Text>
+                          </Callout.Text>
+                        </Callout.Root>
+                      </Flex>
+                    </Box>
+                  )}
                   <Box asChild p="10px">
                     <Dialog.Description size="2">
                       Enter the email of the user you want to invite.
@@ -378,7 +406,7 @@ function TravelPlanner() {
                     </Text>
                     {travelPlan.collaborators.length > 0 ? (
                       travelPlan.collaborators?.map((collaborator) => (
-                        <Flex key={collaborator.username} direction="row" gap="20px" align="center">
+                        <Flex key={collaborator.username} direction="row" gap="20px" align="center" ml="16px">
                           <Text size="3">{collaborator.username}</Text>
                           <Text size="3" color="gray">{collaborator.status}</Text>
                         </Flex>

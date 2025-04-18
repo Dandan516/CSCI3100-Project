@@ -14,10 +14,10 @@ function Start() {
   const [step, setStep] = useState(1);
 
   const [profile, setProfile] = useState({
-    username: auth.user.username || "",
-    first_name: auth.user.first_name || "",
-    last_name: auth.user.last_name ||"",
-    birthday: auth.user.birthday || undefined,
+    username: auth.user?.username || "",
+    first_name: auth.user?.first_name || "",
+    last_name: auth.user?.last_name || "",
+    birthday: auth.user?.birthday || undefined,
   });
 
   const updateProfile = (e) => {
@@ -28,7 +28,7 @@ function Start() {
   }
 
   const handleEditProfile = async () => {
-    alert(JSON.stringify(profile));
+
     axios
       .patch(`${import.meta.env.VITE_API_URL}userinfo/${auth.user?.id}/`, {
         ...profile,
@@ -63,6 +63,12 @@ function Start() {
         break;
     }
   }
+
+  useEffect(() => {
+    if (auth.user?.username) {
+      navigate('/dashboard');
+    }
+  }, [auth.user?.username, navigate]);
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">

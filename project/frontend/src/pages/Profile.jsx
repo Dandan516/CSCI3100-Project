@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Text, Flex, Box, Avatar, AlertDialog, IconButton, TextField, Table, Button, Dialog } from "@radix-ui/themes";
+import { Text, Flex, Box, Avatar, AlertDialog, IconButton, TextField, Table, Button, Dialog, Callout } from "@radix-ui/themes";
 import axios from 'axios';
 
 import Panel from '../components/Panel';
@@ -59,7 +59,7 @@ function Profile() {
       });
   }
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     axios
       .post(`${import.meta.env.VITE_API_URL}password_reset/`, {
         email: auth.user.email
@@ -77,15 +77,16 @@ function Profile() {
       });
   }
 
-  const handleDeleteAccount = () => {
+  // delete method not allowed for general users.
+  const handleDeleteAccount = async () => { 
     axios
       .delete(`${import.meta.env.VITE_API_URL}userinfo/${auth.user?.id}/`, {
         headers: {
           Authorization: `Token ${auth.token}`,
-          'Content-Type': 'application/json',
         },
       })
       .then((response) => {
+        alert(JSON.stringify(response.data));
         auth.logout();
       })
       .catch((error) => {
@@ -95,7 +96,7 @@ function Profile() {
 
   return (
     <Panel>
-      <Flex direction="column" align="center" gap="40px" p="60px">
+      <Flex direction="column" align="center" gap="30px" p="60px">
 
         <Avatar
           size="8"
@@ -106,7 +107,7 @@ function Profile() {
         <Text size="6" weight="medium">{auth.user?.email}</Text>
 
         {resetEmailSent && (
-          <Box width="380px">
+          <Box width="50%">
             <Flex asChild direction="column" align="center" gap="10px">
               <Callout.Root color="green">
                 <Callout.Icon>
