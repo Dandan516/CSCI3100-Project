@@ -8,7 +8,7 @@ import './index.css'
 import * as Pages from './pages/index';
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
-import { ThemeProvider } from "./hooks/ThemeProvider";
+import { SettingsProvider } from "./hooks/SettingsProvider";
 
 const router = createBrowserRouter([
   {
@@ -98,9 +98,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
+    <SettingsProvider>
       <RouterProvider router={router} />
-    </ThemeProvider>
+    </SettingsProvider>
   </StrictMode>,
 )
 

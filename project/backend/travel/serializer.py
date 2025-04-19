@@ -13,7 +13,7 @@ class ItinerarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Itinerary
-        fields = ['id', 'date', 'start_time', 'end_time', 'activity', 'location', 'notes',  'tag']
+        fields = ['id', 'start_date', 'end_date', 'start_time', 'end_time', 'title',  'notes',  'tag', 'location', 'location_lat', 'location_lon', 'location_url']
 
     
         
@@ -26,5 +26,5 @@ class TravelSerializer(serializers.ModelSerializer):
     )
     class Meta:
         model = Travel
-        fields = ['id', 'title', 'start_date', 'end_date', 'description', 'itineraries', 'user', 'collaborators']
+        fields = ['id', 'title', 'start_date', 'end_date', 'description', 'destination', 'itineraries', 'user', 'collaborators']
         read_only_fields = ['user']

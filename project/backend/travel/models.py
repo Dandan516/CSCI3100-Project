@@ -6,6 +6,7 @@ class Travel(models.Model):
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     description = models.TextField(blank=True)
+    destination = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     collaborators = models.ManyToManyField('users.CustomUser', blank=True, related_name="collaborated_travels")
@@ -16,15 +17,20 @@ class Travel(models.Model):
 class Itinerary(models.Model):
 
     travel = models.ForeignKey(Travel, on_delete=models.CASCADE, related_name="itineraries")
-    date = models.DateField(null=True) 
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
-    activity = models.CharField(max_length=100)
-    location = models.CharField(max_length=200, blank=True)
+    title = models.CharField(max_length=100)
     notes = models.TextField(blank=True)
+    location = models.CharField(max_length=200, blank=True)
+    location_lat = models.CharField(max_length=20, blank=True, null=True)
+    location_lon = models.CharField(max_length=20, blank=True, null=True)
+    location_url = models.URLField(max_length=500, blank=True, null=True)
 
     TAGS = (
         ('no-tag', 'No Tag'),
+        ('visit', 'Visit'),
         ('transit', 'Transit'),
         ('sightseeing', 'Sightseeing'),
         ('food', 'Food'),

@@ -143,6 +143,7 @@ function TravelPlannerHome() {
           title: item.title,
           startDate: item.start_date,
           endDate: item.end_date,
+          destination: item.destination,
           description: item.description,
           user: item.user.username,
           collaborators: item.collaborators.map((collab) => collab.username).join(", ") || "",
@@ -294,7 +295,7 @@ function TravelPlannerHome() {
                       <Flex gap="20px" align="center">
                         <Icons.SewingPinFilled />
                         <Text size="3" weight="regular">
-                          {recentTravelPlan.location || "-"}
+                          {recentTravelPlan.destination || "-"}
                         </Text>
                       </Flex>
                       <Flex gap="20px" align="center">

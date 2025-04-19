@@ -45,9 +45,11 @@ const AuthProvider = () => {
   };
 
   const login = async (data) => {
+    setIsLoading(true);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}login/`, data);
       if (response.status === 200) {
+        setIsLoading(false);
         setLoginError(false);
         setLoginSuccess(true);
         setToken(response.data.token);
@@ -64,6 +66,7 @@ const AuthProvider = () => {
       }
     } catch (error) {
       console.error("Login error:", error);
+      setIsLoading(false);
       setLoginError(true);
     }
   };

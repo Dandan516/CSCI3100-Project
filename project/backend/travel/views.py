@@ -73,10 +73,18 @@ class ItineraryViewSet(viewsets.ModelViewSet):
         travel_title = self.kwargs.get('travel_title')
         travel_id = self.kwargs.get('travel_id')
         
-        if travel_title:
+        # if travel_title:
+        #     travel = get_object_or_404(
+        #         Travel, 
+        #         title__iexact=travel_title, 
+        #         user=self.request.user
+        #     )
+        #     return travel.itineraries.all()
+        
+        if travel_id:
             travel = get_object_or_404(
                 Travel, 
-                title__iexact=travel_title, 
+                id=travel_id, 
                 user=self.request.user
             )
             return travel.itineraries.all()
@@ -85,12 +93,12 @@ class ItineraryViewSet(viewsets.ModelViewSet):
 
 
     def perform_create(self, serializer):
-        travel_title = self.kwargs.get('travel_title')
+        travel_id = self.kwargs.get('travel_id')
         
-        if travel_title:
+        if travel_id:
             travel = get_object_or_404(
-                Travel,
-                title__iexact=travel_title,
+                Travel, 
+                id=travel_id, 
                 user=self.request.user
             )
         else:

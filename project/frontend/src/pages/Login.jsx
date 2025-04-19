@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout, Link } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 
 import * as Icons from '../assets/Icons';
@@ -150,12 +150,12 @@ function Login() {
                     </Flex>
                   </Text>
                   <Text size="2" align="right">
-                    <Link to="/forgot-password"> Forgot password? </Link>
+                    <Link className="radix-ui-link"onClick={() => navigate("/forgot-password")}> Forgot password? </Link>
                   </Text>
                 </Flex>
 
                 <Form.Submit asChild onClick={handleLogin}>
-                  <Button asChild variant="solid">
+                  <Button asChild variant="solid" className={(auth.isLoading || auth.loginSuccess) && "no-click"} disabled={auth.isLoading || auth.loginSuccess}>
                     <Box width="380px" height="50px">
                       <Text size="4" weight="medium">
                         Continue
@@ -168,7 +168,7 @@ function Login() {
             </Form.Root>
 
             <Text size="2" m="4px">
-              Don't have an account? <Link to="/signup">Create an account</Link>
+              Don't have an account? <Link className="radix-ui-link" onClick={() => navigate("/signup")}>Create an account</Link>
             </Text>
 
           </Flex>

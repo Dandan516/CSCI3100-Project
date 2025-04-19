@@ -8,6 +8,7 @@ import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButt
 import * as Icons from "../assets/Icons";
 import { useAuth } from "../hooks/AuthProvider";
 import LocationSearch from "../components/LocationSearch";
+import { itineraryTags } from "../utils/itineraryTags";
 
 const formatTime = (time) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -21,23 +22,11 @@ const formatTime = (time) => {
   }).format(date);
 };
 
-const tags = [
-  { value: "no-tag", label: "No tag", color: "gray" },
-  { value: "sightseeing", label: "Sightseeing", color: "bronze" },
-  { value: "food", label: "Food", color: "red" },
-  { value: "transit", label: "Transit", color: "green" },
-  { value: "accommodation", label: "Accommodation", color: "blue" },
-  { value: "shopping", label: "Shopping", color: "yellow" },
-  { value: "leisure", label: "Leisure", color: "teal" },
-  { value: "activity", label: "Activity", color: "violet" },
-  { value: "other", label: "Other", color: "purple" }, 
-]
-
 const matchBadgeColor = (tag) => {
-  return tags.find((t) => t.value === tag)?.color || "gray";
+  return itineraryTags.find((t) => t.value === tag)?.color || "gray";
 };
 
-function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
+function ItineraryCard({ itinerary, travelId, travelStartDate, travelEndDate, onUpdate }) {
 
   const auth = useAuth();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -51,28 +40,27 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
     }
     setEditingItinerary({
       ...editingItinerary,
-      name: value,
+      [name]: value,
     });
   };
 
   const handleSaveItinerary = async () => {
     axios
-      .put(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, editingItinerary, {
+      .put(`${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`, editingItinerary, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then((response) => {
-        alert(JSON.stringify(response.data))
         onUpdate(editingItinerary); // Notify parent component about the update
         setIsEditDialogOpen(false); // Close the dialog
       })
       .catch((error) => {
         console.error("Error updating itinerary:", error);
       });
-  };
+  }
 
   const handleDeleteItinerary = async () => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}travel/${travelTitle}/itineraries/${itinerary.id}/`, {
+      .delete(`${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then(() => {
@@ -90,7 +78,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
         <Flex direction="column" gap="30px" align="start" p="20px" pt="10px">
 
           <Flex width="100%" direction="row" justify="between" align="center" gap="20px">
-            <Heading as="h3" size="6" weight="medium">{itinerary.activity}</Heading>
+            <Heading as="h3" size="6" weight="medium">{itinerary.title}</Heading>
             <Flex>
 
               <Grid flow="column" gap="16px" columns={2}>
@@ -115,23 +103,23 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                     <Form.Root className="FormRoot">
                       <Flex direction="column" gap="20px" px="10px">
 
-                        <Form.Field name="activity">
+                        <Form.Field name="title">
                           <Form.Label asChild>
                             <Box asChild mb="6px" >
-                              <Text size="2" weight="medium">Activity</Text>
+                              <Text size="2" weight="medium">Title</Text>
                             </Box>
                           </Form.Label>
                           <Form.Control
                             asChild
                             type="text"
-                            value={editingItinerary.activity}
+                            value={editingItinerary.title || ""}
                             onChange={updateEditingItinerary}>
                             <Box asChild height="40px">
                               <TextField.Root>
                                 <TextField.Slot />
                                 <TextField.Slot >
                                   <Text size="1" color="gray" mr="4px">
-                                    {editingItinerary.activity.length} / 100
+                                    {editingItinerary.title.length} / 100
                                   </Text>
                                 </TextField.Slot>
                               </TextField.Root>
@@ -140,7 +128,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                         </Form.Field>
 
                         <Grid flow="column" gap="20px" columns={2}>
-                          <Form.Field name="date">
+                          <Form.Field name="start_date">
                             <Form.Label asChild>
                               <Box asChild mb="6px" >
                                 <Text size="2" weight="medium">Start Date</Text>
@@ -149,7 +137,9 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             <Form.Control
                               asChild
                               type="date"
-                              value={editingItinerary.date}
+                              value={editingItinerary.start_date || ""}
+                              min={travelStartDate}
+                              max={travelEndDate}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
                                 <TextField.Root>
@@ -169,7 +159,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             <Form.Control
                               asChild
                               type="time"
-                              value={editingItinerary.start_time}
+                              value={editingItinerary.start_time || ""}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
                                 <TextField.Root>
@@ -182,7 +172,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                         </Grid>
 
                         <Grid flow="column" gap="20px" columns={2}>
-                          <Form.Field name="date">
+                          <Form.Field name="end_date">
                             <Form.Label asChild>
                               <Box asChild mb="6px" >
                                 <Text size="2" weight="medium">End Date</Text>
@@ -191,7 +181,9 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             <Form.Control
                               asChild
                               type="date"
-                              value={editingItinerary.date}
+                              value={editingItinerary.end_date || ""}
+                              min={travelStartDate}
+                              max={travelEndDate}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
                                 <TextField.Root>
@@ -211,7 +203,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             <Form.Control
                               asChild
                               type="time"
-                              value={editingItinerary.end_time}
+                              value={editingItinerary.end_time || ""}
                               onChange={updateEditingItinerary}>
                               <Box asChild height="40px">
                                 <TextField.Root>
@@ -230,10 +222,14 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             </Box>
                           </Form.Label>
                           <LocationSearch
-                            onSelectLocation={(location) => {
+                            selectedLocation={editingItinerary.location || ""}
+                            onSelectLocation={(location, locationUrl) => {
                               setEditingItinerary({
                                 ...editingItinerary,
                                 location: location.display_name,
+                                location_lat: location.lat,
+                                location_lon: location.lon,
+                                location_url: locationUrl,
                               });
                             }}
                           />
@@ -248,7 +244,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                           <Form.Control
                             asChild
                             type="text"
-                            value={editingItinerary.notes}
+                            value={editingItinerary.notes || ""}
                             onChange={updateEditingItinerary}>
                             <Box asChild height="100px" p="2px">
                               <TextArea size="2" />
@@ -273,7 +269,7 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                               }}>
                               <Select.Trigger radius="medium" />
                               <Select.Content>
-                                {tags.map((tag) => (
+                                {itineraryTags.map((tag) => (
                                   <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
                                 ))}
                               </Select.Content>
@@ -288,7 +284,12 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
                             Cancel
                           </Button>
                         </Dialog.Close>
-                        <Button size="3" variant="solid" onClick={handleSaveItinerary}>
+                        <Button
+                          size="3"
+                          variant="solid"
+                          onClick={handleSaveItinerary}
+                          className={editingItinerary.title === "" && "no-click"}
+                          disabled={editingItinerary.title === ""}>
                           Save
                         </Button>
                       </Flex>
@@ -343,12 +344,12 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">Start</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
-                  {!(itinerary.date || itinerary.start_time) && (
+                  {!(itinerary.start_date || itinerary.start_time) && (
                     <Text size="3">
                       -
                     </Text>
                   )}
-                  <Text size="3"> {itinerary.date} </Text>
+                  <Text size="3"> {itinerary.start_date} </Text>
                   {itinerary.start_time && (
                     <Text size="3">
                       {formatTime(itinerary.start_time)}
@@ -362,12 +363,12 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
               <DataList.Label minWidth="88px">End</DataList.Label>
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
-                  {!(itinerary.date || itinerary.end_time) && (
+                  {!(itinerary.end_date || itinerary.end_time) && (
                     <Text size="3">
                       -
                     </Text>
                   )}
-                  <Text size="3"> {itinerary.date} </Text>
+                  <Text size="3"> {itinerary.end_date} </Text>
                   {itinerary.end_time && (
                     <Text size="3">
                       {formatTime(itinerary.end_time)}
@@ -380,7 +381,9 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
             <DataList.Item>
               <DataList.Label minWidth="88px">Location</DataList.Label>
               <DataList.Value>
-                <Link target="_blank" href="https://workos.com">
+                <Link
+                  className="radix-ui-link"
+                  onClick={() => window.open(itinerary.location_url, "_blank")}>
                   <Text size="3">{itinerary.location}</Text>
                 </Link>
               </DataList.Value>
@@ -414,15 +417,21 @@ function ItineraryCard({ itinerary, travelTitle, onUpdate }) {
 ItineraryCard.propTypes = {
   itinerary: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    activity: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    start_date: PropTypes.string.isRequired,
     start_time: PropTypes.string.isRequired,
+    end_date: PropTypes.string.isRequired,
     end_time: PropTypes.string.isRequired,
     location: PropTypes.string.isRequired,
+    location_lat: PropTypes.string.isRequired,
+    location_lon: PropTypes.string.isRequired,
+    location_url: PropTypes.string.isRequired,
     notes: PropTypes.string,
     tag: PropTypes.string,
   }).isRequired,
-  travelTitle: PropTypes.string.isRequired,
+  travelId: PropTypes.number.isRequired, 
+  travelStartDate: PropTypes.string.isRequired, 
+  travelEndDate: PropTypes.string.isRequired,
   onUpdate: PropTypes.func.isRequired,
 };
 

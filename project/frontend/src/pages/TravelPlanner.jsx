@@ -12,6 +12,7 @@ import ItineraryCard from '../components/ItineraryCard';
 import * as Icons from "../assets/Icons";
 import DailyView from '../components/DailyView';
 import LocationSearch from '../components/LocationSearch';
+import { itineraryTags } from '../utils/itineraryTags';
 
 function TravelPlanner() {
 
@@ -36,23 +37,24 @@ function TravelPlanner() {
   });
 
   const [editingTravelPlan, setEditingTravelPlan] = useState({
-    id: 0,
     title: '',
     start_date: undefined,
     end_date: undefined,
     description: '',
-    itineraries: [],
-    collaborators: [],
     destination: '',
     image: undefined,
   });
 
   const [newItinerary, setNewItinerary] = useState({
-    activity: "",
-    date: undefined,
+    title: "",
+    start_date: undefined,
     start_time: undefined,
+    end_date: undefined,
     end_time: undefined,
     location: "",
+    location_lat: undefined,
+    location_lon: undefined,
+    location_url: undefined,
     notes: "",
     tag: undefined,
   });
@@ -73,7 +75,14 @@ function TravelPlanner() {
       .then(response => {
         const data = response.data;
         setTravelPlan(data);
-        setEditingTravelPlan(data);
+        setEditingTravelPlan({
+          title: data.title,
+          start_date: data.start_date,
+          end_date: data.end_date,
+          description: data.description,
+          destination: data.destination,
+          image: data.image,
+        });
         //console.log("Travel plan fetched successfully:", JSON.stringify(data));
       })
       .catch((error) => {
@@ -88,6 +97,9 @@ function TravelPlanner() {
     if (name === "title" && value.length > 100) {
       return;
     }
+    if (name === "destination " && value.length > 200) {
+      return; // Prevent updating if the destination exceeds 200 characters
+    }
     if (name === "description" && value.length > 2000) {
       return; // Prevent updating if the description exceeds 2000 characters
     }
@@ -100,11 +112,18 @@ function TravelPlanner() {
 
   const handleSaveTravelPlan = async () => {
     axios
-      .put(`${import.meta.env.VITE_API_URL}travel/${params.id}/`, editingTravelPlan, {
+      .patch(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/`, {
+        title: editingTravelPlan.title,
+        start_date: editingTravelPlan.start_date,
+        end_date: editingTravelPlan.end_date,
+        description: editingTravelPlan.description,
+        destination: editingTravelPlan.destination,
+        image: editingTravelPlan.image,
+      }, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then(() => {
-        setTravelPlan(editingTravelPlan); // Update the travel plan with the saved data
+        getTravelPlan();
         setIsEditTravelDialogOpen(false); // Close the dialog
       })
       .catch((error) => {
@@ -115,7 +134,7 @@ function TravelPlanner() {
   const updateNewItinerary = (e) => {
 
     const { name, value } = e.target;
-    if (name === "activity" && value.length > 100) {
+    if (name === "title" && value.length > 100) {
       return; // Prevent updating if the title exceeds 100 characters
     }
     setNewItinerary({
@@ -126,9 +145,9 @@ function TravelPlanner() {
 
   const handleNewItinerary = async () => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.title}/itineraries/`, newItinerary, {
-        headers: { 
-          Authorization: `Token ${auth.token}` 
+      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/itineraries/`, newItinerary, {
+        headers: {
+          Authorization: `Token ${auth.token}`
         },
         ContentType: "multipart/form-data",
       })
@@ -148,10 +167,15 @@ function TravelPlanner() {
     if (!date || !(date instanceof Date)) {
       return [];
     }
+
     const filteredItineraries = travelPlan.itineraries.filter((itinerary) => {
-      const itineraryDate = new Date(itinerary.date);
-      return itineraryDate.toDateString() === date.toDateString();
+      const startDate = new Date(itinerary.start_date);
+      const endDate = new Date(itinerary.end_date);
+
+      // Check if the selected date falls within the itinerary's start and end dates
+      return date >= startDate && date <= endDate;
     });
+
     return filteredItineraries;
   };
 
@@ -161,7 +185,6 @@ function TravelPlanner() {
 
   const handleInviteCollaborator = async () => {
     setInviteErrorMessage("");
-    console.log(JSON.stringify(travelPlan.collaborators));
     if (newCollaborator.email === "") {
       setInviteErrorMessage("Please enter a valid email.");
       return;
@@ -197,8 +220,8 @@ function TravelPlanner() {
   const getUsernames = () => {
     return (
       travelPlan.user?.username
-      + (travelPlan.collaborators.length > 0 && ", " || "")
-      + travelPlan.collaborators.map((collab) => collab.username).join(", ") || "-"
+      + (travelPlan.collaborators?.length > 0 && ", " || "")
+      + travelPlan.collaborators?.map((collab) => collab.username).join(", ") || "-"
     );
   }
 
@@ -243,15 +266,14 @@ function TravelPlanner() {
                         <Form.Control
                           asChild
                           type="text"
-                          name="title"
-                          value={editingTravelPlan.title}
+                          value={editingTravelPlan.title || ""} // Default to an empty string
                           onChange={updateEditingTravelPlan}>
                           <Box asChild height="40px">
                             <TextField.Root>
                               <TextField.Slot />
                               <TextField.Slot >
                                 <Text size="1" color="gray" mr="4px">
-                                  {editingTravelPlan.title.length} / 100
+                                  {editingTravelPlan?.title?.length} / 100
                                 </Text>
                               </TextField.Slot>
                             </TextField.Root>
@@ -269,8 +291,8 @@ function TravelPlanner() {
                           <Form.Control
                             asChild
                             type="date"
-                            name="start_date"
-                            value={editingTravelPlan.start_date}
+                            max={editingTravelPlan.end_date}
+                            value={editingTravelPlan.start_date || ""} // Default to an empty string
                             onChange={updateEditingTravelPlan}>
                             <Box asChild height="40px">
                               <TextField.Root>
@@ -290,10 +312,9 @@ function TravelPlanner() {
                           <Form.Control
                             asChild
                             type="date"
-                            name="end_date"
-                            value={editingTravelPlan.end_date}
-                            onChange={updateEditingTravelPlan}
-                            min={editingTravelPlan.start_date}>
+                            min={editingTravelPlan.start_date}
+                            value={editingTravelPlan.end_date || ""}
+                            onChange={updateEditingTravelPlan}>
                             <Box asChild height="40px">
                               <TextField.Root>
                                 <TextField.Slot />
@@ -304,6 +325,30 @@ function TravelPlanner() {
                         </Form.Field>
                       </Grid>
 
+                      <Form.Field name="destination">
+                        <Form.Label asChild>
+                          <Box asChild mb="6px">
+                            <Text size="2" weight="medium">Destination</Text>
+                          </Box>
+                        </Form.Label>
+                        <Form.Control
+                          asChild
+                          type="text"
+                          value={editingTravelPlan.destination || ""} // Default to an empty string
+                          onChange={updateEditingTravelPlan}>
+                          <Box asChild height="40px">
+                            <TextField.Root>
+                              <TextField.Slot />
+                              <TextField.Slot >
+                                <Text size="1" color="gray" mr="4px">
+                                  {editingTravelPlan?.destination?.length} / 200
+                                </Text>
+                              </TextField.Slot>
+                            </TextField.Root>
+                          </Box>
+                        </Form.Control>
+                      </Form.Field>
+
                       <Form.Field name="description">
                         <Form.Label asChild>
                           <Box asChild mb="6px">
@@ -313,15 +358,14 @@ function TravelPlanner() {
                         <Form.Control
                           asChild
                           type="text"
-                          name="description"
-                          value={editingTravelPlan.description}
+                          value={editingTravelPlan.description || ""}
                           onChange={updateEditingTravelPlan}>
                           <Box asChild height="100px" p="2px">
                             <TextArea size="2" />
                           </Box>
                         </Form.Control>
                         <Text size="1" color="gray" mr="4px">
-                          {editingTravelPlan.description.length} / 2000
+                          {editingTravelPlan?.description?.length} / 2000
                         </Text>
                       </Form.Field>
                     </Flex>
@@ -334,7 +378,12 @@ function TravelPlanner() {
                         Cancel
                       </Button>
                     </Dialog.Close>
-                    <Button size="3" variant="solid" onClick={handleSaveTravelPlan}>
+                    <Button
+                      size="3"
+                      variant="solid"
+                      onClick={handleSaveTravelPlan}
+                      className={editingTravelPlan.title === "" && "no-click"}
+                      disabled={editingTravelPlan.title === ""}>
                       Save
                     </Button>
                   </Flex>
@@ -402,9 +451,9 @@ function TravelPlanner() {
                   </Grid>
                   <Flex direction="column" gap="20px" px="10px" my="30px">
                     <Text size="3" weight="medium">
-                      Current Collaborators ({travelPlan.collaborators.length || 0})
+                      Current Collaborators ({travelPlan.collaborators?.length || 0})
                     </Text>
-                    {travelPlan.collaborators.length > 0 ? (
+                    {travelPlan.collaborators?.length > 0 ? (
                       travelPlan.collaborators?.map((collaborator) => (
                         <Flex key={collaborator.username} direction="row" gap="20px" align="center" ml="16px">
                           <Text size="3">{collaborator.username}</Text>
@@ -436,16 +485,22 @@ function TravelPlanner() {
             <Text size="4">{travelPlan?.start_date} - {travelPlan?.end_date}</Text>
             <Box width="30px" />
             <Icons.SewingPinFilled />
-            <Text size="3">{travelPlan?.location || "-"}</Text>
+            <Text size="3">{travelPlan?.destination || "-"}</Text>
             <Box width="30px" />
             <Icons.Person20></Icons.Person20>
             <Text size="3">{getUsernames() || "No collaborators yet."}</Text>
           </Flex>
 
           <Box asChild maxWidth="100vw">
-            <Text as="p" size="4" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
-              {travelPlan.description || <i>Add a description to your travel plan...</i>}
-            </Text>
+            {travelPlan?.description ? (
+              <Text as="p" size="3" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                {travelPlan.description}
+              </Text>
+            ) : (
+              <Text as="p" size="3" color="gray" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+                <i>Add a description to your travel plan...</i>
+              </Text>
+            )}
           </Box>
 
           <Box height="0px" />
@@ -484,23 +539,23 @@ function TravelPlanner() {
                   <Form.Root className="FormRoot">
                     <Flex direction="column" gap="20px" px="10px">
 
-                      <Form.Field name="activity">
+                      <Form.Field name="title">
                         <Form.Label asChild>
                           <Box asChild mb="6px" >
-                            <Text size="2" weight="medium">Activity</Text>
+                            <Text size="2" weight="medium">Title</Text>
                           </Box>
                         </Form.Label>
                         <Form.Control
                           asChild
                           type="text"
-                          value={newItinerary.activity}
+                          value={newItinerary.title || ""} // Default to an empty string
                           onChange={updateNewItinerary}>
                           <Box asChild height="40px">
                             <TextField.Root>
                               <TextField.Slot />
                               <TextField.Slot >
                                 <Text size="1" color="gray" mr="4px">
-                                  {newItinerary.activity.length} / 100
+                                  {newItinerary.title?.length} / 100
                                 </Text>
                               </TextField.Slot>
                             </TextField.Root>
@@ -509,7 +564,7 @@ function TravelPlanner() {
                       </Form.Field>
 
                       <Grid flow="column" gap="20px" columns={2}>
-                        <Form.Field name="date">
+                        <Form.Field name="start_date">
                           <Form.Label asChild>
                             <Box asChild mb="6px" >
                               <Text size="2" weight="medium">Start Date</Text>
@@ -553,7 +608,7 @@ function TravelPlanner() {
                       </Grid>
 
                       <Grid flow="column" gap="20px" columns={2}>
-                        <Form.Field name="date">
+                        <Form.Field name="end_date">
                           <Form.Label asChild>
                             <Box asChild mb="6px" >
                               <Text size="2" weight="medium">End Date</Text>
@@ -603,10 +658,14 @@ function TravelPlanner() {
                           </Box>
                         </Form.Label>
                         <LocationSearch
-                          onSelectLocation={() => {
+                          defaultValue={newItinerary.location}
+                          onSelectLocation={(location, locationUrl) => {
                             setNewItinerary({
                               ...newItinerary,
-                              location: newItinerary.location?.display_name || "yeet",
+                              location: location.display_name,
+                              location_lat: location.lat,
+                              location_lon: location.lon,
+                              location_url: locationUrl,
                             });
                           }}
                         />
@@ -646,12 +705,9 @@ function TravelPlanner() {
                             }}>
                             <Select.Trigger radius="medium" />
                             <Select.Content>
-                              <Select.Item value="no-tag">No tag</Select.Item>
-                              <Select.Item value="visit">Visit</Select.Item>
-                              <Select.Item value="food">Food</Select.Item>
-                              <Select.Item value="accommodation">Accommdation</Select.Item>
-                              <Select.Item value="transit">Transit</Select.Item>
-                              <Select.Item value="other">Other</Select.Item>
+                              {itineraryTags.map((tag) => (
+                                <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
+                              ))}
                             </Select.Content>
                           </Select.Root>
                         </Box>
@@ -664,7 +720,12 @@ function TravelPlanner() {
                           Cancel
                         </Button>
                       </Dialog.Close>
-                      <Button size="3" variant="solid" onClick={handleNewItinerary}>
+                      <Button
+                        size="3"
+                        variant="solid"
+                        onClick={handleNewItinerary}
+                        className={newItinerary.title === "" && "no-click"}
+                        disabled={newItinerary.title === ""}>
                         Add
                       </Button>
                     </Flex>
@@ -678,11 +739,13 @@ function TravelPlanner() {
             <Tabs.Content value="all">
               {travelPlan?.itineraries?.length > 0 ? (
                 <Flex direction="column" gap="40px" py="40px">
-                  {travelPlan.itineraries.map((item) => (
+                  {travelPlan.itineraries?.map((item) => (
                     <ItineraryCard
                       key={item.id}
                       itinerary={item}
-                      travelTitle={travelPlan.title}
+                      travelId={travelPlan.id}
+                      travelStartDate={travelPlan.start_date}
+                      travelEndDate={travelPlan.end_date}
                       onUpdate={getTravelPlan} />
                   ))}
                 </Flex>
@@ -694,30 +757,41 @@ function TravelPlanner() {
             </Tabs.Content>
 
             <Tabs.Content value="daily">
-              {travelPlan?.itineraries?.length > 0 ? (
+              {(travelPlan?.itineraries?.length > 0 && travelPlan.start_date && travelPlan.end_date) ? (
                 <DailyView startDate={travelPlan.start_date} endDate={travelPlan.end_date}>
                   {(selectedDate) => (
-                    getDailyItinerary(selectedDate).length > 0 ? (
+                    getDailyItinerary(selectedDate)?.length > 0 ? (
                       <Flex direction="column" gap="40px" pb="40px">
                         {getDailyItinerary(selectedDate).map((item) => (
                           <ItineraryCard
                             key={item.id}
                             itinerary={item}
-                            travelTitle={travelPlan.title}
-                            onUpdate={getTravelPlan} />
+                            travelId={travelPlan.id}
+                            travelStartDate={travelPlan.start_date}
+                            travelEndDate={travelPlan.end_date}
+                            onUpdate={getTravelPlan}
+                          />
                         ))}
                       </Flex>
                     ) : (
                       <Flex asChild justify="center" py="120px">
-                        <Text size="3" color="gray">No itineraries available.</Text>
+                        <Text size="3" color="gray">No itineraries available for this day.</Text>
                       </Flex>
                     )
                   )}
                 </DailyView>
               ) : (
-                <Flex asChild justify="center" py="120px">
-                  <Text size="3" color="gray">No itineraries available.</Text>
-                </Flex>
+                <>
+                  {!(travelPlan.start_date && travelPlan.end_date) ? (
+                    <Flex asChild justify="center" py="120px">
+                      <Text size="3" color="gray">Set Start Date & End Date to enable Daily View.</Text>
+                    </Flex>
+                  ) : (
+                    <Flex asChild justify="center" py="120px">
+                      <Text size="3" color="gray">No itineraries available.</Text>
+                    </Flex>
+                  )}
+                </>
               )}
             </Tabs.Content>
 

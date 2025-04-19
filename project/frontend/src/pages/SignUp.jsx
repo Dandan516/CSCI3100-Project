@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
-import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout, Link } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
 
@@ -310,7 +310,7 @@ function SignUp() {
 
             {step === 1 && (
               <Text size="2" m="4px">
-                Already have an account? <Link to="/login">Sign in</Link>
+                Already have an account? <Link className="radix-ui-link" onClick={() => navigate("/login")}>Login</Link>
               </Text>
             )}
 

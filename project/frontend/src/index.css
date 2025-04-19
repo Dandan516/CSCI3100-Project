@@ -46,6 +46,10 @@ html, body {
   pointer-events: none;
 }
 
+.radix-ui-link {
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
   .collapsed {
     display: flex;

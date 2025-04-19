@@ -4,8 +4,14 @@ import { Link } from "react-router-dom";
 import { Flex, TextField, Button, Box, Text, Card, Separator, Grid, ScrollArea, Popover, Inset, Spinner } from "@radix-ui/themes";
 import axios from "axios";
 
-function LocationSearch({ onSelectLocation }) {
-  const [query, setQuery] = useState("");
+import { useSettings } from "../hooks/SettingsProvider";
+
+function LocationSearch({ selectedLocation, onSelectLocation }) {
+
+  const settings = useSettings();
+
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [query, setQuery] = useState(selectedLocation || "");
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,14 +34,28 @@ function LocationSearch({ onSelectLocation }) {
   };
 
   const handleSelectLocation = (location) => {
+    let locationUrl = "";
+    switch (settings.mapProvider) {
+      case "applemaps":
+        locationUrl = `https://maps.apple.com/?q=${location.lat},${location.lon}`;
+        break;
+      case "googlemaps":
+        const jointDisplayName = location.display_name.split(" ").join("+");
+        locationUrl = `https://www.google.com/maps/search/?api=1&query=${jointDisplayName}`;
+        break;
+      case "openstreetmap":
+        locationUrl = `https://www.openstreetmap.org/?#map=19/${location.lat}/${location.lon}`;
+        break;
+    }
     if (onSelectLocation) {
-      onSelectLocation(location); // Pass the selected location back to the parent
+      onSelectLocation(location, locationUrl); // Pass the selected location back to the parent
     }
     setQuery(location.display_name);
+    setIsPopoverOpen(false);
   };
 
   return (
-    <Popover.Root>
+    <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
 
       <Flex direction="column" align="center" gap="20px" style={{ zIndex: 1 }}>
         <Grid width="100%" flow="column" gap="20px">
@@ -58,7 +78,7 @@ function LocationSearch({ onSelectLocation }) {
       </Flex>
 
 
-      <Popover.Content width="400px" maxHeight="600px">
+      <Popover.Content width="400px" maxHeight="400px">
         <Inset>
           <Flex direction="column" align="center" gap="20px">
 
@@ -69,7 +89,7 @@ function LocationSearch({ onSelectLocation }) {
                     <Fragment key={index}>
                       <Box asChild width="402px">
                         <Card asChild variant="ghost" >
-                          <Link  onClick={() => handleSelectLocation(result)}>
+                          <Link onClick={() => handleSelectLocation(result)}>
                             <Flex direction="column" p="10px">
                               <Text size="4">{result.name}</Text>
                               <Text size="2" color="gray">{result.display_name}</Text>
