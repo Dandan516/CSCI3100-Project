@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import axios from 'axios';
-import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs, Avatar } from "@radix-ui/themes";
+import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs } from "@radix-ui/themes";
 
 import { Form } from "radix-ui";
 
@@ -18,7 +18,6 @@ function TravelPlanner() {
 
   const auth = useAuth();
   const params = useParams([]);
-  // const navigate = useNavigate();
 
   const [isEditTravelDialogOpen, setIsEditTravelDialogOpen] = useState(false);
   const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);
@@ -788,7 +787,7 @@ function TravelPlanner() {
                     </Flex>
                   ) : (
                     <Flex asChild justify="center" py="120px">
-                      <Text size="3" color="gray">No itineraries available.</Text>
+                      <Text size="3" color="gray">No itineraries yet.</Text>
                     </Flex>
                   )}
                 </>
