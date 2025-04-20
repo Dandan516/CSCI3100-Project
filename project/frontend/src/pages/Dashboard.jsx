@@ -14,7 +14,7 @@ function Dashboard() {
 
   const [recentPlans, setRecentPlans] = useState([]);
   const [sharedPlans, setSharedPlans] = useState([]);
-  const [allPlans, setAllPlans] = useState([]);
+  const [travelPlans, setTravelPlans] = useState([]);
 
   const getPlans = async () => {
     axios
@@ -27,12 +27,12 @@ function Dashboard() {
           title: item.title,
           user: item.user.username,
         }))
-        setAllPlans(data);
+        setTravelPlans(data);
       });
   }
 
   const getRecentPlans = () => {
-    allPlans.filter((plan) => {
+    travelPlans.filter((plan) => {
       const date = new Date(plan.created_at);
       const today = new Date();
       const diffTime = Math.abs(today - date);
@@ -42,7 +42,7 @@ function Dashboard() {
   }
 
   const getSharedPlans = () => {
-    allPlans.filter((plan) => {
+    travelPlans.filter((plan) => {
       return (plan.user.id !== auth.user.id);
     });
   }
@@ -102,13 +102,13 @@ function Dashboard() {
               </Tabs.Content>
 
               <Tabs.Content value="all">
-                {allPlans.length !== 0 && (
+                {travelPlans.length !== 0 && (
                   <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
-                    {allPlans.map((allPlan, index) => (
+                    {travelPlans.map((travelPlan, index) => (
                       <PreviewFrame
                         key={index} // Added unique key prop
-                        linkUrl={`/travel/${allPlan.id}`}
-                        title={allPlan.title}
+                        linkUrl={`/travel/${travelPlan.id}`}
+                        title={travelPlan.title}
                         imageUrl={"/public/images/travel.png"}
                       />
                     ))}

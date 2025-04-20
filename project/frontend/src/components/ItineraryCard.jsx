@@ -349,11 +349,11 @@ function ItineraryCard({ itinerary, travelId, travelStartDate, travelEndDate, on
                       -
                     </Text>
                   )}
-                  <Text size="3"> {itinerary.start_date} </Text>
+                  {itinerary.start_date && (
+                    <Text size="3"> {itinerary.start_date} </Text>
+                  )}
                   {itinerary.start_time && (
-                    <Text size="3">
-                      {formatTime(itinerary.start_time)}
-                    </Text>
+                    <Text size="3"> {formatTime(itinerary.start_time)} </Text>
                   )}
                 </Grid>
               </DataList.Value>
@@ -364,15 +364,13 @@ function ItineraryCard({ itinerary, travelId, travelStartDate, travelEndDate, on
               <DataList.Value>
                 <Grid flow="column" gap="20px" columns={2}>
                   {!(itinerary.end_date || itinerary.end_time) && (
-                    <Text size="3">
-                      -
-                    </Text>
+                    <Text size="3"> - </Text>
                   )}
-                  <Text size="3"> {itinerary.end_date} </Text>
+                  {itinerary.end_date && (
+                    <Text size="3"> {itinerary.end_date} </Text>
+                  )}
                   {itinerary.end_time && (
-                    <Text size="3">
-                      {formatTime(itinerary.end_time)}
-                    </Text>
+                    <Text size="3"> {formatTime(itinerary.end_time)} </Text>
                   )}
                 </Grid>
               </DataList.Value>

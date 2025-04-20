@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
 
 import axios from 'axios';
-import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs } from "@radix-ui/themes";
+import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs, Avatar, Card } from "@radix-ui/themes";
 
 import { Form } from "radix-ui";
 
@@ -30,6 +30,7 @@ function TravelPlanner() {
     end_date: undefined,
     description: '',
     itineraries: [],
+    owner: undefined,
     collaborators: [],
     destination: '',
     image: undefined,
@@ -73,7 +74,10 @@ function TravelPlanner() {
       })
       .then(response => {
         const data = response.data;
-        setTravelPlan(data);
+        setTravelPlan({
+          ...data,
+          owner: data.user,
+        });
         setEditingTravelPlan({
           title: data.title,
           start_date: data.start_date,
@@ -197,6 +201,10 @@ function TravelPlanner() {
       })
       .then((response) => {
         setInviteSuccess(true);
+        setNewCollaborator({
+          ...newCollaborator,
+          email: ""
+        });
         getTravelPlan();
         setTimeout(() => {
           setInviteSuccess(false);
@@ -218,7 +226,7 @@ function TravelPlanner() {
 
   const getUsernames = () => {
     return (
-      travelPlan.user?.username
+      travelPlan.owner?.username
       + (travelPlan.collaborators?.length > 0 && ", " || "")
       + travelPlan.collaborators?.map((collab) => collab.username).join(", ") || "-"
     );
@@ -448,15 +456,41 @@ function TravelPlanner() {
                       Invite
                     </Button>
                   </Grid>
-                  <Flex direction="column" gap="20px" px="10px" my="30px">
+                  <Flex direction="column" gap="10px" px="10px" my="30px">
                     <Text size="3" weight="medium">
-                      Current Collaborators ({travelPlan.collaborators?.length || 0})
+                      Current Collaborators ({travelPlan.collaborators?.length + 1 || 1})
                     </Text>
+                    <Box width="240px">
+                      <Card>
+                        <Flex gap="3" align="center">
+                          <Avatar
+                            size="3"
+                            src="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?&w=64&h=64&dpr=2&q=70&crop=focalpoint&fp-x=0.67&fp-y=0.5&fp-z=1.4&fit=crop"
+                          />
+                          <Box>
+                            <Text size="3"> {travelPlan.owner?.username}  (Owner) </Text>
+                            <Text as="div" size="2" color="gray"> {travelPlan.owner?.email} </Text>
+                          </Box>
+                        </Flex>
+                      </Card>
+                    </Box>
                     {travelPlan.collaborators?.length > 0 ? (
                       travelPlan.collaborators?.map((collaborator) => (
-                        <Flex key={collaborator.username} direction="row" gap="20px" align="center" ml="16px">
-                          <Text size="3">{collaborator.username}</Text>
-                          <Text size="3" color="gray">{collaborator.status}</Text>
+                        <Flex key={collaborator.username} direction="row" gap="20px" align="center">
+                          <Box width="240px">
+                            <Card>
+                              <Flex gap="3" align="center">
+                                <Avatar
+                                  size="3"
+                                  src=""
+                                />
+                                <Box>
+                                  <Text size="3"> {collaborator.username} </Text>
+                                  <Text as="div" size="2" color="gray"> {collaborator?.email} </Text> 
+                                </Box>
+                              </Flex>
+                            </Card>
+                          </Box>
                         </Flex>
                       ))
                     ) : (
