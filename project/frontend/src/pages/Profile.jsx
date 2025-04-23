@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Text, Flex, Box, Avatar, AlertDialog, IconButton, TextField, Table, Button, Dialog } from "@radix-ui/themes";
+import { Text, Flex, Box, Avatar, AlertDialog, IconButton, TextField, Table, Button, Dialog, Callout } from "@radix-ui/themes";
 import axios from 'axios';
 
 import Panel from '../components/Panel';
@@ -14,13 +14,14 @@ function Profile() {
   const [isEditUsernameDialogOpen, setIsEditUsernameDialogOpen] = useState(false);
   const [isEditNameDialogOpen, setIsEditNameDialogOpen] = useState(false);
   const [isEditBirthdayDialogOpen, setIsEditBirthdayDialogOpen] = useState(false);
-  const [isEditeAvatarDialogOpen, setIsEditAvatarDialogOpen] = useState(false);
+  const [isEditAvatarDialogOpen, setIsEditAvatarDialogOpen] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
 
   const [editingProfile, setEditingProfile] = useState({
-    username: auth.user?.username || "",
+    username: auth.user.username || "",
     first_name: auth.user?.first_name || "",
     last_name: auth.user?.last_name || "",
-    birthday: auth.user?.birthday || null,
+    birthday: auth.user?.birthday || undefined,
   });
 
   const updateEditingUserInfo = (e) => {
@@ -58,21 +59,74 @@ function Profile() {
       });
   }
 
+  const handleChangePassword = async () => {
+    setResetEmailSent(true);
+    axios
+      .post(`${import.meta.env.VITE_API_URL}password_reset/`, {
+        email: auth.user.email
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setTimeout(() => {
+            auth.logout();
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        console.error('Error resetting password', error);
+      });
+  }
+
+  // delete method not allowed for general users.
+  const handleDeleteAccount = async () => { 
+    axios
+      .delete(`${import.meta.env.VITE_API_URL}userinfo/${auth.user?.id}/`, {
+        headers: {
+          Authorization: `Token ${auth.token}`,
+        },
+      })
+      .then((response) => {
+        alert(JSON.stringify(response.data));
+        auth.logout();
+      })
+      .catch((error) => {
+        console.error('Error deleting user account', error);
+      });
+  }
+
   return (
     <Panel>
-      <Flex direction="column" align="center" gap="40px" p="60px">
+      <Flex direction="column" align="center" gap="30px" p="60px">
 
         <Avatar
           size="8"
           src={auth.user?.avatarUrl}
           radius="full"
-          fallback="T"
+          fallback={auth.user.username?.charAt(0).toUpperCase()}
         />
         <Text size="6" weight="medium">{auth.user?.email}</Text>
+
+        {resetEmailSent && (
+          <Box width="50%">
+            <Flex asChild direction="column" align="center" gap="10px">
+              <Callout.Root color="green">
+                <Callout.Icon>
+                  <Icons.Check />
+                </Callout.Icon>
+                <Callout.Text>
+                  Reset email has been sent to your email!<br />
+                  Please check your inbox.<br />
+                  Logging out...
+                </Callout.Text>
+              </Callout.Root>
+            </Flex>
+          </Box>
+        )}
 
         <Box asChild minWidth="80%" mt="40px">
           <Table.Root size="3">
             <Table.Body>
+
               <Table.Row>
                 <Table.RowHeaderCell>Username</Table.RowHeaderCell>
                 <Table.Cell>
@@ -86,6 +140,7 @@ function Profile() {
                   </Flex>
                 </Table.Cell>
               </Table.Row>
+
               <Table.Row>
                 <Table.RowHeaderCell>Name</Table.RowHeaderCell>
                 <Table.Cell>
@@ -99,6 +154,7 @@ function Profile() {
                   </Flex>
                 </Table.Cell>
               </Table.Row>
+
               <Table.Row>
                 <Table.RowHeaderCell>Birthday</Table.RowHeaderCell>
                 <Table.Cell>
@@ -116,9 +172,90 @@ function Profile() {
                 <Table.RowHeaderCell>Joined</Table.RowHeaderCell>
                 <Table.Cell>{auth.user?.date_joined ? new Date(auth.user.date_joined).toISOString().split('T')[0] : "-"}</Table.Cell>
               </Table.Row>
+
               <Table.Row>
                 <Table.RowHeaderCell>Last Login</Table.RowHeaderCell>
                 <Table.Cell>{auth.user?.last_login || "-"}</Table.Cell>
+              </Table.Row>
+              <Table.Row align="center">
+                <Table.RowHeaderCell>Change Password</Table.RowHeaderCell>
+                <Table.Cell>
+                  <AlertDialog.Root>
+                    <AlertDialog.Trigger>
+                      <Box asChild>
+                        <Button size="3" variant="soft" radius="medium">
+                          Change Password
+                        </Button>
+                      </Box>
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Content maxWidth="450px">
+                      <AlertDialog.Title>
+                        Change Password
+                      </AlertDialog.Title>
+                      <AlertDialog.Description size="2">
+                        Are you sure you want to change password?
+                        You will be logout from the app and a reset email will be sent to your email.
+                      </AlertDialog.Description>
+
+                      <Flex gap="3" mt="4" justify="end">
+                        <AlertDialog.Cancel>
+                          <Box asChild px="20px">
+                            <Button size="3" variant="soft" color="gray">
+                              No
+                            </Button>
+                          </Box>
+                        </AlertDialog.Cancel>
+                        <AlertDialog.Action>
+                          <Box asChild px="20px">
+                            <Button size="3" variant="solid" onClick={handleChangePassword}>
+                              Yes
+                            </Button>
+                          </Box>
+                        </AlertDialog.Action>
+                      </Flex>
+                    </AlertDialog.Content>
+                  </AlertDialog.Root>
+                </Table.Cell>
+              </Table.Row>
+
+              <Table.Row align="center">
+                <Table.RowHeaderCell>Delete Account</Table.RowHeaderCell>
+                <Table.Cell>
+                  <AlertDialog.Root>
+                    <AlertDialog.Trigger>
+                      <Box asChild>
+                        <Button size="3" variant="soft" color="red" radius="medium">
+                          Delete Account
+                        </Button>
+                      </Box>
+                    </AlertDialog.Trigger>
+                    <AlertDialog.Content maxWidth="450px">
+                      <AlertDialog.Title>
+                        Delete Account
+                      </AlertDialog.Title>
+                      <AlertDialog.Description size="2">
+                        Are you sure you want to delete your account? All data will be lost forever!
+                      </AlertDialog.Description>
+
+                      <Flex gap="3" mt="4" justify="end">
+                        <AlertDialog.Cancel>
+                          <Box asChild px="20px">
+                            <Button size="3" variant="soft" color="gray">
+                              No
+                            </Button>
+                          </Box>
+                        </AlertDialog.Cancel>
+                        <AlertDialog.Action>
+                          <Box asChild px="20px">
+                            <Button size="3" variant="solid" color="red" onClick={handleDeleteAccount}>
+                              Yes
+                            </Button>
+                          </Box>
+                        </AlertDialog.Action>
+                      </Flex>
+                    </AlertDialog.Content>
+                  </AlertDialog.Root>
+                </Table.Cell>
               </Table.Row>
 
             </Table.Body>
@@ -136,7 +273,11 @@ function Profile() {
               <Dialog.Description></Dialog.Description>
 
               <Box asChild height="40px">
-                <TextField.Root name="username" placeholder="New username" onChange={updateEditingUserInfo} >
+                <TextField.Root
+                  name="username"
+                  placeholder="New username"
+                  value={editingProfile.username}
+                  onChange={updateEditingUserInfo} >
                   <TextField.Slot />
                 </TextField.Root>
               </Box>
@@ -147,7 +288,12 @@ function Profile() {
                     Cancel
                   </Button>
                 </Dialog.Close>
-                <Button size="3" variant="solid" onClick={handleEditProfile}>
+                <Button
+                  size="3"
+                  variant="solid"
+                  onClick={handleEditProfile}
+                  disabled={editingProfile.username === ""}
+                  className={editingProfile.username === "" && "no-click"}>
                   Save
                 </Button>
               </Flex>
@@ -166,12 +312,20 @@ function Profile() {
               <Dialog.Description></Dialog.Description>
 
               <Box asChild height="40px">
-                <TextField.Root name="first_name" placeholder="First name" onChange={updateEditingUserInfo} >
+                <TextField.Root
+                  name="first_name"
+                  placeholder="First name"
+                  value={editingProfile.first_name}
+                  onChange={updateEditingUserInfo} >
                   <TextField.Slot />
                 </TextField.Root>
               </Box>
               <Box asChild height="40px">
-                <TextField.Root name="last_name" placeholder="Last name" onChange={updateEditingUserInfo} >
+                <TextField.Root
+                  name="last_name"
+                  placeholder="Last name"
+                  value={editingProfile.last_name}
+                  onChange={updateEditingUserInfo} >
                   <TextField.Slot />
                 </TextField.Root>
               </Box>
@@ -201,7 +355,13 @@ function Profile() {
               <Dialog.Description></Dialog.Description>
 
               <Box asChild height="40px" style={{ width: 'fit-content' }}>
-                <TextField.Root name="birthday" type="date" placeholder="Your birthday" onChange={updateEditingUserInfo} >
+                <TextField.Root
+                  name="birthday"
+                  type="date"
+                  max={new Date().toISOString().split('T')[0]}
+                  value={editingProfile.birthday}
+                  placeholder="Your birthday"
+                  onChange={updateEditingUserInfo} >
                   <TextField.Slot />
                   <TextField.Slot />
                 </TextField.Root>
@@ -221,40 +381,7 @@ function Profile() {
           </Flex>
         </Dialog.Root>
 
-        <AlertDialog.Root>
-          <AlertDialog.Trigger>
-            <Box asChild>
-              <Button size="3" variant="soft" color="red">
-                Delete Account
-              </Button>
-            </Box>
-          </AlertDialog.Trigger>
-          <AlertDialog.Content maxWidth="450px">
-            <AlertDialog.Title>
-              Sign out
-            </AlertDialog.Title>
-            <AlertDialog.Description size="2">
-              Are you sure you want to sign out?
-            </AlertDialog.Description>
 
-            <Flex gap="3" mt="4" justify="end">
-              <AlertDialog.Cancel>
-                <Box asChild px="20px">
-                  <Button size="3" variant="soft" highContrast>
-                    No
-                  </Button>
-                </Box>
-              </AlertDialog.Cancel>
-              <AlertDialog.Action>
-                <Box asChild px="20px">
-                  <Button size="3" variant="solid" color="red" onClick={() => auth.logout()}>
-                    Yes
-                  </Button>
-                </Box>
-              </AlertDialog.Action>
-            </Flex>
-          </AlertDialog.Content>
-        </AlertDialog.Root>
 
       </Flex>
     </Panel>

@@ -2,11 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout, Link } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 import axios from 'axios';
 
 import * as Icons from '../assets/Icons';
+
+const isEmailInvalid = (email) => {
+  const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  return !regex.test(email);
+};
+
+const isPasswordInvalid = (password) => {
+  const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+  return !regex.test(password);
+};
 
 function SignUp() {
 
@@ -14,97 +24,106 @@ function SignUp() {
 
   const [step, setStep] = useState(1);
 
-  const [formData, setFormData] = useState({
+  const [signUpForm, setSignUpForm] = useState({
     email: '',
     password: '',
     confirmPassword: ''
   });
 
-  const updateFormData = (e) => {
-    setFormData({
-      ...formData,
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const [signUpError, setSignUpError] = useState(false);
+
+  const [errorMessages, setErrorMessages] = useState([]);
+
+  const updateSignUpForm = (e) => {
+    setSignUpForm({
+      ...signUpForm,
       [e.target.name]: e.target.value
     });
   };
-
-  const [signUpError, setSignUpError] = useState(false);
-  const [errorMessages, setErrorMessages] = useState([]);
-  const [formTouched, setFormTouched] = useState(false);
-
-  const isEmailInvalid = () => {
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return !regex.test(formData.email);
-  };
-
-  const isPasswordInvalid = () => {
-    const regex = /^(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-    return !regex.test(formData.password);
-  };
-
-  const [isFormValid, setIsFormValid] = useState(false);
 
   const validateForm = () => {
 
     const errors = [];
 
-    if (!formData.email) {
+    if (!signUpForm.email) {
       errors.push("Please enter your email.");
-    } else if (isEmailInvalid()) {
+    } else if (isEmailInvalid(signUpForm.email)) {
       errors.push("Email is invalid.");
     }
 
-    if (!formData.password) {
+    if (!signUpForm.password) {
       errors.push("Password is required.");
-    } else if (isPasswordInvalid()) {
-      errors.push("Password should contain ≥ 8 characters, 1 uppercase letter, and 1 special character.");
-      errors.push("Special characters: !@#$%^&*");
+    } else if (isPasswordInvalid(signUpForm.password)) {
+      errors.push("Password should contain ≥ 8 characters, with:");
+      errors.push("- 1 uppercase letter ( A-Z )");
+      errors.push("- 1 special character ( !@#$%^&* )");
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    if (signUpForm.password !== signUpForm.confirmPassword) {
       errors.push("Passwords do not match.");
     }
 
-    setErrorMessages(errors);
-    setSignUpError(errors.length > 0); // Only show errors if the form has been touched
-    setIsFormValid(errors.length === 0);
+    return errors;
   };
 
   const handleSignUp = async (e) => {
-    e.preventDefault();
-   
-    validateForm(); // Validate the form before proceeding
-    if (!isFormValid) {
+    e.preventDefault(); // Prevent default form submission behavior
+    setIsLoading(true); // Set loading state
+    setErrorMessages([]); // Clear previous error messages
+    const errors = validateForm(); // Validate the form and get errors
+
+    if (errors.length > 0) {
+      setSignUpError(true);
+      setErrorMessages(errors); // Update error messages
+      setIsLoading(false); // Reset loading state
       return; // Prevent submission if the form is invalid
     }
 
-    try {
-      if (step === 1) {
-        axios
-          .post(`${import.meta.env.VITE_API_URL}signup/`, {
-            email: formData.email, 
-            password: formData.password 
-          });
-        setStep(2);
-      } else if (step === 2) {
-        axios
-          .post(`${import.meta.env.VITE_API_URL}password_reset/`, { 
-            email: formData.email, 
-            code: formData.code 
-          })
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error('Error signing up:', error);
-      const errors = [];
-      if (error.response?.data?.email && !isEmailInvalid()) {
-        errors.push('User with this email already exists.');
-      } else {
-        errors.push("An unexpected error occurred. Please try again later.");
-      }
-      setErrorMessages(errors);
-      setSignUpError(true);
-    }
+    axios
+      .post(`${import.meta.env.VITE_API_URL}signup/`, {
+        email: signUpForm.email,
+        password: signUpForm.password,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          console.log("Sign up valid:", response.data);
+          setSignUpError(false);
+          setSignUpSuccess(true);
+
+          // Redirect to login page after 3 seconds
+          const timeoutId = setTimeout(() => {
+            navigate("/login");
+          }, 3000);
+
+          // Cleanup timeout on unmount
+          return () => clearTimeout(timeoutId);
+        }
+      })
+      .catch((error) => {
+        console.error("Error signing up:", error);
+        const errors = [];
+        if (JSON.parse(error.request.response).email) {
+          errors.push("User with this email already exists.");
+        } else {
+          errors.push("An unexpected error occurred. Please try again later.");
+        }
+        setSignUpError(true);
+        setErrorMessages(errors);
+      })
+      .finally(() => {
+        setIsLoading(false); // Reset loading state
+      });
   };
+
+  useEffect(() => {
+    setSignUpError(false);
+    setSignUpSuccess(false);
+    setErrorMessages([]);
+  }, []);
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
@@ -112,34 +131,50 @@ function SignUp() {
         <Card size="3">
           <Flex direction="column" align="center" justify="center" gap="20px">
 
-            <Text size="7" weight="bold" my="20px">
+            <Text size="7" weight="medium" my="20px">
               Sign Up
             </Text>
-
-            {signUpError && (
-              <Box asChild width="380px">
-                <Flex asChild direction="column" align="center" gap="10px">
-                  <Callout.Root color="red">
-                    <Callout.Icon>
-                      <Icons.CrossCircled />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      {errorMessages.map((message, index) => (
-                        <Text key={index} size="2" color="red" mb="5px">
-                          {message}<br />
-                        </Text>
-                      ))}
-                    </Callout.Text>
-                  </Callout.Root>
-                </Flex>
-              </Box>
-            )}
 
             <Form.Root className="FormRoot">
               <Flex align="center" direction="column" gap="20px">
 
                 {step === 1 && (
                   <>
+                    {signUpError && (
+                      <Box asChild width="380px">
+                        <Flex asChild direction="column" align="center" gap="10px">
+                          <Callout.Root color="red">
+                            <Callout.Icon>
+                              <Icons.CrossCircled />
+                            </Callout.Icon>
+                            <Callout.Text>
+                              {errorMessages.map((message, index) => (
+                                <Text key={index} size="2" color="red" mb="5px">
+                                  {message}<br />
+                                </Text>
+                              ))}
+                            </Callout.Text>
+                          </Callout.Root>
+                        </Flex>
+                      </Box>
+                    )}
+
+                    {signUpSuccess && (
+                      <Box width="380px">
+                        <Flex asChild direction="column" align="center" gap="10px">
+                          <Callout.Root color="green">
+                            <Callout.Icon>
+                              <Icons.Check />
+                            </Callout.Icon>
+                            <Callout.Text>
+                              Sign up successful.<br />
+                              Redirecting you to login page...
+                            </Callout.Text>
+                          </Callout.Root>
+                        </Flex>
+                      </Box>
+                    )}
+
                     {/* Email */}
                     <Form.Field name="email">
 
@@ -155,8 +190,8 @@ function SignUp() {
                         asChild
                         type="email"
                         placeholder="Enter your email address..."
-                        value={formData.email}
-                        onChange={updateFormData}
+                        value={signUpForm.email}
+                        onChange={updateSignUpForm}
                         required>
                         <Box asChild width="380px" height="50px" mt="10px">
                           <TextField.Root>
@@ -182,8 +217,8 @@ function SignUp() {
                         asChild
                         className="Input"
                         type="password"
-                        value={formData.password}
-                        onChange={updateFormData}
+                        value={signUpForm.password}
+                        onChange={updateSignUpForm}
                         required
                         minLength="8"
                         placeholder="Enter a password of 8 characters or more...">
@@ -210,8 +245,8 @@ function SignUp() {
                       <Form.Control
                         asChild
                         type="password"
-                        value={formData.confirmPassword}
-                        onChange={updateFormData}
+                        value={signUpForm.confirmPassword}
+                        onChange={updateSignUpForm}
                         required
                         placeholder="Re-enter the password...">
                         <Box asChild width="380px" height="50px" mt="10px">
@@ -241,8 +276,8 @@ function SignUp() {
                       asChild
                       type="text"
                       placeholder="Enter the code sent to your email..."
-                      value={formData.code}
-                      onChange={updateFormData}
+                      value={signUpForm.code}
+                      onChange={updateSignUpForm}
                       required>
                       <Box asChild width="380px" height="50px" mt="10px">
                         <TextField.Root>
@@ -258,9 +293,11 @@ function SignUp() {
                   <Button
                     asChild
                     variant="solid"
-                    onClick={handleSignUp}>
-                    <Box width="380px" height="60px" my="10px">
-                      <Text size="5" weight="bold">
+                    onClick={handleSignUp}
+                    disabled={isLoading || signUpSuccess}
+                    className={(isLoading || signUpSuccess) && "no-click"}>
+                    <Box width="380px" height="50px" mt="10px">
+                      <Text size="4" weight="medium">
                         Continue
                       </Text>
                     </Box>
@@ -273,7 +310,7 @@ function SignUp() {
 
             {step === 1 && (
               <Text size="2" m="4px">
-                Already have an account? <Link href="/login">Sign in</Link>
+                Already have an account? <Link className="radix-ui-link" onClick={() => navigate("/login")}>Login</Link>
               </Text>
             )}
 

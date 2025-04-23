@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Text, Button, Flex, Box, Card, TextField, Link, Checkbox, Callout } from "@radix-ui/themes";
+import { Text, Button, Flex, Box, Card, TextField, Checkbox, Callout, Link } from "@radix-ui/themes";
 import { Form } from "radix-ui";
 
 import * as Icons from '../assets/Icons';
@@ -17,6 +17,8 @@ function Login() {
     password: '',
   });
 
+  const [rememberMe, setRememberMe] = useState(false);
+
   const updateCredentials = (e) => {
     setCredentials({
       ...credentials,
@@ -25,17 +27,6 @@ function Login() {
   };
 
   const handleCheckboxChange = (checked) => setRememberMe(checked);
-  const [rememberMe, setRememberMe] = useState(false);
-
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      setCredentials((prevData) => ({ ...prevData, email: savedEmail }));
-      setRememberMe(true);
-    }
-  }, []);
-
-  const [loginError, setLoginError] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -46,8 +37,16 @@ function Login() {
       localStorage.removeItem('rememberedEmail');
       localStorage.removeItem('rememberedPassword');
     }
-    setLoginError(!(await auth.login(credentials)));
+    await auth.login(credentials);
   };
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('rememberedEmail');
+    if (savedEmail) {
+      setCredentials((prevData) => ({ ...prevData, email: savedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
 
   return (
     <Flex width="100vw" height="100vh" direction="column" align="center" justify="center">
@@ -55,11 +54,11 @@ function Login() {
         <Card size="3">
           <Flex direction="column" align="center" justify="center" gap="20px">
 
-            <Text size="7" weight="bold" my="20px">
-              Sign In
+            <Text size="7" weight="medium" my="20px">
+              Login
             </Text>
 
-            {loginError && (
+            {auth.loginError && (
               <Box width="380px">
                 <Callout.Root color="red">
                   <Callout.Icon>
@@ -69,6 +68,22 @@ function Login() {
                     Invalid credentials.
                   </Callout.Text>
                 </Callout.Root>
+              </Box>
+            )}
+
+            {auth.loginSuccess && (
+              <Box width="380px">
+                <Flex asChild direction="column" align="center" gap="10px">
+                  <Callout.Root color="green">
+                    <Callout.Icon>
+                      <Icons.Check />
+                    </Callout.Icon>
+                    <Callout.Text>
+                      Login success!<br />
+                      Logging in...
+                    </Callout.Text>
+                  </Callout.Root>
+                </Flex>
               </Box>
             )}
 
@@ -135,14 +150,14 @@ function Login() {
                     </Flex>
                   </Text>
                   <Text size="2" align="right">
-                    <Link href="/forgot-password"> Forgot password? </Link>
+                    <Link className="radix-ui-link"onClick={() => navigate("/forgot-password")}> Forgot password? </Link>
                   </Text>
                 </Flex>
 
                 <Form.Submit asChild onClick={handleLogin}>
-                  <Button asChild variant="solid">
-                    <Box width="380px" height="60px">
-                      <Text size="5" weight="bold">
+                  <Button asChild variant="solid" className={(auth.isLoading || auth.loginSuccess) && "no-click"} disabled={auth.isLoading || auth.loginSuccess}>
+                    <Box width="380px" height="50px">
+                      <Text size="4" weight="medium">
                         Continue
                       </Text>
                     </Box>
@@ -153,14 +168,14 @@ function Login() {
             </Form.Root>
 
             <Text size="2" m="4px">
-              Don't have an account? <Link href="/signup">Create an account</Link>
+              Don't have an account? <Link className="radix-ui-link" onClick={() => navigate("/signup")}>Create an account</Link>
             </Text>
 
           </Flex>
         </Card >
       </Box >
 
-      <Box height="40px"/>
+      <Box height="40px" />
 
       <Button variant="outline" onClick={() => navigate("/")}>Go Back</Button>
 

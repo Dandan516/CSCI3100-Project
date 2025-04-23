@@ -10,25 +10,16 @@ import * as Icons from '../assets/Icons';
 
 function ForgotPassword() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-  });
+  const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const updateFormData = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const handleSendEmail = async (e) => {
 
     e.preventDefault();
 
-    if (!formData.email) {
+    if (!email) {
       return;
     }
 
@@ -37,20 +28,20 @@ function ForgotPassword() {
 
     axios
       .post(`${import.meta.env.VITE_API_URL}password_reset/`, {
-        email: formData.email
+        email: email
       })
       .then((response) => {
         if (response.status === 200) {
           setIsLoading(false);
           setEmailError(false);
-          setEmailSent(true);
+          setResetEmailSent(true);
           setTimeout(() => {
             navigate("/");
           }, 3000);
         }
       })
       .catch((error) => {
-        setEmailSent(false);
+        setResetEmailSent(false);
         setEmailError(true);
         setIsLoading(false);
       });
@@ -65,7 +56,7 @@ function ForgotPassword() {
             <Form.Root asChild className="FormRoot">
               <Flex direction="column" gap="20px">
 
-                <Text align="center" size="7" weight="bold" my="20px">
+                <Text align="center" size="7" weight="medium" my="20px">
                   Forgot Password
                 </Text>
 
@@ -82,18 +73,20 @@ function ForgotPassword() {
                   </Box>
                 )}
 
-                {emailSent && (
+                {resetEmailSent && (
                   <Box width="380px">
-                    <Callout.Root color="green">
-                      <Callout.Icon>
-                        <Icons.Check />
-                      </Callout.Icon>
-                      <Callout.Text>
-                        Reset email has been sent to your email!<br />
-                        Please check your inbox.<br />
-                        Redirecting you to home page...
-                      </Callout.Text>
-                    </Callout.Root>
+                    <Flex asChild direction="column" align="center" gap="10px">
+                      <Callout.Root color="green">
+                        <Callout.Icon>
+                          <Icons.Check />
+                        </Callout.Icon>
+                        <Callout.Text>
+                          Reset email has been sent to your email!<br />
+                          Please check your inbox.<br />
+                          Redirecting you to home page...
+                        </Callout.Text>
+                      </Callout.Root>
+                    </Flex>
                   </Box>
                 )}
 
@@ -125,8 +118,8 @@ function ForgotPassword() {
                     className="Input"
                     type="email"
                     placeholder="Enter your email address..."
-                    value={formData.email}
-                    onChange={updateFormData}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required>
                     <Box asChild width="380px" height="50px" mt="10px">
                       <TextField.Root>
@@ -138,9 +131,9 @@ function ForgotPassword() {
                 </Form.Field>
 
                 <Form.Submit asChild onClick={handleSendEmail}>
-                  <Button asChild variant="solid" disabled={(isLoading || emailSent)} className={(isLoading || emailSent) && "no-click"}>
-                    <Box width="380px" height="60px" my="10px">
-                      <Text size="5" weight="bold">
+                  <Button asChild variant="solid" disabled={(isLoading || resetEmailSent)} className={(isLoading || resetEmailSent) && "no-click"}>
+                    <Box width="380px" height="50px" my="10px">
+                      <Text size="4" weight="medium">
                         Send Reset Email
                       </Text>
                     </Box>

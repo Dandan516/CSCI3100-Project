@@ -7,7 +7,7 @@ import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 
 import Panel from '../components/Panel';
-import PreviewFrame from '../components/PreviewFrame';
+
 import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
 
@@ -141,11 +141,12 @@ function TravelPlannerHome() {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          startDate: [item.start_date || "-"],
-          endDate: [item.end_date || "-"],
-          description: [item.description || "-"],
-          user : item.user.username,
-          collaborators: item.collaborators.map((collab) => collab.username).join(", ") || "-",
+          startDate: item.start_date,
+          endDate: item.end_date,
+          destination: item.destination,
+          description: item.description,
+          owner: item.user.username,
+          collaboratorsList: item.collaborators.map((collab) => collab.username).join(", ") || "",
         }));
         setTravelPlans(data);
       })
@@ -244,7 +245,7 @@ function TravelPlannerHome() {
               position: "relative", // Ensure content is above the shadow
               zIndex: 1,
             }}>
-            <Heading size="8" color="white">
+            <Heading size="8">
               Travel Planner
             </Heading >
             <Box asChild width="100%">
@@ -294,13 +295,15 @@ function TravelPlannerHome() {
                       <Flex gap="20px" align="center">
                         <Icons.SewingPinFilled />
                         <Text size="3" weight="regular">
-                          {recentTravelPlan.location || "-"}
+                          {recentTravelPlan.destination || "-"}
                         </Text>
                       </Flex>
                       <Flex gap="20px" align="center">
                         <Icons.Person20 />
                         <Text size="3" weight="regular">
-                          {recentTravelPlan.user + ", " + recentTravelPlan.collaborators || "-"}
+                          {recentTravelPlan.owner}
+                          {recentTravelPlan.collaboratorsList !== "" && ", "}
+                          {recentTravelPlan.collaboratorsList || ""}
                         </Text>
                       </Flex>
                     </Flex>
@@ -337,11 +340,20 @@ function TravelPlannerHome() {
               </Button>
             </Dialog.Trigger>
 
+
+
             <Flex asChild direction="column" gap="10px">
               <Dialog.Content size="3" maxWidth="450px">
                 <Box asChild p="4px">
                   <Dialog.Title>Create New Travel Plan</Dialog.Title>
                 </Box>
+
+                <Dialog.Description>
+                  <Text size="2" weight="medium" mx="6px">
+                    Travel plan title
+                  </Text>
+                </Dialog.Description>
+
                 <Box asChild height="40px">
                   <TextField.Root
                     value={newTravelPlanTitle}
@@ -351,7 +363,6 @@ function TravelPlannerHome() {
                     <TextField.Slot pr="8px" />
                   </TextField.Root>
                 </Box>
-
 
                 <Flex gap="3" mt="4" justify="end">
                   <Dialog.Close>

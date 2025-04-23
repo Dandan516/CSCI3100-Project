@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Flex, Box, Card } from "@radix-ui/themes";
 
 import NavigateButton from '../components/NavigateButton';
@@ -12,13 +10,13 @@ function Portal() {
         <Card size="3">
           <Flex direction="column" align="center" gap="20px" m="20px">
             
-            <NavigateButton url="/login" label="Sign In"/>
+            <NavigateButton url="/login" label="Login"/>
 
             <NavigateButton url="/signup" label="Sign Up"/>
 
             <NavigateButton url="/forgot-password" label="Forgot Password"/>
 
-            <NavigateButton url="/home" label="Home"/>
+            <NavigateButton url="/dashboard" label="Dashboard"/>
             
           </Flex>
         </Card>

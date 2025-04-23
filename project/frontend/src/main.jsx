@@ -8,7 +8,7 @@ import './index.css'
 import * as Pages from './pages/index';
 import AuthProvider from "./hooks/AuthProvider";
 import PrivateRoute from "./router/PrivateRoute";
-import { ThemeProvider } from "./hooks/ThemeProvider";
+import { SettingsProvider } from "./hooks/SettingsProvider";
 
 const router = createBrowserRouter([
   {
@@ -36,18 +36,19 @@ const router = createBrowserRouter([
           path: "/password-reset",
           element: <Pages.PasswordReset />,
         },
-        {
-          path: "/location-search",
-          element: <Pages.LocationSearch />,
-        },
-        // protected routes
+        
+        // Private routes
         {
           element: <PrivateRoute />,
           children:
             [
               {
-                path: "/home",
-                element: <Pages.Home />,
+                path: "/start",
+                element: <Pages.Start />,
+              },
+              {
+                path: "/dashboard",
+                element: <Pages.Dashboard />,
               },
               {
                 path: "/profile",
@@ -97,9 +98,9 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
+    <SettingsProvider>
       <RouterProvider router={router} />
-    </ThemeProvider>
+    </SettingsProvider>
   </StrictMode>,
 )
 

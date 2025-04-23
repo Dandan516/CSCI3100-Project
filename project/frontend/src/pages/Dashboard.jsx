@@ -1,41 +1,55 @@
-import { useState } from 'react';
-import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
-
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+
+import axios, { all } from 'axios';
+import { Text, Flex, Box, Tabs, Grid } from "@radix-ui/themes";
 
 import Panel from '../components/Panel';
 import PreviewFrame from '../components/PreviewFrame';
 import { useAuth } from "../hooks/AuthProvider";
 
-function Home() {
+function Dashboard() {
 
   const auth = useAuth();
 
-  const [recentPlans, setRecentPlans] = useState([
-    {
-      id: "1",
-    },
-    {
-      id: "2",
-    },
-  ]);
+  const [recentPlans, setRecentPlans] = useState([]);
+  const [sharedPlans, setSharedPlans] = useState([]);
+  const [travelPlans, setTravelPlans] = useState([]);
 
-  const [sharedPlans, setSharedPlans] = useState([
-    {
-      id: "3",
-    },
-    {
-      id: "4",
-    },
-  ]);
-  const [allPlans, setAllPlans] = useState([
-    {
-      id: "5",
-    },
-    {
-      id: "6",
-    },
-  ]);
+  const getPlans = async () => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}travel/`, {
+        headers: { Authorization: `Token ${auth.token}` },
+      })
+      .then(response => {
+        const data = response.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          user: item.user.username,
+        }))
+        setTravelPlans(data);
+      });
+  }
+
+  const getRecentPlans = () => {
+    travelPlans.filter((plan) => {
+      const date = new Date(plan.created_at);
+      const today = new Date();
+      const diffTime = Math.abs(today - date);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays <= 7;
+    });
+  }
+
+  const getSharedPlans = () => {
+    travelPlans.filter((plan) => {
+      return (plan.user.id !== auth.user.id);
+    });
+  }
+
+  useEffect(() => {
+    getPlans();
+  }, []);
 
   return (
     <Panel>
@@ -54,7 +68,7 @@ function Home() {
               <Tabs.List mb="30px">
                 <Tabs.Trigger value="recent">Recently viewed</Tabs.Trigger>
                 <Tabs.Trigger value="shared">Shared with me</Tabs.Trigger>
-                <Tabs.Trigger value="all">View all documents</Tabs.Trigger>
+                <Tabs.Trigger value="all">View all plans</Tabs.Trigger>
               </Tabs.List>
 
               <Tabs.Content value="recent">
@@ -88,14 +102,14 @@ function Home() {
               </Tabs.Content>
 
               <Tabs.Content value="all">
-                {allPlans.length !== 0 && (
+                {travelPlans.length !== 0 && (
                   <Grid flow="row" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6">
-                    {allPlans.map((allPlan, index) => (
+                    {travelPlans.map((travelPlan, index) => (
                       <PreviewFrame
                         key={index} // Added unique key prop
-                        linkUrl={`${allPlan.id}`}
-                        title={allPlan.title}
-                        imageUrl={allPlan.imageUrl}
+                        linkUrl={`/travel/${travelPlan.id}`}
+                        title={travelPlan.title}
+                        imageUrl={"/public/images/travel.png"}
                       />
                     ))}
                   </Grid>
@@ -110,4 +124,4 @@ function Home() {
   );
 }
 
-export default Home
+export default Dashboard

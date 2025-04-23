@@ -1,6 +1,6 @@
 export {default as Login} from './Login';
 export {default as SignUp} from './SignUp';
-export {default as Home} from './Home';
+export {default as Dashboard} from './Dashboard';
 export {default as Portal} from './Portal';
 export {default as ForgotPassword} from './ForgotPassword';
 export {default as PasswordReset} from './PasswordReset';
@@ -12,4 +12,4 @@ export {default as Settings} from './Settings';
 export {default as BudgetPlannerHome} from './BudgetPlannerHome';
 //export {default as BudgetPlanner} from './BudgetPlanner';
 export {default as Calendar} from './Calendar';
-export {default as LocationSearch} from '../components/LocationSearch';
+export {default as Start} from './Start';
