@@ -3,8 +3,11 @@ from django.db import models
 # Create your models here.
 class Budget(models.Model):
     user = models.ForeignKey('users.CustomUser', on_delete=models.CASCADE, related_name="budgets")
-    name = models.CharField(max_length=100)
-    date = models.DateField(auto_now_add=True)
+    title = models.CharField(max_length=100,blank=True)
+    date = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.title
 
 
 class Expense(models.Model):
@@ -15,7 +18,7 @@ class Expense(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    CAT = (
+    CAT1 = (
         ('food', 'Food'),
         ('transport', 'Transport'),
         ('accommodation', 'Accommodation'),
@@ -24,7 +27,10 @@ class Expense(models.Model):
         ('other', 'Other'),
     )
 
-    categories = models.CharField(max_length=20, choices=CAT , blank=True, null=True, default=None)
+    categories = models.CharField(max_length=20, choices=CAT1 , blank=True, null=True, default=None)
+
+    def __str__(self):
+        return self.description
 
 class Income(models.Model):
     budget = models.ForeignKey(Budget, on_delete=models.CASCADE, related_name="incomes")
@@ -34,7 +40,7 @@ class Income(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    CAT = (
+    CAT2 = (
         ('salary', 'Salary'),
         ('investment', 'Investment'),
         ('gift', 'Gift'),
@@ -45,4 +51,7 @@ class Income(models.Model):
         ('dividends', 'Dividends'),
     )
 
-    categories = models.CharField(max_length=20, choices=CAT , blank=True, null=True, default=None)
+    categories = models.CharField(max_length=20, choices=CAT2 , blank=True, null=True, default=None)
+
+    def __str__(self):
+        return self.description

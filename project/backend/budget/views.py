@@ -40,7 +40,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         ).distinct()
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
 
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
@@ -54,4 +54,4 @@ class IncomeViewSet(viewsets.ModelViewSet):
         ).distinct()
     
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()

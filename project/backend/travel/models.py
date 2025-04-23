@@ -20,7 +20,7 @@ class Itinerary(models.Model):
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
     activity = models.CharField(max_length=200)
-    location = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, null=True) 
     notes = models.TextField(blank=True)
 
     TAGS = (
