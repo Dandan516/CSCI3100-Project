@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Link } from "@radix-ui/themes";
+import { useNavigate, Link } from 'react-router-dom';
+import { Text, Flex, Box, Grid, Button, Dialog, TextField, Heading, IconButton, DropdownMenu, Card, Inset, Popover } from "@radix-ui/themes";
 
-import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { themeQuartz, colorSchemeDarkBlue, AllCommunityModule, ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import axios from 'axios';
 
 import Panel from '../components/Panel';
-import PreviewFrame from '../components/PreviewFrame';
+
 import { useAuth } from "../hooks/AuthProvider";
 import * as Icons from '../assets/Icons';
 
-ModuleRegistry.registerModules([AllCommunityModule]);
+ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule]);
 
-const BudgetPlannerHome = () => {
+function BudgetPlannerHome() {
 
   const auth = useAuth();
   const navigate = useNavigate();
@@ -33,14 +33,6 @@ const BudgetPlannerHome = () => {
   // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
     return [
-      // {
-      //   field: "id",
-      //   resizable: false,
-      //   sortable: true,
-      //   flex: 0.5,
-      //   suppressMovable: true,
-      //   cellDataType: 'number',
-      // },
       {
         field: "title",
         resizable: false,
@@ -50,14 +42,14 @@ const BudgetPlannerHome = () => {
         cellDataType: 'text',
         cellRenderer: (params) => {
           return (
-            <Link href={`/budget/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
+            <Link to={`/budget/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
               {params.data.title}
             </Link>
           );
         }
       },
       {
-        field: "startDate",
+        field: "dateCreated",
         resizable: false,
         sortable: true,
         flex: 1,
@@ -65,30 +57,38 @@ const BudgetPlannerHome = () => {
         cellDataType: 'dateString',
       },
       {
-        field: "endDate",
+        field: "totalBalance",
         resizable: false,
         sortable: true,
-        flex: 1,
-        suppressMovable: true,
-        cellDataType: 'dateString',
-      },
-      {
-        field: "description",
-        resizable: false,
-        sortable: false,
-        flex: 2,
+        flex: 0.8,
         suppressMovable: true,
         cellDataType: 'text',
       },
       {
-        field: "actions",
+        field: "totalIncome",
+        resizable: false,
+        sortable: true,
+        flex: 0.8,
+        suppressMovable: true,
+        cellDataType: 'text',
+      },
+      {
+        field: "totalExpense",
+        resizable: false,
+        sortable: true,
+        flex: 0.8,
+        suppressMovable: true,
+        cellDataType: 'text',
+      },
+      {
+        field: "",
         resizable: false,
         sortable: false,
-        flex: 0.6,
+        flex: 0.3,
         suppressMovable: true,
         cellRenderer: (params) => {
           return (
-            <Flex width="100%" height="100%" align="center" justify="between">
+            <Flex width="100%" height="100%" align="center" justify="end">
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger>
                   <IconButton variant="ghost" color="gray" size="3">
@@ -149,9 +149,10 @@ const BudgetPlannerHome = () => {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          startDate: [item.start_date || "-"],
-          endDate: [item.end_date || "-"],
-          description: [item.description || "-"],
+          dateCreated: item.date,
+          totalBalance: "$" + item.total_balance,
+          totalIncome: "$" + item.total_income,
+          totalExpense: "$" + item.total_expense,
         }));
         setBudgetPlans(data);
       })
@@ -159,6 +160,12 @@ const BudgetPlannerHome = () => {
         console.error("Error fetching budgets:", error);
       });
   };
+
+  const recentBudgetPlan = useMemo(() => {
+
+    return budgetPlans[0];
+
+  }, [budgetPlans]);
 
   // Fetch Budget Plans when the component mounts
   useEffect(() => {
@@ -203,157 +210,202 @@ const BudgetPlannerHome = () => {
       fontSize: 16,
       backgroundColor: 'rgba(40, 40, 40, 0.22)',
       width: "100%",
-      height: `${budgetPlans.length * 50}px`
+      height: `${budgetPlans.length * 50}px`,
+      cellHorizontalPadding: 30,
+      cellVerticalPadding: 20,
     });
 
   return (
     <Panel>
-
-      <Box asChild width="100%" my="60px">
-        <Flex direction="column" align="start" gap="60px">
-          <Box asChild width="100%" p="100px">
-            <Flex
-              direction="column"
-              align="start"
-              justify="center"
-              gap="40px"
-              style={{
-                width: "100%",
-                backgroundImage: "url('/images/sky.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center", // Center the image to handle sidebar collapse
-                backgroundRepeat: "no-repeat", // Prevent tiling
-                marginTop: "-60px",
-                position: "relative", // Added for positioning the shadow
-              }}>
-              <Box
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  background: "linear-gradient(to right, rgba(59, 58, 58, 0.85), rgba(0, 0, 0, 0))", // Shadow effect
-                  zIndex: 1,
-                }}
-              />
-              <Flex
-                direction="column"
-                align="start"
-                justify="center"
-                gap="40px"
-                style={{
-                  position: "relative", // Ensure content is above the shadow
-                  zIndex: 2,
-                }}>
-                <Heading size="8" color="white">
-                  Budget Planner
-                </Heading >
-                <Box asChild width="100%">
-                  <Text size="5" >
-                    Plan your budgets effortlessly with our budget planner.<br />
-                    Create, view, and manage your budget plans all in one place.
-                  </Text>
-                </Box>
-
-                <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-
-                  <Dialog.Trigger asChild>
-                    <Box asChild height="60px" px="30px">
-                      <Button size="3" variant="solid">
-                        <Text size="5" weight="medium">
-                          Create New Budget Plan
-                        </Text>
-                      </Button>
-                    </Box>
-                  </Dialog.Trigger>
-
-                  <Flex asChild direction="column" gap="10px">
-                    <Dialog.Content size="3" maxWidth="450px">
-                      <Box asChild p="4px">
-                        <Dialog.Title>Create New Budget Plan</Dialog.Title>
-                      </Box>
-                      <Box asChild height="40px">
-                        <TextField.Root
-                          value={newBudgetPlanTitle}
-                          onChange={(e) => setNewBudgetPlanTitle(e.target.value)}
-                          placeholder="Enter title for your new budget plan...">
-                          <TextField.Slot pl="8px" />
-                          <TextField.Slot pr="8px" />
-                        </TextField.Root>
-                      </Box>
-
-
-                      <Flex gap="3" mt="4" justify="end">
-                        <Dialog.Close>
-                          <Box asChild px="20px">
-                            <Button size="3" variant="soft" color="gray">
-                              Cancel
-                            </Button>
-                          </Box>
-
-                        </Dialog.Close>
-                        <Box asChild px="20px">
-                          <Button size="3" onClick={handleCreateBudgetPlan}>
-                            Create
-                          </Button>
-                        </Box>
-                      </Flex>
-                    </Dialog.Content>
-                  </Flex>
-                </Dialog.Root>
-              </Flex>
-            </Flex>
-          </Box>
-
-          {budgetPlans.length !== 0 && (
-            <Box asChild width="100%" px="60px">
-              <Heading size="7" weight="medium">
-                Continue planning your next journey...
-              </Heading>
+      <Box asChild width="100%" p="80px" pt="60px">
+        <Flex
+          direction="column"
+          align="start"
+          justify="center"
+          gap="40px"
+          style={{
+            width: "100%",
+            backgroundImage: "url('/images/sky.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center", // Center the image to handle sidebar collapse
+            backgroundRepeat: "no-repeat", // Prevent tiling
+            position: "relative", // Added for positioning the shadow
+          }}>
+          <Box
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(59, 58, 58, 0.85), rgba(0, 0, 0, 0))", // Shadow effect
+              zIndex: 1,
+            }}
+          />
+          <Flex
+            direction="column"
+            align="start"
+            justify="center"
+            gap="40px"
+            style={{
+              position: "relative", // Ensure content is above the shadow
+              zIndex: 1,
+            }}>
+            <Heading size="8">
+              Budget Planner
+            </Heading >
+            <Box asChild width="100%">
+              <Text size="5" >
+                Plan your budgets effortlessly with our budget planner.<br />
+                Create, view, and manage your budget plans all in one place.
+              </Text>
             </Box>
-          )}
 
-          {budgetPlans.length !== 0 && (
-            <Grid flow="column" columns="repeat(auto-fill, minmax(202px, 202px))" gap="6" px="60px">
-              {budgetPlans.map((budgetPlan, index) => (
-                <PreviewFrame
-                  key={index} // Added unique key prop
-                  linkUrl={`${budgetPlan.id}`}
-                  title={budgetPlan.title}
-                  imageUrl={budgetPlan.imageUrl}
-                />
-              ))}
-            </Grid>
-          )}
-
-          <Box asChild width="100%" px="60px">
-            <Heading size="7" weight="medium">
-              All budgets
-            </Heading>
-          </Box>
-
-          <Box width="100%" px="60px" style={{ overflowX: "auto" }}>
-            {budgetPlans.length === 0 ? (
-              <Box asChild width="100%" mt="60px" mb="100px">
-                <Text size="5" weight="regular">
-                  <i>No budget plans available.</i>
-                </Text>
-              </Box>
-            ) : (
-              <AgGridReact
-                theme={gridTheme}
-                rowData={budgetPlans}
-                columnDefs={colDefs}
-                domLayout="autoHeight"
-              />
-            )}
-          </Box>
+          </Flex>
         </Flex>
       </Box>
+
+      <Flex width="100%" direction="column" align="start" gap="40px" p="60px">
+        {recentBudgetPlan && (
+          <>
+            <Box asChild width="100%">
+              <Heading size="7" weight="medium">
+                Continue planning your budget...
+              </Heading>
+            </Box>
+            <Box asChild width="800px" height="300px">
+              <Card asChild>
+                <Link to={`${recentBudgetPlan.id}`}>
+                  <Grid flow="row" columns="2">
+                    <Flex
+                      direction="column"
+                      align="start"
+                      justify="start"
+                      gap="20px"
+                      p="40px"
+                      style={{
+                        boxShadow: "inset -10px 0px 10px -10px rgba(0, 0, 0, 0.3)", // Add shadow between text and image
+                        zIndex: 1,
+                      }}>
+                      <Box asChild width="100%">
+                        <Heading as="h3" size="7" weight="medium">
+                          {recentBudgetPlan.title}
+                        </Heading>
+                      </Box>
+                      <Flex gap="20px" align="center">
+                        <Text size="6" weight="regular" color={recentBudgetPlan.totalBalance >= 0 ? "green" : "red"}>
+                          {recentBudgetPlan.totalBalance}
+                        </Text>
+                      </Flex>
+                      <Flex gap="20px" align="center">
+                        <Icons.Plus />
+                        <Text size="5" weight="regular">
+                          {recentBudgetPlan.totalIncome}
+                        </Text>
+                      </Flex>
+                      <Flex gap="20px" align="center">
+                        <Icons.Minus />
+                        <Text size="5" weight="regular">
+                          {recentBudgetPlan.totalExpense}
+                        </Text>
+                      </Flex>
+                    </Flex>
+
+                    <Inset asChild clip="padding-box" side="right" pb="0">
+                      <Box height="300px" overflow="hidden">
+                        <img
+                          src="/images/Greece.jpeg"
+                          width="100%"
+                          height="100%"
+                          style={{ objectFit: "cover" }}
+                        />
+                      </Box>
+                    </Inset>
+                  </Grid>
+                </Link>
+              </Card>
+            </Box>
+          </>
+        )}
+
+        <Flex width="100%" align="center" justify="between">
+          <Heading size="7" weight="medium">
+            All budgets
+          </Heading>
+          <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+
+            <Dialog.Trigger asChild>
+              <Button variant="soft" radius="medium" size="3">
+                <Flex direction="row" gap="8px" align="center" justify="center">
+                  <Icons.Plus />
+                  <Text size="3" weight="medium">New Budget Plan</Text>
+                </Flex>
+              </Button>
+            </Dialog.Trigger>
+
+
+
+            <Flex asChild direction="column" gap="10px">
+              <Dialog.Content size="3" maxWidth="450px">
+                <Box asChild p="4px">
+                  <Dialog.Title>Create New Budget Plan</Dialog.Title>
+                </Box>
+
+                <Dialog.Description>
+                  <Text size="2" weight="medium" mx="6px">
+                    Travel plan title
+                  </Text>
+                </Dialog.Description>
+
+                <Box asChild height="40px">
+                  <TextField.Root
+                    value={newBudgetPlanTitle}
+                    onChange={(e) => setNewBudgetPlanTitle(e.target.value)}
+                    placeholder="Enter title for your new budget plan...">
+                    <TextField.Slot pl="8px" />
+                    <TextField.Slot pr="8px" />
+                  </TextField.Root>
+                </Box>
+
+                <Flex gap="3" mt="4" justify="end">
+                  <Dialog.Close>
+                    <Box asChild px="20px">
+                      <Button size="3" variant="soft" color="gray">
+                        Cancel
+                      </Button>
+                    </Box>
+
+                  </Dialog.Close>
+                  <Box asChild px="20px">
+                    <Button size="3" onClick={handleCreateBudgetPlan}>
+                      Create
+                    </Button>
+                  </Box>
+                </Flex>
+              </Dialog.Content>
+            </Flex>
+          </Dialog.Root>
+        </Flex>
+
+        <Box width="100%" style={{ overflowX: "auto" }}>
+          {budgetPlans.length === 0 ? (
+            <Box asChild width={"100%"} mt="60px" mb="100px">
+              <Text size="5" weight="regular">
+                <i>No budget plans available.</i>
+              </Text>
+            </Box>
+          ) : (
+            <AgGridReact
+              theme={gridTheme}
+              rowData={budgetPlans}
+              columnDefs={colDefs}
+              domLayout="autoHeight"
+            />
+          )}
+        </Box>
+      </Flex>
     </Panel>
   );
 }
-
 
 export default BudgetPlannerHome;

@@ -10,6 +10,6 @@ export {default as TravelPlanner} from './TravelPlanner';
 export {default as NotFound} from './NotFound';
 export {default as Settings} from './Settings';
 export {default as BudgetPlannerHome} from './BudgetPlannerHome';
-//export {default as BudgetPlanner} from './BudgetPlanner';
+export {default as BudgetPlanner} from './BudgetPlanner';
 export {default as Calendar} from './Calendar';
 export {default as Start} from './Start';

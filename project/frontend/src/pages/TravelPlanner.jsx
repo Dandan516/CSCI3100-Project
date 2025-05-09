@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 
 import axios from 'axios';
 import { Text, Flex, Box, Button, TextField, Heading, TextArea, Grid, Dialog, Callout, Select, Tabs, Avatar, Card } from "@radix-ui/themes";
-
 import { Form } from "radix-ui";
 
 import { useAuth } from "../hooks/AuthProvider";
@@ -20,7 +19,7 @@ function TravelPlanner() {
   const params = useParams([]);
 
   const [isEditTravelDialogOpen, setIsEditTravelDialogOpen] = useState(false);
-  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);
+  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);s
   const [isInviteCollaboratorDialogOpen, setIsInviteCollaboratorDialogOpen] = useState(false);
 
   const [travelPlan, setTravelPlan] = useState({

@@ -104,7 +104,7 @@ function TravelPlannerHome() {
               <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <Dialog.Content size="3" maxWidth="600px">
                   <Box asChild p="10px" pb="0px">
-                    <Dialog.Title>Delete Itinerary</Dialog.Title>
+                    <Dialog.Title>Delete Travel Plan</Dialog.Title>
                   </Box>
 
                   <Box asChild px="10px">

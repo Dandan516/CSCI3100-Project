@@ -84,10 +84,10 @@ const router = createBrowserRouter([
                       path: "*",
                       element: <Pages.BudgetPlannerHome />,
                     },
-                    // {
-                    //   path: ":id",
-                    //   element: <Pages.BudgetPlanner />,
-                    // }
+                    {
+                      path: ":id",
+                      element: <Pages.BudgetPlanner />,
+                    }
                   ]
               }
             ]
