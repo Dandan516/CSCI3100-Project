@@ -13,13 +13,13 @@ import * as Icons from '../assets/Icons';
 
 ModuleRegistry.registerModules([AllCommunityModule, ClientSideRowModelModule]);
 
-function BudgetPlannerHome() {
+function TravelPlannerRoot() {
 
   const auth = useAuth();
   const navigate = useNavigate();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [newBudgetPlanTitle, setNewBudgetPlanTitle] = useState("");
+  const [newTravelPlanTitle, setNewTravelPlanTitle] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleOpenDeleteDialog = (e) => {
@@ -28,7 +28,7 @@ function BudgetPlannerHome() {
   };
 
   // Row Data: The data to be displayed.
-  const [budgetPlans, setBudgetPlans] = useState([]);
+  const [travelPlans, setTravelPlans] = useState([]);
 
   // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
@@ -42,41 +42,33 @@ function BudgetPlannerHome() {
         cellDataType: 'text',
         cellRenderer: (params) => {
           return (
-            <Link to={`/budget/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
+            <Link to={`/travel/${params.data.id}`} size="3" style={{ textDecoration: 'none' }}>
               {params.data.title}
             </Link>
           );
         }
       },
       {
-        field: "dateCreated",
+        field: "startDate",
         resizable: false,
         sortable: true,
-        flex: 1,
+        flex: 0.8,
         suppressMovable: true,
         cellDataType: 'dateString',
       },
       {
-        field: "totalBalance",
+        field: "endDate",
         resizable: false,
         sortable: true,
         flex: 0.8,
         suppressMovable: true,
-        cellDataType: 'text',
+        cellDataType: 'dateString',
       },
       {
-        field: "totalIncome",
+        field: "description",
         resizable: false,
-        sortable: true,
-        flex: 0.8,
-        suppressMovable: true,
-        cellDataType: 'text',
-      },
-      {
-        field: "totalExpense",
-        resizable: false,
-        sortable: true,
-        flex: 0.8,
+        sortable: false,
+        flex: 2,
         suppressMovable: true,
         cellDataType: 'text',
       },
@@ -96,10 +88,10 @@ function BudgetPlannerHome() {
                   </IconButton>
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Content>
-                  <DropdownMenu.Item onClick={() => navigate(`/budget/${params.data.id}`)}>
+                  <DropdownMenu.Item onClick={() => navigate(`/travel/${params.data.id}`)}>
                     <Icons.EyeOpen />View
                   </DropdownMenu.Item>
-                  <DropdownMenu.Item onClick={() => navigate(`/budget/`)}>
+                  <DropdownMenu.Item onClick={() => navigate(`/travel/`)}>
                     <Icons.Share2 />Share
                   </DropdownMenu.Item>
                   <DropdownMenu.Separator />
@@ -112,12 +104,12 @@ function BudgetPlannerHome() {
               <Dialog.Root open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <Dialog.Content size="3" maxWidth="600px">
                   <Box asChild p="10px" pb="0px">
-                    <Dialog.Title>Delete Itinerary</Dialog.Title>
+                    <Dialog.Title>Delete Travel Plan</Dialog.Title>
                   </Box>
 
                   <Box asChild px="10px">
                     <Dialog.Description>
-                      Are you sure you want to delete this budget plan? This action cannot be undone.
+                      Are you sure you want to delete this travel plan? This action cannot be undone.
                     </Dialog.Description>
                   </Box>
 
@@ -127,7 +119,7 @@ function BudgetPlannerHome() {
                         Cancel
                       </Button>
                     </Dialog.Close>
-                    <Button size="3" variant="solid" color="red" onClick={handleDeleteBudgetPlan.bind(this, params.data.id)}>
+                    <Button size="3" variant="solid" color="red" onClick={handleDeleteTravelPlan.bind(this, params.data.id)}>
                       Delete
                     </Button>
                   </Flex>
@@ -140,64 +132,66 @@ function BudgetPlannerHome() {
     ];
   });
 
-  const getBudgetPlans = async () => {
+  const getTravelPlans = async () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}budget/`, {
+      .get(`${import.meta.env.VITE_API_URL}travel/`, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
         const data = response.data.map((item) => ({
           id: item.id,
           title: item.title,
-          dateCreated: item.date,
-          totalBalance: "$" + item.total_balance,
-          totalIncome: "$" + item.total_income,
-          totalExpense: "$" + item.total_expense,
+          startDate: item.start_date,
+          endDate: item.end_date,
+          destination: item.destination,
+          description: item.description,
+          owner: item.user.username,
+          collaboratorsList: item.collaborators.map((collab) => collab.username).join(", ") || "",
         }));
-        setBudgetPlans(data);
+        setTravelPlans(data);
       })
       .catch(error => {
-        console.error("Error fetching budgets:", error);
+        console.error("Error fetching travels:", error);
       });
   };
 
-  const recentBudgetPlan = useMemo(() => {
+  const recentTravelPlan = useMemo(() => {
 
-    return budgetPlans[0];
+    return travelPlans[0];
 
-  }, [budgetPlans]);
+  }, [travelPlans]);
 
-  // Fetch Budget Plans when the component mounts
+  // Fetch Travel Plans when the component mounts
   useEffect(() => {
-    getBudgetPlans();
+    getTravelPlans();
   }, []);
 
-  const handleCreateBudgetPlan = async () => {
+  const handleCreateTravelPlan = async () => {
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}budget/`, {
-        title: newBudgetPlanTitle,
+      .post(`${import.meta.env.VITE_API_URL}travel/`, {
+        title: newTravelPlanTitle,
       }, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
-        setNewBudgetPlanTitle("");
+        setNewTravelPlanTitle("");
         setIsCreateDialogOpen(false);
-        getBudgetPlans();
+        getTravelPlans();
       });
 
   };
 
-  const handleDeleteBudgetPlan = async (id) => {
+  const handleDeleteTravelPlan = async (id) => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}budget/${id}/`, {
+      .delete(`${import.meta.env.VITE_API_URL}travel/${id}/`, {
         headers: { Authorization: `Token ${auth.token}` },
       })
       .then(response => {
-        getBudgetPlans();
+        getTravelPlans();
       })
       .catch(error => {
-        console.error("Error deleting budget plan:", error);
+        console.error("Error deleting travel plan:", error);
       });
     setIsDeleteDialogOpen(false);
   };
@@ -210,7 +204,7 @@ function BudgetPlannerHome() {
       fontSize: 16,
       backgroundColor: 'rgba(40, 40, 40, 0.22)',
       width: "100%",
-      height: `${budgetPlans.length * 50}px`,
+      height: `${travelPlans.length * 50}px`,
       cellHorizontalPadding: 30,
       cellVerticalPadding: 20,
     });
@@ -252,12 +246,12 @@ function BudgetPlannerHome() {
               zIndex: 1,
             }}>
             <Heading size="8">
-              Budget Planner
+              Travel Planner
             </Heading >
             <Box asChild width="100%">
               <Text size="5" >
-                Plan your budgets effortlessly with our budget planner.<br />
-                Create, view, and manage your budget plans all in one place.
+                Plan your trips effortlessly with our travel planner.<br />
+                Create, view, and manage your travel plans all in one place.
               </Text>
             </Box>
 
@@ -266,16 +260,16 @@ function BudgetPlannerHome() {
       </Box>
 
       <Flex width="100%" direction="column" align="start" gap="40px" p="60px">
-        {recentBudgetPlan && (
+        {recentTravelPlan && (
           <>
             <Box asChild width="100%">
               <Heading size="7" weight="medium">
-                Continue planning your budget...
+                Continue planning your next journey...
               </Heading>
             </Box>
             <Box asChild width="800px" height="300px">
               <Card asChild>
-                <Link to={`${recentBudgetPlan.id}`}>
+                <Link to={`${recentTravelPlan.id}`}>
                   <Grid flow="row" columns="2">
                     <Flex
                       direction="column"
@@ -287,26 +281,29 @@ function BudgetPlannerHome() {
                         boxShadow: "inset -10px 0px 10px -10px rgba(0, 0, 0, 0.3)", // Add shadow between text and image
                         zIndex: 1,
                       }}>
-                      <Box asChild width="100%">
-                        <Heading as="h3" size="7" weight="medium">
-                          {recentBudgetPlan.title}
+                      <Box asChild width="100%" pb="16px">
+                        <Heading as="h3" size="6" weight="medium">
+                          {recentTravelPlan.title}
                         </Heading>
                       </Box>
                       <Flex gap="20px" align="center">
-                        <Text size="6" weight="regular" color={recentBudgetPlan.totalBalance >= 0 ? "green" : "red"}>
-                          {recentBudgetPlan.totalBalance}
+                        <Icons.Calendar />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.startDate} - {recentTravelPlan.endDate}
                         </Text>
                       </Flex>
                       <Flex gap="20px" align="center">
-                        <Icons.Plus />
-                        <Text size="5" weight="regular">
-                          {recentBudgetPlan.totalIncome}
+                        <Icons.SewingPinFilled />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.destination || "-"}
                         </Text>
                       </Flex>
                       <Flex gap="20px" align="center">
-                        <Icons.Minus />
-                        <Text size="5" weight="regular">
-                          {recentBudgetPlan.totalExpense}
+                        <Icons.Person20 />
+                        <Text size="3" weight="regular">
+                          {recentTravelPlan.owner}
+                          {recentTravelPlan.collaboratorsList !== "" && ", "}
+                          {recentTravelPlan.collaboratorsList || ""}
                         </Text>
                       </Flex>
                     </Flex>
@@ -330,7 +327,7 @@ function BudgetPlannerHome() {
 
         <Flex width="100%" align="center" justify="between">
           <Heading size="7" weight="medium">
-            All budgets
+            All trips
           </Heading>
           <Dialog.Root open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
 
@@ -338,7 +335,7 @@ function BudgetPlannerHome() {
               <Button variant="soft" radius="medium" size="3">
                 <Flex direction="row" gap="8px" align="center" justify="center">
                   <Icons.Plus />
-                  <Text size="3" weight="medium">New Budget Plan</Text>
+                  <Text size="3" weight="medium">New Travel Plan</Text>
                 </Flex>
               </Button>
             </Dialog.Trigger>
@@ -348,7 +345,7 @@ function BudgetPlannerHome() {
             <Flex asChild direction="column" gap="10px">
               <Dialog.Content size="3" maxWidth="450px">
                 <Box asChild p="4px">
-                  <Dialog.Title>Create New Budget Plan</Dialog.Title>
+                  <Dialog.Title>Create New Travel Plan</Dialog.Title>
                 </Box>
 
                 <Dialog.Description>
@@ -359,9 +356,9 @@ function BudgetPlannerHome() {
 
                 <Box asChild height="40px">
                   <TextField.Root
-                    value={newBudgetPlanTitle}
-                    onChange={(e) => setNewBudgetPlanTitle(e.target.value)}
-                    placeholder="Enter title for your new budget plan...">
+                    value={newTravelPlanTitle}
+                    onChange={(e) => setNewTravelPlanTitle(e.target.value)}
+                    placeholder="Enter title for your new travel plan...">
                     <TextField.Slot pl="8px" />
                     <TextField.Slot pr="8px" />
                   </TextField.Root>
@@ -377,7 +374,7 @@ function BudgetPlannerHome() {
 
                   </Dialog.Close>
                   <Box asChild px="20px">
-                    <Button size="3" onClick={handleCreateBudgetPlan}>
+                    <Button size="3" onClick={handleCreateTravelPlan}>
                       Create
                     </Button>
                   </Box>
@@ -388,16 +385,16 @@ function BudgetPlannerHome() {
         </Flex>
 
         <Box width="100%" style={{ overflowX: "auto" }}>
-          {budgetPlans.length === 0 ? (
+          {travelPlans.length === 0 ? (
             <Box asChild width={"100%"} mt="60px" mb="100px">
               <Text size="5" weight="regular">
-                <i>No budget plans available.</i>
+                <i>No travel plans available.</i>
               </Text>
             </Box>
           ) : (
             <AgGridReact
               theme={gridTheme}
-              rowData={budgetPlans}
+              rowData={travelPlans}
               columnDefs={colDefs}
               domLayout="autoHeight"
             />
@@ -408,4 +405,4 @@ function BudgetPlannerHome() {
   );
 }
 
-export default BudgetPlannerHome;
+export default TravelPlannerRoot;

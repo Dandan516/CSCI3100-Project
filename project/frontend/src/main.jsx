@@ -68,7 +68,7 @@ const router = createBrowserRouter([
                   [
                     {
                       path: "*",
-                      element: <Pages.TravelPlannerHome />,
+                      element: <Pages.TravelPlannerRoot />,
                     },
                     {
                       path: ":id",
@@ -82,11 +82,11 @@ const router = createBrowserRouter([
                   [
                     {
                       path: "*",
-                      element: <Pages.BudgetPlannerHome />,
+                      element: <Pages.BudgetTrackerRoot />,
                     },
                     {
                       path: ":id",
-                      element: <Pages.BudgetPlanner />,
+                      element: <Pages.BudgetTracker />,
                     }
                   ]
               }
