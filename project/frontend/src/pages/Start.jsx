@@ -28,7 +28,6 @@ function Start() {
   }
 
   const handleEditProfile = async () => {
-
     axios
       .patch(`${import.meta.env.VITE_API_URL}userinfo/${auth.user?.id}/`, {
         ...profile,
@@ -179,7 +178,7 @@ function Start() {
                     <Form.Field name="date">
                       <Form.Label asChild>
                         <Box asChild mb="6px" >
-                          <Text size="2" weight="medium">Birhtday</Text>
+                          <Text size="2" weight="medium">Birthday</Text>
                         </Box>
                       </Form.Label>
                       <Form.Control

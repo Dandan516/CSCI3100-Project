@@ -15,11 +15,14 @@ const formatTime = (time) => {
   const date = new Date();
   date.setHours(hours, minutes);
 
-  return new Intl.DateTimeFormat("en-US", {
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  }).format(date);
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    }
+  ).format(date);
 };
 
 const matchBadgeColor = (tag) => {
@@ -46,30 +49,49 @@ function ItineraryCard({ itinerary, travelId, travelStartDate, travelEndDate, on
 
   const handleSaveItinerary = async () => {
     axios
-      .put(`${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`, editingItinerary, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then((response) => {
-        onUpdate(editingItinerary); // Notify parent component about the update
-        setIsEditDialogOpen(false); // Close the dialog
-      })
-      .catch((error) => {
-        console.error("Error updating itinerary:", error);
-      });
+      .put(
+        `${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`,
+        editingItinerary,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`
+          },
+        }
+      )
+      .then(
+        (response) => {
+          onUpdate(editingItinerary); // Notify parent component about the update
+          setIsEditDialogOpen(false); // Close the dialog
+        }
+      )
+      .catch(
+        (error) => {
+          console.error("Error updating itinerary:", error);
+        }
+      );
   }
 
   const handleDeleteItinerary = async () => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(() => {
-        onUpdate(editingItinerary); // Notify parent component about the update
-        setIsEditDialogOpen(false); // Close the dialog
-      })
-      .catch((error) => {
-        console.error("Error deleting itinerary:", error);
-      });
+      .delete(
+        `${import.meta.env.VITE_API_URL}travel/${travelId}/itineraries/${itinerary.id}/`,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`
+          },
+        }
+      )
+      .then(
+        () => {
+          onUpdate(editingItinerary); // Notify parent component about the update
+          setIsEditDialogOpen(false); // Close the dialog
+        }
+      )
+      .catch(
+        (error) => {
+          console.error("Error deleting itinerary:", error);
+        }
+      );
   }
 
   return (
@@ -427,8 +449,8 @@ ItineraryCard.propTypes = {
     notes: PropTypes.string,
     tag: PropTypes.string,
   }).isRequired,
-  travelId: PropTypes.number.isRequired, 
-  travelStartDate: PropTypes.string.isRequired, 
+  travelId: PropTypes.number.isRequired,
+  travelStartDate: PropTypes.string.isRequired,
   travelEndDate: PropTypes.string.isRequired,
   onUpdate: PropTypes.func.isRequired,
 };

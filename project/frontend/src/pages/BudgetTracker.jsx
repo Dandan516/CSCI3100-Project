@@ -25,13 +25,193 @@ const matchBadgeColor = (entryType, category) => {
 
 const matchBadgeLabel = (entryType, category) => {
   if (entryType === "expenses") {
-    return expenseTags.find((t) => t.value === category)?.label || "Unknown"
-   
+    return expenseTags.find((t) => t.value === category)?.label || "No category"
   } else if (entryType === "incomes") {
-    return incomeTags.find((t) => t.value === category)?.label || "Unknown"
+    return incomeTags.find((t) => t.value === category)?.label || "No category"
   }
-  return "Unknown" ; // Default label if no match is found
+  return "No category"; // Default label if no match is found
 };
+
+function BudgetEntryDialog({
+  mode,
+  entry,
+  setEntry,
+  isDialogOpen,
+  setIsDialogOpen,
+  handleSave,
+}) {
+
+  const dialogTitle = mode === "edit" ? "Edit Entry" : "New Entry";
+  const updateEntry = (e) => {
+    const { name, value } = e.target;
+    if (name === "description" && value.length > 100) {
+      return; // Prevent updating if the description exceeds 100 characters
+    }
+    setEntry({
+      ...entry,
+      [name]: value,
+    });
+  };
+
+  return (
+    <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+      <Dialog.Content size="3" maxWidth="600px">
+        <Box asChild p="10px" pb="20px">
+          <Dialog.Title>
+            {dialogTitle}
+          </Dialog.Title>
+        </Box>
+
+        <Dialog.Description></Dialog.Description>
+
+        <Form.Root className="FormRoot">
+          <Flex direction="column" gap="20px" px="10px">
+
+            {mode === "new" &&
+              <Form.Field>
+                <Form.Label asChild>
+                  <Box asChild mb="6px">
+                    <Text size="2" weight="medium">Entry Type</Text>
+                  </Box>
+                </Form.Label>
+                <SegmentedControl.Root
+                  name="entryType"
+                  variant="classic"
+                  defaultValue="expenses"
+                  onValueChange={(value) => {
+                    setEntry({
+                      ...entry,
+                      entryType: value,
+                    });
+                  }}>
+                  <SegmentedControl.Item value="expenses">Expenses</SegmentedControl.Item>
+                  <SegmentedControl.Item value="incomes" >Incomes</SegmentedControl.Item>
+                </SegmentedControl.Root>
+              </Form.Field>
+            }
+
+            <Form.Field name="description">
+              <Form.Label asChild>
+                <Box asChild mb="6px" >
+                  <Text size="2" weight="medium">Description</Text>
+                </Box>
+              </Form.Label>
+              <Form.Control
+                asChild
+                type="text"
+                autoComplete="off"
+                value={entry.description || ""} // Default to an empty string
+                onChange={updateEntry}>
+                <Box asChild height="40px">
+                  <TextField.Root>
+                    <TextField.Slot />
+                    <TextField.Slot >
+                      <Text size="1" color="gray" mr="4px">
+                        {entry.description?.length} / 100
+                      </Text>
+                    </TextField.Slot>
+                  </TextField.Root>
+                </Box>
+              </Form.Control>
+            </Form.Field>
+
+            <Grid flow="column" gap="20px" columns={1}>
+              <Form.Field name="date">
+                <Form.Label asChild>
+                  <Box asChild mb="6px" >
+                    <Text size="2" weight="medium">Date</Text>
+                  </Box>
+                </Form.Label>
+                <Form.Control
+                  asChild
+                  type="date"
+                  onChange={updateEntry}>
+                  <Box asChild height="40px">
+                    <TextField.Root>
+                      <TextField.Slot />
+                      <TextField.Slot />
+                    </TextField.Root>
+                  </Box>
+                </Form.Control>
+              </Form.Field>
+            </Grid>
+
+            <Form.Field name="amount">
+              <Form.Label asChild>
+                <Box asChild mb="6px" >
+                  <Text size="2" weight="medium">Amount</Text>
+                </Box>
+              </Form.Label>
+              <Form.Control
+                asChild
+                type="number"
+                autoComplete="off"
+                step="0.01"
+                value={entry.amount || ""} // Default to an empty string
+                onChange={updateEntry}>
+                <Box asChild height="40px">
+                  <TextField.Root>
+                    <TextField.Slot />
+                  </TextField.Root>
+                </Box>
+              </Form.Control>
+            </Form.Field>
+
+            <Form.Field name="category">
+              <Form.Label asChild>
+                <Box asChild mb="6px" >
+                  <Text size="2" weight="medium">Category</Text>
+                </Box>
+              </Form.Label>
+              <Box asChild height="40px">
+                <Select.Root
+                  defaultValue={entry.category || "no-category"}
+                  onValueChange={(value) => {
+                    setEntry({
+                      ...entry,
+                      category: value,
+                    });
+                  }}>
+                  <Select.Trigger radius="medium" />
+                  <Select.Content>
+                    {
+                      (entry.entryType === "incomes") ? (
+                        incomeTags.map((category) => (
+                          <Select.Item key={category.value} value={category.value}>{category.label}</Select.Item>
+                        ))
+                      ) : (
+                        expenseTags.map((category) => (
+                          <Select.Item key={category.value} value={category.value}>{category.label}</Select.Item>
+                        ))
+                      )
+                    }
+                  </Select.Content>
+                </Select.Root>
+              </Box>
+            </Form.Field>
+          </Flex>
+
+        </Form.Root>
+
+        <Flex gap="16px" mt="20px" justify="end">
+          <Dialog.Close>
+            <Button size="3" variant="soft" color="gray">
+              Cancel
+            </Button>
+          </Dialog.Close>
+          <Button
+            size="3"
+            variant="solid"
+            onClick={handleSave}
+            className={!entry.amount && "no-click"}
+            disabled={!entry.amount}>
+            Save
+          </Button>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
+  )
+}
 
 function BudgetTracker() {
 
@@ -51,11 +231,11 @@ function BudgetTracker() {
     expenses: [],
     totalBalance: '',
     totalIncome: '',
-    totalExpense: '',
+    totalExpense: ''
   });
 
   const [editingBudget, setEditingBudget] = useState({
-    title: '',
+    title: ''
   });
 
   const [newEntry, setNewEntry] = useState({
@@ -64,7 +244,7 @@ function BudgetTracker() {
     date: undefined,
     amount: "",
     description: "",
-    categories: undefined,
+    category: "no-category"
   });
 
   const [editingEntry, setEditingEntry] = useState({
@@ -74,16 +254,18 @@ function BudgetTracker() {
     date: undefined,
     amount: "",
     description: "",
-    categories: undefined,
+    category: "no-category",
   });
 
+  const handleOpenNewEntryDialog = () => {
+    setIsNewEntryDialogOpen(true);
+  };
 
   const handleOpenEditEntryDialog = (entry) => {
     if (!entry) {
       console.error("No entry data provided.");
       return;
     }
-
     setEditingEntry({
       ...entry,
       id: entry.id || 0, // Ensure id is set to 0 if undefined
@@ -106,7 +288,6 @@ function BudgetTracker() {
 
     setIsDeleteEntryDialogOpen(true);
   };
-
 
   const getBudget = async () => {
     axios
@@ -157,7 +338,7 @@ function BudgetTracker() {
     });
   };
 
-  const handleSaveBudget = async () => {
+  const handleEditBudget = async () => {
     axios
       .patch(`${import.meta.env.VITE_API_URL}budget/${budget.id}/`, {
         title: editingBudget.title,
@@ -173,80 +354,66 @@ function BudgetTracker() {
       });
   };
 
-  const updateNewEntry = (e) => {
-
-    const { name, value } = e.target;
-    if (name === "description" && value.length > 100) {
-      return; // Prevent updating if the description exceeds 100 characters
-    }
-    setNewEntry({
-      ...newEntry,
-      [name]: value,
-    });
-  };
-
-  const updateEditingEntry = (e) => {
-
-    const { name, value } = e.target;
-    if (name === "description" && value.length > 100) {
-      return; // Prevent updating if the description exceeds 100 characters
-    }
-    setEditingEntry({
-      ...editingEntry,
-      [name]: value,
-    });
-  };
-
   const handleNewEntry = async () => {
+    console.log("New entry:", newEntry);
+    if (!newEntry.budget) {
+      console.error("No budget ID provided.");
+      return;
+    }
+    if (!newEntry.amount) {
+      console.error("No amount provided.");
+      return;
+    };
     axios
-      .post(`${import.meta.env.VITE_API_URL}budget/${params.id}/${newEntry.entryType}/`,
+      .post(
+        `${import.meta.env.VITE_API_URL}budget/${params.id}/${newEntry.entryType}/`,
         {
           "budget": params.id,
           "date": newEntry.date,
           "amount": newEntry.amount,
           "description": newEntry.description,
-          "categories": newEntry.categories,
+          "category": newEntry.category,
         },
         {
-          headers:
-          {
-            Authorization: `Token ${auth.token}`
+          headers: {
+            Authorization: `Token ${auth.token}`,
+            'Content-Type': "application/json",
           },
-          ContentType: "application/json",
         })
-      .then((response) => {
-
-        alert("Entry added successfully!", response.data);
-        setIsNewEntryDialogOpen(false);
-        getBudget();
-      })
+      .then(
+        (response) => {
+          setIsNewEntryDialogOpen(false);
+          getBudget();
+        }
+      )
       .catch((error) => {
         alert("Error adding budget entry:", error);
       });
   };
 
-  const handleSaveEntry = async () => {
+  const handleEditEntry = async () => {
     axios
-      .patch(`${import.meta.env.VITE_API_URL}budget/${editingEntry.budget}/${editingEntry.entryType}/${editingEntry.id}/`,
+      .patch(
+        `${import.meta.env.VITE_API_URL}budget/${editingEntry.budget}/${editingEntry.entryType}/${editingEntry.id}/`,
         {
           "description": editingEntry.description,
           "date": editingEntry.date,
           "amount": editingEntry.amount,
           "description": editingEntry.description,
-          "categories": editingEntry.categories,
+          "category": editingEntry.category,
         },
         {
-          headers:
-          {
-            Authorization: `Token ${auth.token}`
+          headers: {
+            Authorization: `Token ${auth.token}`,
           },
-          ContentType: "application/json",
-        })
-      .then((response) => {
-        alert("Entry saved successfully!", response.data);
-        setIsEditEntryDialogOpen(false);
-        getBudget();
-      })
+        }
+      )
+      .then(
+        (response) => {
+          setIsEditEntryDialogOpen(false);
+          getBudget();
+        }
+      )
       .catch((error) => {
         alert("Error adding budget entry:", error);
       });
@@ -254,22 +421,26 @@ function BudgetTracker() {
 
   const handleDeleteEntry = async () => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}budget/${params.id}/${editingEntry.entryType}/${editingEntry.id}/`,
+      .delete(
+        `${import.meta.env.VITE_API_URL}budget/${params.id}/${editingEntry.entryType}/${editingEntry.id}/`,
         {
-          headers:
-          {
-            Authorization: `Token ${auth.token}`
+          headers: {
+            Authorization: `Token ${auth.token}`,
+            'Content-Type': "application/json",
           },
-          ContentType: "application/json",
-        })
-      .then((response) => {
-        alert("Entry deleted successfully!", response.data);
-        setIsDeleteEntryDialogOpen(false);
-        getBudget();
-      })
-      .catch((error) => {
-        alert("Error deleting budget entry:", error);
-      });
+        }
+      )
+      .then(
+        (response) => {
+          setIsDeleteEntryDialogOpen(false);
+          getBudget();
+        }
+      )
+      .catch(
+        (error) => {
+          alert("Error deleting budget entry:", error);
+        }
+      );
   };
 
   const colDefs = useMemo(() => {
@@ -305,8 +476,8 @@ function BudgetTracker() {
         flex: 1,
         suppressMovable: true,
         cellRenderer: (params) => {
-          const categoryColor = matchBadgeColor(params.data.entryType, params.data.categories)
-          const categoryLabel = matchBadgeLabel(params.data.entryType, params.data.categories)
+          const categoryColor = matchBadgeColor(params.data.entryType, params.data.category)
+          const categoryLabel = matchBadgeLabel(params.data.entryType, params.data.category)
           return (
             <Badge color={categoryColor} variant="soft" radius="medium" size="2">
               {categoryLabel}
@@ -373,9 +544,12 @@ function BudgetTracker() {
       cellVerticalPadding: 20,
     });
 
-  useEffect(() => {
-    getBudget();
-  }, [params.id]);
+  useEffect(
+    () => {
+      getBudget();
+    },
+    [params.id]
+  );
 
   return (
     <Panel>
@@ -441,7 +615,7 @@ function BudgetTracker() {
                     <Button
                       size="3"
                       variant="solid"
-                      onClick={handleSaveBudget}
+                      onClick={handleEditBudget}
                       className={editingBudget.title === "" && "no-click"}
                       disabled={editingBudget.title === ""}>
                       Save
@@ -514,166 +688,12 @@ function BudgetTracker() {
                 </Tabs.Trigger>
               </Tabs.List>
 
-              <Dialog.Root open={isNewEntryDialogOpen} onOpenChange={setIsNewEntryDialogOpen}>
-
-                <Dialog.Trigger asChild>
-                  <Button variant="soft" radius="medium" size="3">
-                    <Flex direction="row" gap="8px" align="center" justify="center">
-                      <Icons.Plus />
-                      <Text size="3" weight="medium">Add Entry</Text>
-                    </Flex>
-                  </Button>
-                </Dialog.Trigger>
-
-                <Dialog.Content size="3" maxWidth="600px">
-                  <Box asChild p="10px" pb="20px">
-                    <Dialog.Title>Add Entry</Dialog.Title>
-                  </Box>
-                  <Dialog.Description></Dialog.Description>
-                  <Form.Root className="FormRoot">
-                    <Flex direction="column" gap="20px" px="10px">
-
-                      <Form.Field>
-                        <Form.Label asChild>
-                          <Box asChild mb="6px">
-                            <Text size="2" weight="medium">Entry Type</Text>
-                          </Box>
-                        </Form.Label>
-                        <SegmentedControl.Root
-                          name="entryType"
-                          variant="classic"
-                          defaultValue="expenses"
-                          onValueChange={(value) => {
-                            setNewEntry({
-                              ...newEntry,
-                              entryType: value,
-                            });
-                          }}>
-                          <SegmentedControl.Item value="expenses">Expenses</SegmentedControl.Item>
-                          <SegmentedControl.Item value="incomes" >Incomes</SegmentedControl.Item>
-                        </SegmentedControl.Root>
-                      </Form.Field>
-
-                      <Form.Field name="description">
-                        <Form.Label asChild>
-                          <Box asChild mb="6px" >
-                            <Text size="2" weight="medium">Title</Text>
-                          </Box>
-                        </Form.Label>
-                        <Form.Control
-                          asChild
-                          type="text"
-                          value={newEntry.description || ""} // Default to an empty string
-                          onChange={updateNewEntry}>
-                          <Box asChild height="40px">
-                            <TextField.Root>
-                              <TextField.Slot />
-                              <TextField.Slot >
-                                <Text size="1" color="gray" mr="4px">
-                                  {newEntry.description?.length} / 100
-                                </Text>
-                              </TextField.Slot>
-                            </TextField.Root>
-                          </Box>
-                        </Form.Control>
-                      </Form.Field>
-
-                      <Grid flow="column" gap="20px" columns={1}>
-                        <Form.Field name="date">
-                          <Form.Label asChild>
-                            <Box asChild mb="6px" >
-                              <Text size="2" weight="medium">Date</Text>
-                            </Box>
-                          </Form.Label>
-                          <Form.Control
-                            asChild
-                            type="date"
-                            onChange={updateNewEntry}>
-                            <Box asChild height="40px">
-                              <TextField.Root>
-                                <TextField.Slot />
-                                <TextField.Slot />
-                              </TextField.Root>
-                            </Box>
-                          </Form.Control>
-                        </Form.Field>
-                      </Grid>
-
-                      <Form.Field name="amount">
-                        <Form.Label asChild>
-                          <Box asChild mb="6px" >
-                            <Text size="2" weight="medium">Amount</Text>
-                          </Box>
-                        </Form.Label>
-                        <Form.Control
-                          asChild
-                          type="number"
-                          value={newEntry.amount || ""} // Default to an empty string
-                          onChange={updateNewEntry}>
-                          <Box asChild height="40px">
-                            <TextField.Root>
-                              <TextField.Slot />
-                              <TextField.Slot >
-                                <Text size="1" color="gray" mr="4px">
-                                  {newEntry.amount?.length} / 100
-                                </Text>
-                              </TextField.Slot>
-                            </TextField.Root>
-                          </Box>
-                        </Form.Control>
-                      </Form.Field>
-
-                      <Form.Field name="categories">
-                        <Form.Label asChild>
-                          <Box asChild mb="6px" >
-                            <Text size="2" weight="medium">Tag</Text>
-                          </Box>
-                        </Form.Label>
-                        <Box asChild height="40px">
-                          <Select.Root
-                            defaultValue="salary"
-                            onValueChange={(value) => {
-                              setNewEntry({
-                                ...newEntry,
-                                categories: value,
-                              });
-                            }}>
-                            <Select.Trigger radius="medium" />
-                            <Select.Content>
-                              {(newEntry.entryType === "incomes") ? (
-                                incomeTags.map((tag) => (
-                                  <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
-                                ))
-                              ) : (
-                                expenseTags.map((tag) => (
-                                  <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
-                                ))
-                              )}
-                            </Select.Content>
-                          </Select.Root>
-                        </Box>
-                      </Form.Field>
-                    </Flex>
-
-                    <Flex gap="16px" mt="30px" justify="end">
-                      <Dialog.Close>
-                        <Button size="3" variant="soft" color="gray">
-                          Cancel
-                        </Button>
-                      </Dialog.Close>
-                      <Button
-                        size="3"
-                        variant="solid"
-                        onClick={handleNewEntry}
-                        className={newEntry.description === "" && "no-click"}
-                        disabled={newEntry.description === ""}>
-                        Add
-                      </Button>
-                    </Flex>
-                  </Form.Root>
-
-                </Dialog.Content>
-              </Dialog.Root>
+              <Button variant="soft" radius="medium" size="3" onClick={handleOpenNewEntryDialog}>
+                <Flex direction="row" gap="8px" align="center" justify="center">
+                  <Icons.Plus />
+                  <Text size="3" weight="medium">Add Entry</Text>
+                </Flex>
+              </Button>
 
             </Flex>
 
@@ -715,134 +735,28 @@ function BudgetTracker() {
 
           </Tabs.Root>
 
-          <Dialog.Root open={isEditEntryDialogOpen} onOpenChange={setIsEditEntryDialogOpen}>
-            <Dialog.Content size="3" maxWidth="600px">
-              <Box asChild p="10px" pb="0px">
-                <Dialog.Title>Edit Entry</Dialog.Title>
-              </Box>
+          {/* Add entry dialog */}
+          <BudgetEntryDialog
+            mode="new"
+            entry={newEntry}
+            setEntry={setNewEntry}
+            isDialogOpen={isNewEntryDialogOpen}
+            setIsDialogOpen={setIsNewEntryDialogOpen}
+            handleSave={handleNewEntry}
+          />
 
-              <Dialog.Description></Dialog.Description>
+          {/* Edit entry dialog */}
+          <BudgetEntryDialog
+            mode="edit"
+            entry={editingEntry}
+            setEntry={setEditingEntry}
+            isDialogOpen={isEditEntryDialogOpen}
+            setIsDialogOpen={setIsEditEntryDialogOpen}
+            handleSave={handleEditEntry}
+          />
 
-              <Form.Root className="FormRoot">
-                <Flex direction="column" gap="20px" px="10px">
-
-                  <Form.Field name="description">
-                    <Form.Label asChild>
-                      <Box asChild mb="6px" >
-                        <Text size="2" weight="medium">Description</Text>
-                      </Box>
-                    </Form.Label>
-                    <Form.Control
-                      asChild
-                      type="text"
-                      value={editingEntry.description || ""} // Default to an empty string
-                      onChange={updateEditingEntry}>
-                      <Box asChild height="40px">
-                        <TextField.Root>
-                          <TextField.Slot />
-                          <TextField.Slot >
-                            <Text size="1" color="gray" mr="4px">
-                              {editingEntry.description?.length} / 100
-                            </Text>
-                          </TextField.Slot>
-                        </TextField.Root>
-                      </Box>
-                    </Form.Control>
-                  </Form.Field>
-
-                  <Grid flow="column" gap="20px" columns={1}>
-                    <Form.Field name="date">
-                      <Form.Label asChild>
-                        <Box asChild mb="6px" >
-                          <Text size="2" weight="medium">Date</Text>
-                        </Box>
-                      </Form.Label>
-                      <Form.Control
-                        asChild
-                        type="date"
-                        onChange={updateEditingEntry}>
-                        <Box asChild height="40px">
-                          <TextField.Root>
-                            <TextField.Slot />
-                            <TextField.Slot />
-                          </TextField.Root>
-                        </Box>
-                      </Form.Control>
-                    </Form.Field>
-                  </Grid>
-
-                  <Form.Field name="amount">
-                    <Form.Label asChild>
-                      <Box asChild mb="6px" >
-                        <Text size="2" weight="medium">Amount</Text>
-                      </Box>
-                    </Form.Label>
-                    <Form.Control
-                      asChild
-                      type="number"
-                      value={editingEntry.amount || ""} // Default to an empty string
-                      onChange={updateEditingEntry}>
-                      <Box asChild height="40px">
-                        <TextField.Root>
-                          <TextField.Slot />
-                          <TextField.Slot >
-                            <Text size="1" color="gray" mr="4px">
-                              {editingEntry.amount?.length} / 100
-                            </Text>
-                          </TextField.Slot>
-                        </TextField.Root>
-                      </Box>
-                    </Form.Control>
-                  </Form.Field>
-
-                  <Form.Field name="categories">
-                    <Form.Label asChild>
-                      <Box asChild mb="6px" >
-                        <Text size="2" weight="medium">Tag</Text>
-                      </Box>
-                    </Form.Label>
-                    <Box asChild height="40px">
-                      <Select.Root
-                        defaultValue={editingEntry.categories || "no-category"}
-                        onValueChange={(value) => {
-                          setEditingEntry({
-                            ...editingEntry,
-                            categories: value,
-                          });
-                        }}>
-                        <Select.Trigger radius="medium" />
-                        <Select.Content>
-                          {(editingEntry.entryType === "incomes") ? (
-                            incomeTags.map((tag) => (
-                              <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
-                            ))
-                          ) : (
-                            expenseTags.map((tag) => (
-                              <Select.Item key={tag.value} value={tag.value}>{tag.label}</Select.Item>
-                            ))
-                          )}
-                        </Select.Content>
-                      </Select.Root>
-                    </Box>
-                  </Form.Field>
-                </Flex>
-
-              </Form.Root>
-
-              <Flex gap="16px" mt="20px" justify="end">
-                <Dialog.Close>
-                  <Button size="3" variant="soft" color="gray">
-                    Cancel
-                  </Button>
-                </Dialog.Close>
-                <Button size="3" variant="solid" onClick={handleSaveEntry}>
-                  Save
-                </Button>
-              </Flex>
-            </Dialog.Content>
-          </Dialog.Root>
-
-          <Dialog.Root open={isDeleteEntryDialogOpen} onOpenChange={setIsDeleteEntryDialogOpen}>
+          {/* Delete entry dialog */}
+          < Dialog.Root open={isDeleteEntryDialogOpen} onOpenChange={setIsDeleteEntryDialogOpen} >
             <Dialog.Content size="3" maxWidth="600px">
               <Box asChild p="10px" pb="0px">
                 <Dialog.Title>Delete Entry</Dialog.Title>
@@ -869,7 +783,7 @@ function BudgetTracker() {
 
         </Flex>
       </Box>
-    </Panel>
+    </Panel >
   );
 }
 

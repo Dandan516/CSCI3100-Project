@@ -14,13 +14,13 @@ class UserUsernameSerializer(serializers.ModelSerializer):
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Expense
-        fields = ['id', 'budget', 'date', 'amount', 'description', 'categories']
+        fields = ['id', 'budget', 'date', 'amount', 'description', 'category']
 
 # Income Serializer
 class IncomeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Income
-        fields = ['id', 'budget', 'date', 'amount', 'description', 'categories']
+        fields = ['id', 'budget', 'date', 'amount', 'description', 'category']
 
 # Budget Serializer
 class BudgetSerializer(serializers.ModelSerializer):

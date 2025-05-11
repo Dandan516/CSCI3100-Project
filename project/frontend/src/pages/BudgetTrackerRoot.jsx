@@ -142,23 +142,33 @@ function BudgetTrackerRoot() {
 
   const getBudgets = async () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}budget/`, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        const data = response.data.map((item) => ({
-          id: item.id,
-          title: item.title,
-          dateCreated: item.date,
-          totalBalance: "$" + item.total_balance,
-          totalIncome: "$" + item.total_income,
-          totalExpense: "$" + item.total_expense,
-        }));
-        setBudgets(data);
-      })
-      .catch(error => {
-        console.error("Error fetching budgets:", error);
-      });
+      .get(
+        `${import.meta.env.VITE_API_URL}budget/`,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`
+          },
+        }
+      )
+      .then(
+        response => {
+          const data = response.data.map((item) => ({
+            id: item.id,
+            title: item.title,
+            dateCreated: item.date,
+            totalBalance: "$" + item.total_balance,
+            totalIncome: "$" + item.total_income,
+            totalExpense: "$" + item.total_expense,
+          }
+          ));
+          setBudgets(data);
+        }
+      )
+      .catch(
+        error => {
+          console.error("Error fetching budgets:", error);
+        }
+      );
   };
 
   const recentBudget = useMemo(() => {
@@ -175,30 +185,43 @@ function BudgetTrackerRoot() {
   const handleCreateBudget = async () => {
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}budget/`, {
-        title: newBudgetTitle,
-      }, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        setNewBudgetTitle("");
-        setIsCreateDialogOpen(false);
-        getBudgets();
-      });
+      .post(
+        `${import.meta.env.VITE_API_URL}budget/`,
+        {
+          title: newBudgetTitle,
+        },
+        {
+          headers: { Authorization: `Token ${auth.token}` },
+        }
+      )
+      .then(
+        response => {
+          setNewBudgetTitle("");
+          setIsCreateDialogOpen(false);
+          getBudgets();
+        }
+      );
 
   };
 
   const handleDeleteBudget = async (id) => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}budget/${id}/`, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        getBudgets();
-      })
-      .catch(error => {
-        console.error("Error deleting budget plan:", error);
-      });
+      .delete(
+        `${import.meta.env.VITE_API_URL}budget/${id}/`,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`
+          },
+        }
+      )
+      .then(
+        response => {
+          getBudgets();
+        })
+      .catch(
+        error => {
+          console.error("Error deleting budget plan:", error);
+        });
     setIsDeleteDialogOpen(false);
   };
 
@@ -314,10 +337,13 @@ function BudgetTrackerRoot() {
                     <Inset asChild clip="padding-box" side="right" pb="0">
                       <Box height="300px" overflow="hidden">
                         <img
-                          src="/images/Greece.jpeg"
+                          src="/images/pexels-pixabay-53621.jpg"
                           width="100%"
                           height="100%"
-                          style={{ objectFit: "cover" }}
+                          style={{
+                            objectFit: "cover",
+                            objectPosition: "left",
+                          }}
                         />
                       </Box>
                     </Inset>
@@ -353,7 +379,7 @@ function BudgetTrackerRoot() {
 
                 <Dialog.Description>
                   <Text size="2" weight="medium" mx="6px">
-                    Travel plan title
+                    Budget title
                   </Text>
                 </Dialog.Description>
 
@@ -361,7 +387,7 @@ function BudgetTrackerRoot() {
                   <TextField.Root
                     value={newBudgetTitle}
                     onChange={(e) => setNewBudgetTitle(e.target.value)}
-                    placeholder="Enter title for your new budget plan...">
+                    placeholder="Enter title for your new budget...">
                     <TextField.Slot pl="8px" />
                     <TextField.Slot pr="8px" />
                   </TextField.Root>

@@ -19,6 +19,7 @@ class Expense(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     CAT1 = (
+        ('no-category', 'No Category'),
         ('food', 'Food'),
         ('transport', 'Transport'),
         ('accommodation', 'Accommodation'),
@@ -27,7 +28,7 @@ class Expense(models.Model):
         ('other', 'Other'),
     )
 
-    categories = models.CharField(max_length=20, choices=CAT1 , blank=True, null=True, default=None)
+    category = models.CharField(max_length=20, choices=CAT1 , blank=True, null=True, default='no-category')
 
     def __str__(self):
         return self.description
@@ -41,17 +42,18 @@ class Income(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     CAT2 = (
+        ('no-category', 'No Category'),
         ('salary', 'Salary'),
         ('investment', 'Investment'),
         ('gift', 'Gift'),
         ('other', 'Other'),
         ('business', 'Business'),
-        ('rental_income', 'Rental Income'),
-        ('interest_income', 'Interest Income'),
+        ('rental-income', 'Rental Income'),
+        ('interest-income', 'Interest Income'),
         ('dividends', 'Dividends'),
     )
 
-    categories = models.CharField(max_length=20, choices=CAT2 , blank=True, null=True, default=None)
+    category = models.CharField(max_length=20, choices=CAT2 , blank=True, null=True, default=None)
 
     def __str__(self):
         return self.description

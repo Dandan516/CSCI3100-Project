@@ -19,7 +19,7 @@ function TravelPlanner() {
   const params = useParams([]);
 
   const [isEditTravelDialogOpen, setIsEditTravelDialogOpen] = useState(false);
-  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);s
+  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);
   const [isInviteCollaboratorDialogOpen, setIsInviteCollaboratorDialogOpen] = useState(false);
 
   const [travelPlan, setTravelPlan] = useState({
@@ -147,12 +147,15 @@ function TravelPlanner() {
 
   const handleNewItinerary = async () => {
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/itineraries/`, newItinerary, {
-        headers: {
-          Authorization: `Token ${auth.token}`
-        },
-        ContentType: "multipart/form-data",
-      })
+      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/itineraries/`,
+        newItinerary,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`
+          },
+          ContentType: "multipart/form-data",
+        }
+      )
       .then((response) => {
         alert("Itinerary added successfully!", response.data);
         setIsNewItineraryDialogOpen(false);
@@ -191,13 +194,23 @@ function TravelPlanner() {
       setInviteErrorMessage("Please enter a valid email.");
       return;
     }
+    if (newCollaborator.email === travelPlan.owner?.email) {
+      setInviteErrorMessage("You cannot invite yourself.");
+      return;
+    }
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/invite_collaborator/`, { email: newCollaborator.email }, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-          "Content-Type": "application/json"
+      .post(
+        `${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/invite_collaborator/`,
+        {
+          email: newCollaborator.email
         },
-      })
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`,
+          },
+          ContentType: "application/json"
+        }
+      )
       .then((response) => {
         setInviteSuccess(true);
         setNewCollaborator({
@@ -485,7 +498,7 @@ function TravelPlanner() {
                                 />
                                 <Box>
                                   <Text size="3"> {collaborator.username} </Text>
-                                  <Text as="div" size="2" color="gray"> {collaborator?.email} </Text> 
+                                  <Text as="div" size="2" color="gray"> {collaborator?.email} </Text>
                                 </Box>
                               </Flex>
                             </Card>
