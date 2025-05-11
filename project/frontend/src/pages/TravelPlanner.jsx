@@ -19,7 +19,7 @@ function TravelPlanner() {
   const params = useParams([]);
 
   const [isEditTravelDialogOpen, setIsEditTravelDialogOpen] = useState(false);
-  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);s
+  const [isNewItineraryDialogOpen, setIsNewItineraryDialogOpen] = useState(false);
   const [isInviteCollaboratorDialogOpen, setIsInviteCollaboratorDialogOpen] = useState(false);
 
   const [travelPlan, setTravelPlan] = useState({

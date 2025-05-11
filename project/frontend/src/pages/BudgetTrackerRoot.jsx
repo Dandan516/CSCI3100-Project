@@ -353,7 +353,7 @@ function BudgetTrackerRoot() {
 
                 <Dialog.Description>
                   <Text size="2" weight="medium" mx="6px">
-                    Travel plan title
+                    Budget plan title
                   </Text>
                 </Dialog.Description>
 
