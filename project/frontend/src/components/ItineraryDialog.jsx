@@ -1,5 +1,7 @@
 import * as Form from "@radix-ui/react-form";
 import { TextField, TextArea, Button, IconButton, Tooltip, Box, Flex, Grid, Text, Dialog, Select } from "@radix-ui/themes";
+import PropTypes from "prop-types";
+
 import * as Icons from "../assets/Icons"; 
 import LocationSearch from "./LocationSearch"; 
 import { itineraryTags } from "../utils/itineraryTags";
@@ -11,6 +13,8 @@ function ItineraryDialog({
   isDialogOpen,
   setIsDialogOpen,
   handleSave,
+  travelStartDate,
+  travelEndDate,
 }) {
   const dialogTitle = mode === "edit" ? "Edit Itinerary" : "New Itinerary";
   const updateItinerary = (e) => {
@@ -25,17 +29,7 @@ function ItineraryDialog({
   };
   return (
     <Dialog.Root open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <Tooltip content={dialogTitle}>
-        <Dialog.Trigger asChild>
-          <IconButton
-            variant="soft"
-            radius="medium"
-            color="gray"
-            size="3">
-            <Icons.Pencil24 />
-          </IconButton>
-        </Dialog.Trigger>
-      </Tooltip>
+      
       <Dialog.Content size="3" maxWidth="600px">
         <Box asChild p="10px">
           <Dialog.Title>
@@ -82,7 +76,7 @@ function ItineraryDialog({
                   type="date"
                   value={itinerary.start_date || ""}
                   min={travelStartDate}
-                  max={travelEndDate}
+                  max={itinerary.end_date ? itinerary.end_date : travelEndDate}
                   onChange={updateItinerary}>
                   <Box asChild height="40px">
                     <TextField.Root>
@@ -125,7 +119,7 @@ function ItineraryDialog({
                   asChild
                   type="date"
                   value={itinerary.end_date || ""}
-                  min={travelStartDate}
+                  min={itinerary.start_date ? itinerary.start_date : travelStartDate}
                   max={travelEndDate}
                   onChange={updateItinerary}>
                   <Box asChild height="40px">
@@ -242,5 +236,16 @@ function ItineraryDialog({
     </Dialog.Root>
   );
 }
+
+ItineraryDialog.propTypes = {
+  mode: PropTypes.string.isRequired,
+  itinerary: PropTypes.object.isRequired,
+  setItinerary: PropTypes.func.isRequired,
+  isDialogOpen: PropTypes.bool.isRequired,
+  setIsDialogOpen: PropTypes.func.isRequired,
+  handleSave: PropTypes.func.isRequired,
+  travelStartDate: PropTypes.string.isRequired,
+  travelEndDate: PropTypes.string.isRequired,
+};
 
 export default ItineraryDialog;

@@ -22,15 +22,8 @@ function TravelPlannerRoot() {
   const [newTravelPlanTitle, setNewTravelPlanTitle] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const handleOpenDeleteDialog = (e) => {
-    e.preventDefault();
-    setIsDeleteDialogOpen(true);
-  };
-
-  // Row Data: The data to be displayed.
   const [travelPlans, setTravelPlans] = useState([]);
 
-  // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
     return [
       {
@@ -134,25 +127,34 @@ function TravelPlannerRoot() {
 
   const getTravelPlans = async () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}travel/`, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        const data = response.data.map((item) => ({
-          id: item.id,
-          title: item.title,
-          startDate: item.start_date,
-          endDate: item.end_date,
-          destination: item.destination,
-          description: item.description,
-          owner: item.user.username,
-          collaboratorsList: item.collaborators.map((collab) => collab.username).join(", ") || "",
-        }));
-        setTravelPlans(data);
-      })
-      .catch(error => {
-        console.error("Error fetching travels:", error);
-      });
+      .get(
+        `${import.meta.env.VITE_API_URL}travel/`,
+        {
+          headers: { Authorization: `Token ${auth.token}` },
+        }
+      )
+      .then(
+        response => {
+          const data = response.data.map(
+            (item) => ({
+              id: item.id,
+              title: item.title,
+              startDate: item.start_date,
+              endDate: item.end_date,
+              destination: item.destination,
+              description: item.description,
+              owner: item.user.username,
+              collaboratorsList: item.collaborators.map(collab => collab.username).join(", ") || "",
+            })
+          );
+          setTravelPlans(data);
+        }
+      )
+      .catch(
+        error => {
+          console.error("Error fetching travels:", error);
+        }
+      );
   };
 
   const recentTravelPlan = useMemo(() => {
@@ -160,6 +162,11 @@ function TravelPlannerRoot() {
     return travelPlans[0];
 
   }, [travelPlans]);
+
+  const handleOpenDeleteDialog = (e) => {
+    e.preventDefault();
+    setIsDeleteDialogOpen(true);
+  };
 
   // Fetch Travel Plans when the component mounts
   useEffect(() => {
@@ -169,30 +176,41 @@ function TravelPlannerRoot() {
   const handleCreateTravelPlan = async () => {
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}travel/`, {
-        title: newTravelPlanTitle,
-      }, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        setNewTravelPlanTitle("");
-        setIsCreateDialogOpen(false);
-        getTravelPlans();
-      });
-
+      .post(
+        `${import.meta.env.VITE_API_URL}travel/`,
+        {
+          title: newTravelPlanTitle,
+        },
+        {
+          headers: { Authorization: `Token ${auth.token}` },
+        }
+      )
+      .then(
+        response => {
+          setNewTravelPlanTitle("");
+          setIsCreateDialogOpen(false);
+          getTravelPlans();
+        }
+      );
   };
 
   const handleDeleteTravelPlan = async (id) => {
     axios
-      .delete(`${import.meta.env.VITE_API_URL}travel/${id}/`, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(response => {
-        getTravelPlans();
-      })
-      .catch(error => {
-        console.error("Error deleting travel plan:", error);
-      });
+      .delete(
+        `${import.meta.env.VITE_API_URL}travel/${id}/`,
+        {
+          headers: { Authorization: `Token ${auth.token}` },
+        }
+      )
+      .then(
+        response => {
+          getTravelPlans();
+        })
+      .catch(
+        error => {
+          console.error("Error deleting travel plan:", error);
+        }
+      );
     setIsDeleteDialogOpen(false);
   };
 

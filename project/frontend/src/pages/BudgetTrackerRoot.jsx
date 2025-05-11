@@ -21,16 +21,8 @@ function BudgetTrackerRoot() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newBudgetTitle, setNewBudgetTitle] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
-  const handleOpenDeleteDialog = (e) => {
-    e.preventDefault();
-    setIsDeleteDialogOpen(true);
-  };
-
-  // Row Data: The data to be displayed.
   const [budgets, setBudgets] = useState([]);
 
-  // Column Definitions: Defines the columns to be displayed.
   const colDefs = useMemo(() => {
     return [
       {
@@ -176,6 +168,11 @@ function BudgetTrackerRoot() {
     return budgets[0];
 
   }, [budgets]);
+
+  const handleOpenDeleteDialog = (e) => {
+    e.preventDefault();
+    setIsDeleteDialogOpen(true);
+  };
 
   // Fetch Budgets when the component mounts
   useEffect(() => {

@@ -7,7 +7,7 @@ import * as Icons from "../assets/Icons";
 
 const DailyViewContext = createContext();
 
-function DailyView ({ children, startDate, endDate }) {
+function DailyView ({ children, startDate, endDate, travelPlan }) {
   const [selectedDateIndex, setSelectedDateIndex] = useState(0);
   const [dateList, setDateList] = useState([]);
 

@@ -14,8 +14,7 @@ const router = createBrowserRouter([
   {
     element: <AuthProvider />,
     errorElement: <Pages.NotFound />,
-    children:
-      [
+    children: [
         {
           path: "/",
           element: <Pages.Portal />,

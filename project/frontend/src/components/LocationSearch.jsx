@@ -64,7 +64,7 @@ function LocationSearch({ selectedLocation, onSelectLocation }) {
               type="text"
               value={query}
               onChange={handleLocationQueryChange}
-              autocomplete="off"
+              autoComplete="off"
               placeholder="Enter location...">
               <TextField.Slot></TextField.Slot>
               <TextField.Slot></TextField.Slot>
