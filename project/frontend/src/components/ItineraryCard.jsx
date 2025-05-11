@@ -7,7 +7,7 @@ import { Text, Flex, Box, Button, Card, Heading, DataList, Badge, Link, IconButt
 
 import * as Icons from "../assets/Icons";
 import { useAuth } from "../hooks/AuthProvider";
-import LocationSearch from "../components/LocationSearch";
+import { LocationSearch, ItineraryDialog } from "../components/index";
 import { itineraryTags } from "../utils/itineraryTags";
 
 const formatTime = (time) => {
