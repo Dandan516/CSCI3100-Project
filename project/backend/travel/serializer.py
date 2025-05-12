@@ -5,8 +5,8 @@ from users.models import CustomUser
 class UserUsernameSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['username']
-        read_only_fields = ['username']
+        fields = ['username', 'email']
+        read_only_fields = ['username', 'email']
 
 
 class ItinerarySerializer(serializers.ModelSerializer):
