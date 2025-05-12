@@ -53,18 +53,17 @@ function PasswordReset() {
   const handlePasswordReset = async (e) => {
 
     e.preventDefault();
-    
-    console.log("Resetting password with token:", params.token);
 
+    setResetError(false); // Reset error state
     setErrorMessages([]); // Clear previous error messages
     const errors = validateForm(); // Validate the form and get errors
 
     if (errors.length > 0) {
-      setSignUpError(true);
+      setResetError(true);
       setErrorMessages(errors); // Update error messages
       return; // Prevent submission if the form is invalid
     }
-    
+
     axios
       .post(
         `${import.meta.env.VITE_API_URL}password_reset/confirm/`,
@@ -126,16 +125,18 @@ function PasswordReset() {
                 )}
 
                 {resetSuccess && (
-                  <Box width="380px">
-                    <Callout.Root color="green">
-                      <Callout.Icon>
-                        <Icons.Check />
-                      </Callout.Icon>
-                      <Callout.Text>
-                        Password reset successful!<br />
-                        Redirecting you to login page...
-                      </Callout.Text>
-                    </Callout.Root>
+                  <Box asChild width="380px">
+                    <Flex asChild direction="column" align="center" gap="10px">
+                      <Callout.Root color="green">
+                        <Callout.Icon>
+                          <Icons.Check />
+                        </Callout.Icon>
+                        <Callout.Text>
+                          Password reset successful!<br />
+                          Redirecting you to login page...
+                        </Callout.Text>
+                      </Callout.Root>
+                    </Flex>
                   </Box>
                 )}
 
