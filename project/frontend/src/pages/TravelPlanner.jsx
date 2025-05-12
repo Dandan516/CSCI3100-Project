@@ -63,31 +63,38 @@ function TravelPlanner() {
 
   const getTravelPlan = async () => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}travel/${params.id}/`, {
-        headers: {
-          Authorization: `Token ${auth.token}`,
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(response => {
-        const data = response.data;
-        setTravelPlan({
-          ...data,
-          owner: data.user,
-        });
-        setEditingTravelPlan({
-          title: data.title,
-          start_date: data.start_date,
-          end_date: data.end_date,
-          description: data.description,
-          destination: data.destination,
-          image: data.image,
-        });
-        //console.log("Travel plan fetched successfully:", JSON.stringify(data));
-      })
-      .catch((error) => {
-        console.error("Error fetching travel plan:", error);
-      });
+      .get(
+        `${import.meta.env.VITE_API_URL}travel/${params.id}/`,
+        {
+          headers: {
+            Authorization: `Token ${auth.token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      .then(
+        response => {
+          const data = response.data;
+          setTravelPlan({
+            ...data,
+            owner: data.user,
+          });
+          setEditingTravelPlan({
+            title: data.title,
+            start_date: data.start_date,
+            end_date: data.end_date,
+            description: data.description,
+            destination: data.destination,
+            image: data.image,
+          });
+          //console.log("Travel plan fetched successfully:", JSON.stringify(data));
+        }
+      )
+      .catch(
+        (error) => {
+          console.error("Error fetching travel plan:", error);
+        }
+      );
   };
 
   const updateEditingTravelPlan = (e) => {
@@ -112,23 +119,29 @@ function TravelPlanner() {
 
   const handleEditTravelPlan = async () => {
     axios
-      .patch(`${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/`, {
-        title: editingTravelPlan.title,
-        start_date: editingTravelPlan.start_date,
-        end_date: editingTravelPlan.end_date,
-        description: editingTravelPlan.description,
-        destination: editingTravelPlan.destination,
-        image: editingTravelPlan.image,
-      }, {
-        headers: { Authorization: `Token ${auth.token}` },
-      })
-      .then(() => {
-        getTravelPlan();
-        setIsEditTravelDialogOpen(false); // Close the dialog
-      })
-      .catch((error) => {
-        console.error("Error updating travel plan:", error);
-      });
+      .patch(
+        `${import.meta.env.VITE_API_URL}travel/${travelPlan.id}/`,
+        {
+          title: editingTravelPlan.title,
+          start_date: editingTravelPlan.start_date,
+          end_date: editingTravelPlan.end_date,
+          description: editingTravelPlan.description,
+          destination: editingTravelPlan.destination,
+        },
+        {
+          headers: { Authorization: `Token ${auth.token}` },
+        }
+      )
+      .then(
+        () => {
+          getTravelPlan();
+          setIsEditTravelDialogOpen(false); // Close the dialog
+        }
+      ).catch(
+        (error) => {
+          console.error("Error updating travel plan:", error);
+        }
+      );
   };
 
   const handleNewItinerary = async () => {

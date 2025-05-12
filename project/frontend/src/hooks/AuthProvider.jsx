@@ -38,8 +38,6 @@ const AuthProvider = () => {
         console.error("Error fetching user info:", error);
         logout(); // Log out if the token is invalid
       }
-    } else {
-      logout(); // Log out if no token is present
     }
     return null; // Return null if no token or an error occurs
   };

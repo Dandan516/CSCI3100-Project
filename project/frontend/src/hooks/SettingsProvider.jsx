@@ -11,10 +11,11 @@ export function SettingsProvider({ children }) {
   const [mapProvider, setMapProvider] = useState(localStorage.getItem("mapProvider") || "openstreetmap");
 
   return (
-    <SettingsContext.Provider value={{ 
-      themeAppearance, setThemeAppearance,
-      themeAccentColor, setThemeAccentColor,
-      mapProvider, setMapProvider,
+    <SettingsContext.Provider
+      value={{
+        themeAppearance, setThemeAppearance,
+        themeAccentColor, setThemeAccentColor,
+        mapProvider, setMapProvider,
       }}>
       <Theme className="theme" accentColor={themeAccentColor} grayColor="slate" radius="full" scaling="100%" appearance={themeAppearance}>
         {children}

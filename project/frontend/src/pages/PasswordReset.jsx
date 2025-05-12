@@ -15,7 +15,7 @@ const isPasswordInvalid = (password) => {
 function PasswordReset() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const token = params.get('token');
+  const resetToken = params.get('token');
   const [resetForm, setResetForm] = useState({
     newPassword: '',
     confirmNewPassword: ''
@@ -53,7 +53,9 @@ function PasswordReset() {
   const handlePasswordReset = async (e) => {
 
     e.preventDefault();
-  
+    
+    console.log("Resetting password with token:", params.token);
+
     setErrorMessages([]); // Clear previous error messages
     const errors = validateForm(); // Validate the form and get errors
 
@@ -62,24 +64,33 @@ function PasswordReset() {
       setErrorMessages(errors); // Update error messages
       return; // Prevent submission if the form is invalid
     }
-
+    
     axios
-      .post(`${import.meta.env.VITE_API_URL}password_reset/confirm/`, {
-        password: resetForm.newPassword,
-        token: token
-      })
-      .then((response) => {
-        setResetError(false);
-        setResetSuccess(true);
-        setTimeout(() => {
-          navigate("/login");
-        }, 3000);
-      })
-      .catch((error) => {
-        console.error("Error resetting password:", error.response.data.password);
-        setResetError(true);
-        setErrorMessages([error.response.data.password]);
-      });
+      .post(
+        `${import.meta.env.VITE_API_URL}password_reset/confirm/`,
+        {
+          password: resetForm.newPassword,
+          token: resetToken
+        }
+      )
+      .then(
+        (response) => {
+          setResetError(false);
+          setResetSuccess(true);
+          setTimeout(
+            () => {
+              navigate("/login");
+            }, 3000
+          );
+        }
+      )
+      .catch(
+        (error) => {
+          console.error("Error resetting password:", error.response.data.password);
+          setResetError(true);
+          setErrorMessages([error.response.data.password]);
+        }
+      );
   };
 
   return (
