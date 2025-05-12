@@ -472,7 +472,14 @@ function TravelPlanner() {
                     </Text>
                     <Flex>
                       <Card>
-                        <Text size="3"> {travelPlan.owner?.username}  (Owner) </Text>
+                        <Flex direction="column" align="start">
+                          <Text size="3">
+                            {travelPlan.owner?.username}  (Owner)
+                          </Text>
+                          <Text size="2" weight="light" color="gray">
+                            {travelPlan.owner?.email}
+                          </Text>
+                        </Flex>
                       </Card>
                     </Flex>
                     {
@@ -480,7 +487,14 @@ function TravelPlanner() {
                         travelPlan.collaborators?.map((collaborator) => (
                           <Flex key={collaborator.username} direction="row" gap="20px" align="center">
                             <Card>
-                              <Text size="3"> {collaborator.username} </Text>
+                              <Flex direction="column" align="start">
+                                <Text size="3">
+                                  {collaborator.username}
+                                </Text>
+                                <Text size="2" weight="light" color="gray">
+                                  {collaborator.email}
+                                </Text>
+                              </Flex>
                             </Card>
                           </Flex>
                         ))
